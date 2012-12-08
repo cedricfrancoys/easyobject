@@ -1,0 +1,8 @@
+{
+	"model": {
+		"firstname":{"label":"Prénom"},
+		"lastname":{"label":"Nom de famille"}
+	},
+	"view": {
+	}
+}

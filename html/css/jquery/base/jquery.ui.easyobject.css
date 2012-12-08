@@ -1,0 +1,66 @@
+@import url("jquery.ui.core.css");
+@import url("jquery.ui.theme.css");
+@import url("jquery.ui.resizable.css");
+@import url("jquery.ui.selectable.css");
+@import url("jquery.ui.slider.css");
+@import url("jquery.ui.progressbar.css");
+@import url("jquery.ui.tabs.css");
+@import url("jquery.ui.button.css");
+@import url("jquery.ui.dialog.css");
+@import url("jquery.ui.datepicker.css");
+
+/* jquery-ui style changes */
+.ui-button {
+	padding: 3px;
+}
+
+.ui-dialog .ui-dialog-content {
+    padding: 1%;
+}
+
+.ui-button-text-only  {
+    padding: 0.4em 1em;
+    line-height: 1.4;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 1em 0.3em 1em 0.4em;
+}
+
+ul.ui-tabs-nav {
+	line-height: 1em;
+}
+
+ul.ui-helper-clearfix:before, .ui-helper-clearfix:after {
+    display: block;
+}
+
+/* timepicker */
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+/* selectable */
+.ui-selectable {
+	border: none;
+	cursor: default;
+	list-style-image: url(images/icon_plus.png);
+	list-style-position: inside;
+}
+
+.ui-selectable  .unfolded {
+	list-style-image: url(images/icon_minus.png);
+}
+
+.ui-selectable .ui-selecting {
+	background: #83A4DB;
+	color: white;	
+}
+
+.ui-selectable .ui-selected {
+	background: #346AC4;
+	color: white;
+}

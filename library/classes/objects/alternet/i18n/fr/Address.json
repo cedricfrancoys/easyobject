@@ -1,0 +1,11 @@
+{
+	"model": {
+		"place":{"label":"Lieu", "help":"Lieu et numéro\nExemples:\nrue de l'église, 3\nmontagne aux lapins, 1\ncortijo peñon del fuerte, 2"},
+		"city":{"label":"Ville", "help":"Nom de l'agglomération (ville ou village)"},
+		"division":{"label":"Division", "help":"Nom de la division administrative (canton, province, état),\nsi différent du nom de l'agglomération"},
+		"zip":{"label":"CP", "help":"Code postal officiel"},
+		"country":{"label":"Pays"}	
+	},
+	"view": {
+	}
+}

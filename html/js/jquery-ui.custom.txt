@@ -1,0 +1,11 @@
+* Includes: jquery.ui.core.js
+* Includes: jquery.ui.widget.js
+* Includes: jquery.ui.mouse.js
+* Includes: jquery.ui.position.js
+* Includes: jquery.ui.draggable.js
+* Includes: jquery.ui.resizable.js
+* Includes: jquery.ui.autocomplete.js
+* Includes: jquery.ui.button.js
+* Includes: jquery.ui.dialog.js
+* Includes: jquery.ui.tabs.js
+* Includes: jquery.ui.datepicker.js

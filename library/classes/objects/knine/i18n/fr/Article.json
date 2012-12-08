@@ -1,0 +1,20 @@
+{
+	"model": {
+		"title":{"label":"Titre","help":"Titre de l'article sans formatage ni retour à la ligne"},
+		"summary":{"label":"Résumé"},		
+		"content":{"label":"Contenu"},
+		"attributes_ids":{"label":"Attributs"},		
+		"labels_ids":{"label":"Labels"},				
+		"authors_ids":{"label":"Auteurs"}
+	},
+	"view": {
+		"description":{"label":"Description"},
+		"details":{"label":"Détails"},
+		"attributes_ids":{"label":"Attributs"},		
+		"labels_ids":{"label":"Labels"},				
+		"authors_ids":{"label":"Auteurs"},		
+		"summary":{"label":"Résumé"},
+		"content":{"label":"Contenu"},
+		"chapters":{"label":"Chaptitres"}		
+	}
+}
