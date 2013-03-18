@@ -19,33 +19,32 @@
 	 */
 	$.fn.grid = function(arg) { 
 		var default_conf = {
-			data_type: 'json',
-			rp: 20,								// number of results per page
-			rp_choices: [5, 10, 20, 40, 80],	//allowed per-page values 			
-			page: 1,
-			sortname: 'id',
-			sortorder: 'asc',
+			data_type: 'json',							// format of the received data (plugin only supports 'json' for now)
+			rp: 20,										// number of results per page
+			rp_choices: [5, 10, 20, 40, 80],			// allowed per-page values 			
+			page: 1,									// default page to display
+			sortname: 'id',								// default field on which perform sort
+			sortorder: 'asc',							// order for sorting
 			edit: {
-				func: function($grid, selection) {},
-				text: 'edit',
-				icon: 'ui-icon-pencil'
+				func: function($grid, selection) {},	// function to call for editing an item
+				text: 'edit',							// alternate text for the edit button
+				icon: 'ui-icon-pencil'					// icon for the edition button
 			},
 			del: {
-				func: function($grid, selection) {},
-				text: 'delete',
-				icon: 'ui-icon-trash'
+				func: function($grid, selection) {},	// function to call for removing an item
+				text: 'delete',							// alternate text for the delete button
+				icon: 'ui-icon-trash'					// icon for the delete button
 			},
 			add: {
-				func: function($grid, conf) {},
-				text: 'create new',
-				icon: 'ui-icon-document'
-			},
-			// ids to include to the domain
-			more: [],
-			// ids to exclude from the domain
-			less: [],
-			lang: easyObject.conf.content_lang, 
-			ui: easyObject.conf.user_lang			
+				func: function($grid, conf) {},			// function to call for adding an item
+				text: 'create new',						// alternate text for the add button
+				icon: 'ui-icon-document'				// icon for the add button
+			},			
+			more: [],									// ids to include to the domain			
+			less: [],									// ids to exclude from the domain
+			domain: [],									// domain (i.e. clauses to limit the results)
+			lang: easyObject.conf.content_lang,			// language in which request the content to server 
+			ui: easyObject.conf.user_lang				// language in which display UI items			
 		};
 	
 		var methods = {
@@ -98,7 +97,7 @@
 				// create other columns, based on the col_model given in the configuration
 				$.each(conf.col_model, function(i, col) {
 //					$cell = $('<th/>').attr('id', col.name).addClass('column').css('width', col.width).append($('<div/>').text(col.display))
-					$cell = $('<th/>').attr('id', col.name).addClass('column').css('width', col.width).append($('<div/>').append($('<label/>').attr('for', col.display)))
+					$cell = $('<th/>').attr('name', col.name).addClass('column').css('width', col.width).append($('<div/>').append($('<label/>').attr('for', col.display)))
 						.hover(
 							/** The div style attr 'asc' or 'desc' is for the display of the arrow
 							  * the th style attr 'asc' or 'desc' is to memorize the current order
@@ -110,7 +109,7 @@
 								$this.addClass('thOver');
 								$div = $('div', $this);								
 								$sorted = $thead.find('.sorted');
-								if($sorted.attr('id') == $this.attr('id') && conf.sortorder == 'asc') $div.removeClass('asc').addClass('desc');
+								if($sorted.attr('name') == $this.attr('name') && conf.sortorder == 'asc') $div.removeClass('asc').addClass('desc');
 								else $div.removeClass('desc').addClass('asc');
 							}, 
 							function() {
@@ -120,7 +119,7 @@
 								$sorted = $thead.find('.sorted');
 								$this.removeClass('thOver');
 								$div.removeClass('asc').removeClass('desc');						
-								if($sorted.attr('id') == $this.attr('id')) {
+								if($sorted.attr('name') == $this.attr('name')) {
 									if($this.hasClass('asc')) $div.addClass('asc');
 									else $div.addClass('desc');
 								}
@@ -131,7 +130,7 @@
 								$this = $(this);
 								$sorted = $thead.find('.sorted');
 								$div = $('div', $this);
-								if($sorted.attr('id') == $this.attr('id')) {
+								if($sorted.attr('name') == $this.attr('name')) {
 									if($div.hasClass('asc')) {
 										$div.removeClass('asc').addClass('desc');
 										$this.removeClass('desc').addClass('asc');
@@ -150,7 +149,7 @@
 									$('div', $sorted).removeClass('asc').removeClass('desc');
 									conf.sortorder = 'asc';
 								}
-								conf.sortname = $this.attr('id');
+								conf.sortname = $this.attr('name');
 								// uncheck selection box
 								$("input:checkbox", $thead)[0].checked = false;
 								self.feed($grid, conf);
@@ -174,7 +173,7 @@
 					// 1) action buttons
 					.append($('<div/>').css('left', '5px')
 						// edit button
-						.append($('<span/>').attr('id', 'edit').button({icons:{primary:conf.edit.icon}}).attr('title', conf.edit.text)
+						.append($('<span/>').button({icons:{primary:conf.edit.icon}}).attr('title', conf.edit.text)
 							.click(function() {
 								var ids = self.selection($grid);
 								if(!ids.length) alert('No item selected.');
@@ -183,7 +182,7 @@
 							})
 						)
 						// delete button
-						.append($('<span/>').attr('id', 'delete').button({icons:{primary:conf.del.icon}}).attr('title', conf.del.text)
+						.append($('<span/>').button({icons:{primary:conf.del.icon}}).attr('title', conf.del.text)
 							.click(function() {
 								var ids = self.selection($grid);
 								if(!ids.length) alert('No item selected.');
@@ -193,7 +192,7 @@
 							})
 						)
 						// add button
-						.append($('<span/>').attr('id', 'create').button({icons:{primary:conf.add.icon}}).attr('title', conf.add.text)
+						.append($('<span/>').button({icons:{primary:conf.add.icon}}).attr('title', conf.add.text)
 							.click(function() {
 								if(typeof(conf.add.func) == 'function') conf.add.func($grid, conf);
 							})
@@ -234,13 +233,13 @@
 					// 3) page navigator
 					.append($('<div/>').css('left', '50%').css('margin-left',  '-190px')
 						// first page button
-						.append($('<span/>').attr('id', 'first').button({icons:{primary:'ui-icon-seek-start'}}).attr('title', 'first')
+						.append($('<span/>').button({icons:{primary:'ui-icon-seek-start'}}).attr('title', 'first')
 							.click(function() {
 								conf.page = 1;
 								self.feed($grid, conf);
 							}))
 						// previous page button
-						.append($('<span/>').attr('id', 'prev').button({icons:{primary:'ui-icon-seek-prev'}}).attr('title', 'prev')
+						.append($('<span/>').button({icons:{primary:'ui-icon-seek-prev'}}).attr('title', 'prev')
 							.click(function() {
 								conf.page = Math.max(parseInt(conf.page)-1, 1);
 								self.feed($grid, conf);
@@ -266,13 +265,13 @@
 						// separator
 						.append($('<span/>').addClass('separator').text(' | '))
 						// next page button
-						.append($('<span/>').attr('id', 'next').button({icons:{primary:'ui-icon-seek-next'}}).attr('title', 'next')
+						.append($('<span/>').button({icons:{primary:'ui-icon-seek-next'}}).attr('title', 'next')
 							.click(function() {
 								conf.page = Math.min(parseInt(conf.page)+1, conf.total);
 								self.feed($grid, conf);
 							}))						
 						// last page button
-						.append($('<span/>').attr('id', 'last').button({icons:{primary:'ui-icon-seek-end'}}).attr('title', 'last')
+						.append($('<span/>').button({icons:{primary:'ui-icon-seek-end'}}).attr('title', 'last')
 							.click(function() {
 								conf.page = conf.total;
 								self.feed($grid, conf);
@@ -289,7 +288,11 @@
 					$tbody.empty();
 					$('#grid_pager', $grid).remove();
 					$.each(json.rows, function(i, row) {
-						$row = $('<tr/>').attr('id', row.id).append($('<td/>').append($('<div/>').append($('<input type="checkbox" />').addClass('checkbox'))));
+						$row = $('<tr/>').attr('id', row.id).append($('<td/>').append($('<div/>').append(
+								$('<input type="checkbox" />')
+								.addClass('checkbox')
+								.on('dblclick', function() {conf.edit.func($grid, [row.id]);})
+						)));
 						if(i%2) $row.addClass('erow');
 						$.each(row.cell, function(i, cell) {
 							$row.append($('<td/>').append($('<div/>').text(cell)));
@@ -394,11 +397,11 @@
 					methods.layout($grid, conf);
 					methods.translate($grid, conf);					
 					$grid.data('conf', conf);
-					$grid.on("reload", function(event){
+					$grid.on('reload', function(event){
 						conf.page = 1;
 						methods.feed($grid, conf);
 					});
-					$grid.trigger("reload");
+					$grid.trigger('reload');
 				})($(this), $.extend(true, default_conf, arg));
 			});				
 		}

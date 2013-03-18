@@ -27,7 +27,7 @@
 */
 
 // easyObject index.php is in charge of setting the context
-defined('__EASY_OBJECT_INDEX_PHP') or die(__FILE__.' cannot be executed directly.');
+defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 $response = array('result'=>false);
 

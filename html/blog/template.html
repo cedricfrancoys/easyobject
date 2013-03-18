@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>FiveCents</title> 
+<link media="all" rel="stylesheet" type="text/css" href="html/css/blog/style.css" />
+<script type="text/javascript" src="html/js/jquery-1.7.1.min.js"></script>
+<script><var id="scripts"></var></script>
+</head>
+<body>
+	<div id="header">
+		<div id="logo">
+			<div id="h1"><a href="#">FiveCents</a></div>
+			<div id="h2" style="font-style: italic;">Réflexions sur le monde actuel &amp; Perspectives d'avenir</div>		
+		</div>
+		<div id="header-icons"></div>
+		<div id="menu">
+			<div class="menu-bottom">
+				<ul>
+					<li class="page_item">
+						<a href="index.php?show=blog_categories">catégories</a>
+					</li>
+
+					<li class="page_item">
+						<a href="a_propos">à propos</a>
+					</li>
+					<li class="page_item">
+						<a href="#">contact</a>
+					</li>
+				</ul>
+				<div class="spacer" style="clear: both;"></div>
+			</div>	
+		</div>
+	</div>
+	<div id="main">	
+		<div id="content">
+			<div class="post type-post format-standard">
+				<var id="content"></var>			
+				<p class="comments">
+					<span class="comments-link">Commentaires</span>
+					<ul class="commentlist">
+						<li>
+							<span><a style="cursor: pointer;" href="javascript:void(0)" onclick="document.getElementById('add_comment').style.display='block';document.getElementById('author').focus();this.style.display='none';">Ajouter un commentaire</a></span>
+							<div id="add_comment" style="display: none;">
+								<iframe name="submission_frame" style="display: none;"></iframe>								
+								<form target="submission_frame" method="get" action="index.php" onsubmit="setTimeout(function(){window.location.reload();}, 2000);">
+									<label for="author">Nom*</label><br/><input type="text" id="author" name="author" /><br/>
+									<label for="email">E-mail</label><br/><input type="text" id="email" name="email" /><br/>
+									<label for="message">Commentaire*</label><textarea id="message" name="content"></textarea>
+									<textarea style="display: none;" name="post_id"><var id="post_id"></var></textarea>
+									<input type="hidden" name="object_class" value="blog\Comment" />
+									<input type="hidden" name="ids[]" value="0" />
+									<input type="hidden" name="do" value="core_objects_update" />									
+									<button type="submit">Envoyer</button>
+								</form>
+							</div>
+						</li>				
+						<var id="comments"></var>					
+					</ul>					
+				</p>			
+			</div>					
+		</div>
+		<div id="sidebar1" class="sidecol">
+			<ul>
+				<li>
+					<p style="font-style: italic; font-family: Georgia,serif;">Le plus grand défi d'une vie humaine est de parvenir à être heureux dans le monde tel qu'il est tout en contribuant à en faire ce qu'on voudrait qu'il soit.
+					<br/>
+					</p>
+				</li>			
+				<li class="widget recent">
+					<h2 class="widgettitle">Articles récents</h2>
+					<ul>
+						<var id="recent_posts"></var>
+					</ul>					
+				</li>
+				<li class="widget related">
+					<h2 class="widgettitle">Articles associés</h2>
+					<ul>
+						<var id="related_posts"></var>					
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div style="clear:both"></div>
+	</div>	
+	<div id="footer">
+		<p>
+		<span>
+		<a title="easyObject" href="http://easyobject.cedricfrancoys.be/">Powered by easyObject</a>
+		&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+		Theme by <a title="Diovo" href="http://www.diovo.com/links/voidy/">Niyaz</a>
+		</span>
+		<strong>FiveCents</strong>
+		CC BY-SA-NC Some Rights Reserved
+		</p>	
+	</div>		
+</body>
+</html>

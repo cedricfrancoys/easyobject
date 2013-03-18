@@ -37,22 +37,19 @@ load_class('orm/Object') or die('unable to load mandatory class Object');
 * @author	Cedric Francoys
 */
 class ObjectManager {
-/**
-*
-* Private vars
-*
-*/
+
+// Private vars
+
 	private $objectsArray;
 	private $dbConnection;
 
 	public $simple_types	= array('boolean', 'integer', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one');
 	public $complex_types	= array('one2many', 'many2many', 'related', 'function');
 
-/**
-*
-* Private methods
-*
-*/
+
+// Private methods
+
+
 	private function __construct() {
 		// initialize the objects array
 		$this->objectsArray = array();
@@ -60,14 +57,12 @@ class ObjectManager {
 		new ErrorHandler();
 		// open DB connection
 		$this->dbConnection = &DBConnection::getInstance(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_DBMS);
+		if($this->dbConnection->connect() === false) trigger_error('ObjectManager::ObjectManager, unable to establish connection to database: check connection parameters (possibles reasons: non-supported DBMS, unknown database name, incorrect username or password, ...)', E_USER_ERROR);
 	}
 
 
-	/**
-	*
-	*	 methods related to objects instances
-	*	 ************************************
-	*/
+//  Methods related to objects instances
+
 
 	/**
 	* Returns a DB id for a new instance
@@ -84,8 +79,9 @@ class ObjectManager {
 		if(count($ids)) $object_id = $ids[0];
 		$creation_array = array('created' => date("Y-m-d H:i:s"), 'creator' => $user_id);
 		if($object_id  > 0) {
-			// store the id to reuse and delete the associated record
+			// store the id to reuse
 			$creation_array['id'] = $object_id;
+			// and delete the associated record
 			$this->dbConnection->deleteRecords($object_table, array($object_id));
 		}
 		// create a new record with the found walue, or let the autoincrement do the job
@@ -105,13 +101,13 @@ class ObjectManager {
 			if(!class_exists($object_class)) {
 				// first, read the file content to see if the class extends from another, which could not be loaded yet
 				// (we do so because we cannot use __autoload mechanism since the script may be run in CLI SAPI)
-				$file_content = file_get_contents('classes/objects/'.$this->getObjectClassFileName($object_class).'.class.php', FILE_USE_INCLUDE_PATH);
+				if(!($file_content = file_get_contents('classes/objects/'.$this->getObjectClassFileName($object_class).'.class.php', FILE_USE_INCLUDE_PATH))) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
 				preg_match('/\bextends\b(.*)\{/iU', $file_content, $matches);
 				if(!isset($matches[1])) throw new Exception("malformed class file for object '$object_class' : parent class name not found", INVALID_PARAM);
 				else $parent_class = trim($matches[1]);
 				// caution : no mutual inclusion check is done, so this call might result in an infinite loop
 				if($parent_class != '\core\Object') $this->getObjectStaticInstance($parent_class);
-				if(!load_class('objects/'.$this->getObjectClassFileName($object_class), $object_class)) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
+				if(!load_class('objects/'.$this->getObjectClassFileName($object_class))) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
 			}
 			if(!isset($this->objectsArray[$object_class])) {
 				$this->objectsArray[$object_class] = array();
@@ -122,7 +118,7 @@ class ObjectManager {
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
-			throw new Exception('unable to get static instance');
+			throw new Exception('unable to get static instance', $e->getCode());
 		}
 	}
 
@@ -155,12 +151,12 @@ class ObjectManager {
 				// new instances are clones of static instances (so we don't need to re-compute default values for each new instance)
 				$static_instance = &$this->getObjectStaticInstance($object_class);
 				$object = clone $static_instance;
-				// set the proper id
+    			// set the proper id
 				$object->setValues($user_id, array('id'=>$object_id));
 				// for existing objects, values that matter are the ones in DB (and not defaults)
-				if(!$is_new_object) {
+    			if(!$is_new_object) {
 					// we make sure we won't overwrite fields with default values
-					$object->resetLoadedFields();
+    				$object->resetLoadedFields();
 					$object->resetModifiedFields();
 				}
 				$this->objectsArray[$object_class][$object_id] = &$object;
@@ -337,10 +333,14 @@ class ObjectManager {
 							}
 							break;
 						case 'one2many':
-						case 'many2many':
 							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'");
 							// obtain the ids by searching among objects having symmetrical field ('foreign_field') set to $object_id
-		                    $value_array[$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], ($schema[$field]['type']=='many2many')?'contains':'in', $object_id))));
+		                    $value_array[$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'in', $object_id))));
+							break;
+						case 'many2many':
+							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for many2many field '$field' of class '$object_class'");
+							// obtain the ids by searching among objects having symmetrical field ('foreign_field') set to $object_id
+		                    $value_array[$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'contains', $object_id))));
 							break;
 						default :
 							throw new Exception("unknown type '{$schema[$field]['type']}' for field '$field' of class '$object_class'");
@@ -353,14 +353,30 @@ class ObjectManager {
 				$result = $this->dbConnection->getRecords(array($table_name), $simple_fields, array($object_id));
 				if($row = $this->dbConnection->fetchArray($result))
 					// check each value to ensure not to erase default value for empty fields
-					foreach($row as $column => $value) if(!$this->dbConnection->isEmpty($value)) $value_array[$column] = $value;
+					foreach($row as $column => $value) {
+						// for functional fields : if no value is specified in DB, then compute the value by calling the associated method
+						// note : we use is_null() rather than empty() because an empty value could be the result of the calculated field (this implies thaht the DB schema has DDEFAULT NULL for the associated column)
+						if($schema[$column]['type'] == 'function' && is_null($value) && isset($schema[$column]['store']) && $schema[$column]['store'] && is_callable($schema[$column]['function'])) {
+							$computed_value = call_user_func($schema[$column]['function'], $this, $user_id, $object_id, $lang);
+							// assign the field to the computed value and mark it as modified (to prevent doing so at each load)
+							$object->setValues($user_id, array($column => $computed_value), $lang, true);
+						}
+						else
+							// note : sometimes, we need the value, even if it is empty (and it is important that it overwrites the default value, if any)
+							// it means that, for existing objects, default value may be overwritten by an empty value
+							// if(!$this->dbConnection->isEmpty($value)) $value_array[$column] = $value;
+							$value_array[$column] = $value;
+					}
 			}
 			// second pass : b) load multilang fields, if any
 			if(count($simple_fields_multilang)) {
 				$result = $this->dbConnection->getRecords(array('core_translation'), array('object_field', 'value'), array($object_id), array(array(array('lang','=',$lang), array('object_class','=',$object_class), array('object_field','in',$simple_fields_multilang))), 'object_id');
 				while($row = $this->dbConnection->fetchArray($result)) {
 					// check value to ensure not to erase default value for empty field
-					if(!$this->dbConnection->isEmpty($row['value'])) $value_array[$row['object_field']] = $row['value'];
+					// note : sometimes, we need the value, even if it is empty (and it is important that it overwrites the default value, if any)
+					// it means that, for existing objects, default value may be overwritten by an empty value
+					// if(!$this->dbConnection->isEmpty($row['value'])) $value_array[$row['object_field']] = $row['value'];
+					$value_array[$row['object_field']] = $row['value'];
 				}
 			}
 			// set the object values according to the loaded fields (do not mark as modified)
@@ -371,7 +387,6 @@ class ObjectManager {
 			throw new Exception('unable to load object fields');
 		}
 	}
-
 
 	/**
 	* Stores the values of specified fields to database.
@@ -391,9 +406,6 @@ class ObjectManager {
 			$columns = $object->getSchema();
 			// get the name of the DB table associated to the object
 			$table_name = $this->getObjectTableName($object_class);
-
-// todo : check if we can change that since every class has to be in a package
-			$table_prefix = (strlen($prefix = $this->getObjectPackageName($object_class)))?$prefix.'_':'';
 
 			// array to handle names of the fields that must be stored
 			$simple_fields = array(DEFAULT_LANG=>array());
@@ -447,7 +459,6 @@ class ObjectManager {
 						// delete relations of ids having a '-' prefix
 						if(count($ids_to_remove)) $this->dbConnection->deleteRecords($columns[$field]['rel_table'], array($object_id), array(array(array($columns[$field]['rel_foreign_key'], 'in', $ids_to_remove))), $columns[$field]['rel_local_key']);
 						// create relations for other ids
-// todo: trying to add an already existing relation could raise an exception, so we should either do some check or make it fail-safe (this may occur when using the UI to remove and re-add during the same edition process)
 						$this->dbConnection->addRecords($columns[$field]['rel_table'], array($columns[$field]['rel_local_key'], $columns[$field]['rel_foreign_key']), $values_array);
 						break;
 					case 'related':
@@ -481,11 +492,9 @@ class ObjectManager {
 		}
 	}
 
-	/**
-	*
-	*	methods related to retreiving objects or fields values
-	*	******************************************************
-	*/
+
+// Methods related to retreiving objects or fields values
+
 
 	/**
 	* Gets the value of the required fields for the specified object.
@@ -509,7 +518,7 @@ class ObjectManager {
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
-			throw new Exception('unable to get object fields');
+			throw new Exception('unable to get object fields', $e->getCode());
 		}
 	}
 
@@ -529,14 +538,14 @@ class ObjectManager {
 			if($object_id == 0) $object_id = $object->getId();
 
 			$fields_values = array();
+			$onchange_fields = array();
 
+        // first pass : update values
 			foreach($object_fields as $field => $value) {
 				// 1) check if the given value match one of the object's fields
 				if(!isset($columns[$field])) continue;
-				// 2) handle the onchange events
-				if(isset($columns[$field]['onchange']) && is_callable($columns[$field]['onchange'])) {
-					call_user_func($columns[$field]['onchange'], $this, $user_id, $object_id, $lang);
-				}
+				// 2) check if the modification does trigger an onchange event
+				if(isset($columns[$field]['onchange'])) $onchange_fields[] = $field;
 				// 3) some fields require to be adapted in some ways
 				switch($columns[$field]['type']) {
 					case 'text':
@@ -568,6 +577,19 @@ class ObjectManager {
 			}
 			// update object (mark fields as modified)
 			$object->setValues($user_id, $fields_values, $lang);
+
+		// second pass : handle onchange events, if any (must be called afer modifications otherwise object values might be outdated)
+			// before handling onchange events, we store fields having the onchange attribute set (we need to do so because o2m and m2m fields can be only partially loaded)
+			if(count($onchange_fields)) {
+				// force a storage of the modified values to DB
+				$this->storeObjectFields($user_id, $object_class, $object_id, $onchange_fields, $lang);
+				// reset the state flags (so value will be reloaded from DB when needed)
+				$object->resetModifiedFields(array($lang => $onchange_fields));
+				$object->resetLoadedFields(array($lang => $onchange_fields));
+				// call methods associated with onchange events of related fields
+				foreach($onchange_fields as $field)
+					if(is_callable($columns[$field]['onchange'])) call_user_func($columns[$field]['onchange'], $this, $user_id, $object_id, $lang);
+			}
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
@@ -576,11 +598,9 @@ class ObjectManager {
 		return $object_id;
 	}
 
-	/**
-	*
-	*	methods related to logs
-	*	***********************
-	*/
+
+// Methods related to logs
+
 
 	/**
 	* Adds a log to database.
@@ -592,35 +612,28 @@ class ObjectManager {
 	* @param mixed $object_id
 	* @param array $object_fields
 	*/
-	private function logAction($user_id, $action, $object_class, $object_id, $object_fields=null, $lang=DEFAULT_LANG) {
+	private function setLog($user_id, $action, $object_class, $object_id, $object_fields=null, $lang=DEFAULT_LANG) {
 		if(!defined('LOGGING_MODE') || !(LOGGING_MODE & $action) ) return;
+		// allow only valid actions
+		if(!in_array($action, array(R_CREATE, R_READ, R_WRITE, R_DELETE, R_MANAGE))) return;
+
 		// prevent from infintite loop
 		if($object_class == 'core\Log') return;
 
-		//$values = array('created' => date("Y-m-d H:i:s"), 'creator' => $user_id, 'action' => $action, 'object_class' => $object_class, 'object_id' => $object_id, 'lang' => $lang);
 		$values = array('action' => $action, 'object_class' => $object_class, 'object_id' => $object_id, 'lang' => $lang);
 
-		// creation, deletion or management
-		if(empty($object_fields)) {
-			if(!in_array($action, array(R_CREATE, R_DELETE, R_MANAGE))) return;
-			$this->update($user_id, 'core\Log', array(0), $values);
+		if(!empty($object_fields)) {
+			// remove special fields from list, if any
+			$object_fields = array_diff($object_fields, array('created', 'modified', 'creator', 'modifier'));
+			$values['object_fields'] = implode(',', $object_fields);
 		}
-		// reading, writing
-		else {
-			if(!in_array($action, array(R_READ, R_WRITE))) return;
-			foreach($object_fields as $object_field) {
-				if(in_array($object_field, array('created', 'modified', 'creator', 'modifier'))) return;
-				$values['object_field'] = $object_field;
-				$this->update($user_id, 'core\Log', array(0), $values);
-			}
-		}
+		$this->update($user_id, 'core\Log', array(0), $values);
 	}
 
-/**
-*
-* Public methods
-*
-*/
+
+// Public methods
+
+
 	/**
 	* Gets the instance of the Manager.
 	* The instance is stored in the $GLOBALS array and is created at first call to this method.
@@ -665,17 +678,16 @@ class ObjectManager {
 						$this->storeObjectFields($info['modifier'], $object_class, $object_id, $modified_fields, $lang);
 					}
 				}
-				// reset the modification flag
+				// reset the state flags
 				$object->resetModifiedFields();
+				$object->resetLoadedFields();
 			}
 		}
 	}
 
-	/**
-	*
-	*	Main final methods (validate, get, browse, search, update, remove)
-	*	******************************************************************
-	*/
+
+// Main final methods (validate, get, browse, search, update, remove)
+
 
 	/**
 	* Checks whether the values of given object fields are valid or not.
@@ -706,9 +718,11 @@ class ObjectManager {
 	* @param integer $object_id
 	* @return object
 	*/
-	public function &get($user_id, $object_class, $object_id) {
+	public function &get($user_id, $object_class, $object_id, $lang=DEFAULT_LANG) {
 		try {
 			$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
+            // we browse the specified object requesting all fields in order to load those that would have not yet been loaded
+			$this->browse($user_id, $object_class, array($object_id), $object->getFieldsNames(), $lang);
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
@@ -717,7 +731,14 @@ class ObjectManager {
 		return $object;
 	}
 
-	// experimental (we need this for validation tests)
+	/**
+	* Returns the static instance for the specified class. Static instances or zero id instances are instances with no id that serve as template for new object.
+	* Note : we don't need a database access to instanciate those instances.
+	*
+	* 	experimental (we need this for validation tests)
+	*
+	* @param string $object_class
+	*/
 	public function &getStatic($object_class) {
 		try {
 			$object = &$this->getObjectStaticInstance($object_class);
@@ -757,7 +778,7 @@ class ObjectManager {
 				else {
 					if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_READ)) throw new Exception("user '$user_id' does not have permission to read object '$object_id' of class '$object_class'", NOT_ALLOWED);
 					$result[$object_id] = $this->getFields($user_id, $object_class, $object_id, $fields, $lang);
-					$this->logAction($user_id, R_READ, $object_class, $object_id, $fields, $lang);
+					$this->setLog($user_id, R_READ, $object_class, $object_id, $fields, $lang);
 				}
 			}
 		}
@@ -776,8 +797,8 @@ class ObjectManager {
 	* 	Array of several series of clauses joined by logical ANDs themselves joined by logical ORs : disjunctions of conjunctions
 	* 	i.e.: (clause[, AND clause [, AND ...]]) [ OR (clause[, AND clause [, AND ...]]) [ OR ...]]
 	*
-	* 	accepted operators are : '=', '<', '>',' <=', '>=', '<>', 'like', 'ilike', 'in', 'contains'
-	* 	example : array( array('title', 'like', '%foo%'), array('id', 'in', array(1,2,18)) )
+	* 	accepted operators are : '=', '<', '>',' <=', '>=', '<>', 'like' (case-sensitive), 'ilike' (case-insensitive), 'in', 'contains'
+	* 	example : array( array( array('title', 'like', '%foo%'), array('id', 'in', array(1,2,18)) ) )
 	*
 	*
 	* @param integer $user_id
@@ -789,10 +810,12 @@ class ObjectManager {
 	* @param string $limit
 	* @return mixed (integer or array)
 	*/
-	public function search($user_id, $object_class, $domain=null, $order='', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG) {
+	public function search($user_id, $object_class, $domain=null, $order='id', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG) {
 		try {
 			if(!IdentificationManager::hasRight($user_id, $object_class, 0, R_READ)) throw new Exception("user($user_id) does not have permission to read objects of class ($object_class)", NOT_ALLOWED);
+			if(empty($order)) throw new Exception("sort field cannot be empty", INVALID_PARAM);
 			$res_list = array();
+			$res_assoc_db = array();
 			$valid_operators = array(
 								'boolean'		=> array('=', '<>'),
 								'integer'		=> array('in', 'not in', '=', '<>', '<', '>', '<=', '>='),
@@ -807,12 +830,12 @@ class ObjectManager {
 								'many2one'		=> array('in', '='),
 								'one2many'		=> array('contains'),
 								'many2many'		=> array('contains'),
-								'related'		=> array('contains', '=', '<>', '<', '>', '<=', '>='),
 							);
 
 			$conditions = array(array());
 			$tables = array();
-			// we use a nested closure to define a function (whose use is limited to this method) that stores original table names and returns corresponding aliases
+
+			// we use a nested closure to define a function that stores original table names and returns corresponding aliases
 			$add_table = function ($table_name) use (&$tables) {
 				$table_alias = 't'.count($tables);
 				$tables[$table_alias] = $table_name;
@@ -821,7 +844,7 @@ class ObjectManager {
 
 			$table_alias = $add_table($this->getObjectTableName($object_class));
 
-			if(!empty($domain)) {
+			if(!empty($domain) && !empty($domain[0]) && !empty($domain[0][0])) {
 				$schema = $this->getObjectSchema($object_class);
 				for($j = 0, $max_j = count($domain); $j < $max_j; ++$j) {
 					// first pass : build conditions and the tables names arrays
@@ -831,12 +854,14 @@ class ObjectManager {
 						$field		= $domain[$j][$i][0];
 						$operator	= strtolower($domain[$j][$i][1]);
 						$value		= $domain[$j][$i][2];
+						$type 		= $schema[$field]['type'];
+						if(in_array($type, array('function', 'related'))) $type = $schema[$field]['result_type'];
 
 						if(!in_array($field, array_keys($schema))) throw new Exception("invalid domain, unexisting field '$field' for object '$object_class'", INVALID_PARAM);
-						if(!in_array($operator, $valid_operators[$schema[$field]['type']])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' in object '$object_class'", INVALID_PARAM);
+						if(!in_array($operator, $valid_operators[$type])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' in object '$object_class'", INVALID_PARAM);
 
-						// todo : test user permissions (on foreign objects)
-						switch($schema[$field]['type']) {
+// todo : do we need to test user permissions on foreign objects
+						switch($type) {
 							case 'one2many':
 								if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory parameter for one2many field '$field' of class '$object_class'", INVALID_PARAM);
 								// add foreign table to sql query
@@ -850,24 +875,24 @@ class ObjectManager {
 								$operator = 'in';
 								break;
 							case 'many2many':
-								if(!$this->checkFieldAttributes(array('rel_table','rel_local_key','rel_foreign_key'), $schema, $field)) throw new Exception("missing at least one mandatory parameter for many2many field '$field' of class '$object_class'", INVALID_PARAM);
+								if(!$this->checkFieldAttributes(array('foreign_object', 'rel_table','rel_local_key','rel_foreign_key'), $schema, $field)) throw new Exception("missing at least one mandatory parameter for many2many field '$field' of class '$object_class'", INVALID_PARAM);
 								// add related table to sql query
-								$table_prefix = (strlen($prefix = $this->getObjectPackageName($object_class)))?$prefix.'_':'';
-								$rel_table_alias =  $add_table($schema[$field]['rel_table']);
-								// add the join condition
-								$conditions[$j][] = array($table_alias.'.id', '=', '`'.$rel_table_alias.'`.`'.$schema[$field]['rel_local_key'].'`');
-								// use rel table's 'rel_foreign_key' as comparison field
-								$field = $rel_table_alias.'.'.$schema[$field]['rel_foreign_key'];
+								$rel_table_alias = $add_table($schema[$field]['rel_table']);
+								// if the relation points out to objects of the same class
+								if($schema[$field]['foreign_object'] == $object_class) {
+									// add the join condition on 'rel_foreign_key'
+									$conditions[$j][] = array($table_alias.'.id', '=', '`'.$rel_table_alias.'`.`'.$schema[$field]['rel_foreign_key'].'`');
+									// use 'rel_local_key' column as comparison field
+									$field = $rel_table_alias.'.'.$schema[$field]['rel_local_key'];
+								}
+								else {
+									// add the join condition on 'rel_local_key'
+									$conditions[$j][] = array($table_alias.'.id', '=', '`'.$rel_table_alias.'`.`'.$schema[$field]['rel_local_key'].'`');
+									// use 'rel_foreign_key' column as comparison field
+									$field = $rel_table_alias.'.'.$schema[$field]['rel_foreign_key'];
+								}
 								// use operator 'in' instead of 'contains' (which is not sql standard)
 								$operator = 'in';
-								break;
-							case 'related':
-								// todo : handle when 'store' attribute is set
-								throw new Exception("no search allowed for 'related' field '$field' of class '$object_class'", NOT_ALLOWED);
-								break;
-							case 'function':
-								// todo : handle when 'store' attribute is set
-								throw new Exception("no search allowed for 'function' field '$field' of class '$object_class'", NOT_ALLOWED);
 								break;
 							default:
 								// simple fields always match table fields
@@ -876,21 +901,93 @@ class ObjectManager {
 						}
 						$conditions[$j][] = array($field, $operator, $value);
 					}
-					// search only among non-deleted records
+					// search only among non-draft and non-deleted records
 					$conditions[$j][] = array($table_alias.'.deleted', '=', '0');
 					$conditions[$j][] = array($table_alias.'.modifier', '>', '0');
 				}
 			}
 			else {
-				// search only among non-deleted records
+				// search only among non-draft and non-deleted records
 				$conditions[0][] = array($table_alias.'.deleted', '=', '0');
 				$conditions[0][] = array($table_alias.'.modifier', '>', '0');
 			}
 
 			// second pass : fetch the ids of matching objects
-			$res = $this->dbConnection->getRecords($tables, array($table_alias.'.id'), null, $conditions, $table_alias.'.id', $order, $sort, $start, $limit);
-			while ($row = $this->dbConnection->fetchArray($res)) $res_list[] = $row['id'];
-			$res_list = array_unique($res_list);
+			$select_fields = array($table_alias.'.id');
+			if($order != 'id') $select_fields[] = $table_alias.'.'.$order;
+			$res = $this->dbConnection->getRecords($tables, $select_fields, null, $conditions, $table_alias.'.id', $order, $sort, $start, $limit);
+			while ($row = $this->dbConnection->fetchArray($res)) {
+				// if we are in cstandalone mode, we take advantage of the SQL sort
+				$res_list[] = $row['id'];
+				// if we are in client-server mode, we may need further sort
+				$res_assoc_db[$row['id']] = $row[$order];
+			}
+
+// todo : validate this code
+			// if we are running in client-server mode, some objects may have been modified and changes not yet been stored in database
+			if(OPERATION_MODE == 'client-server' && isset($this->objectsArray[$object_class])) {
+				// note: if we are here, we know that OPERATION_SIDE is 'server'
+				$res_assoc_mem = array();
+				// get all ids of (partialy) loaded objects from the specified class that have not been selected by the SQL query
+				$ids = array_diff(array_keys($this->objectsArray[$object_class]), $res_list);
+				for($i = 0, $j = count($ids); $i < $j; ++$i) {
+					$object = &$this->objectsArray[$object_class][$ids[$i]];
+					// check if the object does match the domain criterias
+					foreach($domain as $conditions_list) {
+						// each group of disjunctions may be a match
+						$match = true;
+						foreach($conditions_list as $condition) {
+								//$condition[0] is the field name ; $condition[1] is the operator; $condition[2] is the value to which the field has to be compared to
+								$values = $object->getValues(array($condition[0]), $lang);
+								$value = $values[$condition[0]];
+								switch($condition[1]) {
+									case '=':			$match = ($value == $condition[2]);
+										break;
+									case '<':			$match = ($value < $condition[2]);
+										break;
+									case '>':			$match = ($value > $condition[2]);
+										break;
+									case '<>':			$match = ($value != $condition[2]);
+										break;
+									case '<=':			$match = ($value <= $condition[2]);
+										break;
+									case '>=':			$match = ($value >= $condition[2]);
+										break;
+									case 'in':			$match = in_array($value, $condition[2]);
+										break;
+									case 'not in':  	$match = !(in_array($value, $condition[2]));
+										break;
+									case 'contains':    $match = in_array($condition[2], $value);
+										break;
+									case 'like':
+										$condition[2] = str_replace('%', '', $condition[2]);
+										$match = strpos($value, $condition[2]);
+										break;
+									case 'ilike':
+										$condition[2] = str_replace('%', '', $condition[2]);
+										$match = stripos($value, $condition[2]);
+										break;
+								}
+								// if one the conditions is not met, we can stop and try the next disjunction
+								if($match === false) break;
+						}
+						if($match !== false) {
+							// if any of the disjunctions is a match the whole domain is validated :
+							// we add the object if to the result list and we go to the next object
+							// we get the value of the 'order' field for further sort
+							$values = $object->getValues(array($order), $lang);
+							$res_assoc_mem[$ids[$i]] = $values[$order];
+							break;
+						}
+					}
+				}
+				// if we found add least one more object matching the domain
+				if(count($res_assoc_mem)) {
+					// we merge both associative arrays (from DB and from memory), we sort the result and keep only the keys (which hold matching objects ids)
+					$res_list = array_keys(asort(array_merge($res_assoc_db, $res_assoc_mem)));
+				}
+			}
+			else $res_list = array_unique($res_list);
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
@@ -899,11 +996,8 @@ class ObjectManager {
 		return $res_list;
 	}
 
-	/**
-	*
-	*	 methods related to modifying objects
-	*	 ************************************
-	*/
+
+// Methods related to modifying objects
 
 
 	/**
@@ -940,7 +1034,7 @@ class ObjectManager {
 				}
 				// log R_WRITE
 				else $log_action = R_WRITE;
-				$this->logAction($user_id, $log_action, $object_class, $object_id, array_keys($values), $lang);
+				$this->setLog($user_id, $log_action, $object_class, $object_id, array_keys($values), $lang);
 			}
 		}
 		catch(Exception $e) {
@@ -978,7 +1072,7 @@ class ObjectManager {
 				$log_action = R_WRITE;
 				$log_fields = array('deleted');
 			}
-			foreach($ids as $object_id) $this->logAction($user_id, $log_action, $object_class, $object_id, $log_fields);
+			foreach($ids as $object_id) $this->setLog($user_id, $log_action, $object_class, $object_id, $log_fields);
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);

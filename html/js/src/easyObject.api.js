@@ -26,7 +26,14 @@
 	*/
 	$(document).bind('keydown', function(event) {
 		if(event.ctrlKey && event.shiftKey && event.altKey) {
-			var $dia = $('<div/>').append($('<div/>').css({'font-size': '11px', 'height': '200px', 'overflow': 'scroll', 'border': 'solid 1px grey'}).append($('#easyobject_console').html())).appendTo($('body'));
+// todo : add a menu for common tasks		
+			var user_id = easyObject.user_id();
+			var user_values = (easyObject.browse('core\\User', [user_id], ['firstname', 'lastname'], easyObject.conf.lang))[user_id];
+			var $dia = $('<div/>')
+			.append($('<div/>').html('Current user: '+user_values['firstname']+' '+user_values['lastname']+' ('+user_id+')')
+			.append($('<button type="button" />').css({'margin-left':'20px'}).html("logon").on('click', function() {logon_dialog();})))
+			.append($('<div/>').css({'font-size': '11px', 'height': '200px', 'overflow': 'scroll', 'border': 'solid 1px grey'}).append($('#easyobject_console').html()))
+			.appendTo($('body'));
 			$dia.dialog({
 				modal: true,
 				title: 'easyobject console',
@@ -48,6 +55,7 @@
 var easyObject = {
 		/* configuration data */
 		conf: {
+				user_id: 0,
 				user_key: 0,
 				// user_lang is the language in which the UI is displayed (set once and for all)
 				user_lang: 'en',
@@ -61,17 +69,10 @@ var easyObject = {
 		views: [],
 		fields: [],		
 		error_codes: {0: "unknown error(s)", 1: "invalid parameter(s) or wrong value(s)", 2: "SQL error(s)", 4: "unknown class or object", 8: "action not allowed : action violates some rule or you don't have permission to execute it"},
-
-		/* array of callbacks dedicated to store users inputs into the form */
-		pre_submission_callbacks: [],
-
 		simple_types: ['boolean', 'integer', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one'],
-
 	
 		init: function(conf) {
 				$.extend(this.conf, conf);
-				this.onSubmitCallbacks = $.Callbacks();
-				this.onChangeCallbascks = $.Callbacks();			
 		},
 		
 		/**
@@ -86,7 +87,7 @@ var easyObject = {
 		log: function(txt) {
 			$console = $('#easyobject_console');
 			if($console.length == 0) $console = $('<div/>').attr('id', 'easyobject_console').css('display', 'none').appendTo('body');
-			$console.append(txt + "<br/><br/>");
+			$console.append(txt + "<br/>");
 		},
 		browse: function(class_name, ids, fields, lang) {
 				var result = [];
@@ -95,8 +96,10 @@ var easyObject = {
 					url: 'index.php?get=core_objects_browse',
 					async: false,
 					dataType: 'json',
+// todo : rather set fields param to null in calls that require it and leave this to whatever the user asks for
 					// we don't want to request complex fields, so we don't use the fields parameter					
 					data: {
+//						fields: fields,
 						object_class: class_name,
 						ids: ids,
 						lang: lang
@@ -230,6 +233,25 @@ var easyObject = {
 					}
 				}
 				return value;
+		},
+		login: function() {
+		},
+		user_id: function () {
+				if(!easyObject.conf.user_id) {
+					$.ajax({
+						type: 'GET',
+						url: 'index.php?get=core_user_id',
+						async: false,
+						dataType: 'json',
+						contentType: 'application/json; charset=utf-8',
+						success: function(json_data){
+								easyObject.conf.user_id = json_data.result;
+						},
+						error: function(e){
+						}
+					});
+				}
+				return easyObject.conf.user_id;
 		},
 		user_key: function () {
 				if(!easyObject.conf.user_key) {
@@ -385,8 +407,16 @@ var easyObject = {
 				var view_html = easyObject.get_view(conf.class_name, conf.view_name);
 				// merge data from configuration
 				$.extend(result, conf);
+				$view = $('<div/>').append(view_html).children().first();
+				// check if we need to apply a condition to the elements to be displayed in the view
+				var domain_str = $view.attr('domain');
+				if(domain_str != undefined) {
+// todo : check syntax validity using reg exp
+					var domain = eval(domain_str);
+					result.domain.push(domain[0]);
+				}
 				// create a jquery object by appending raw html to a temporary div
-				$('<div/>').append(view_html).children().first().find('li').each(function() {
+				$view.find('li').each(function() {
 					// extract the fields from the view and generate the columns model
 					var name = $(this).attr('id');
 					result.col_model.push({display: name, name: name, width: $(this).attr('width')});
@@ -406,7 +436,7 @@ var easyObject = {
 						content: $('<div/>'),
 						modal: true,
 						title: '',
-						width: 600,
+						width: 650,
 						height: 'auto',
 						minHeight: 100,
 						x_offset: 0,
@@ -456,7 +486,7 @@ var easyObject = {
 					return $('<div/>').attr('id', 'load').text('Loading ...').css('font-size', '16px').css('height','16px').css('line-height','16px').css('text-align','center').prepend(spinner);
 				},
 				form: function(conf) {		
-					// the display of some relational fields require the actual existence of the objet before editing it			
+					// the display of some relational fields require the actual existence of the objet before editing it
 					if(typeof conf.object_id == 'undefined' || conf.object_id == 0) {
 						// obtain a new id by creating a new empty object (as no values are specified, the modifier field wont be set)
 						conf.object_id = (update(conf.class_name, [0], {}, conf.lang))[0];
@@ -477,17 +507,14 @@ var easyObject = {
 					.grid($.extend(true, {
 						edit: {
 							func: function($grid, ids) {
-								for(i = 0; i < ids.length; ++i)	{
-									$dia = easyObject.UI.dialog({
-											content: easyObject.UI.form({class_name: conf.class_name, object_id: ids[i], view_name: 'form.default', lang: conf.lang}),
-											title: 'Object edition', 
-											width: 600, 
-											height: 'auto', 
-											x_offset: (i*20), 
-											y_offset: (i*20)
-									});
-									$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); }});	
-								}
+								$form = easyObject.UI.form({class_name: conf.class_name, object_id: ids[0], view_name: 'form.default', lang: conf.lang});
+								$dia = easyObject.UI.dialog({
+										content: $form,
+										title: 'Object edition - ' + conf.class_name, 
+										width: 650, 
+										height: 'auto'
+								});
+								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $form.trigger('destroy'); $(this).dialog('destroy');}});	
 							}
 						},
 						del: {
@@ -498,8 +525,8 @@ var easyObject = {
 						},
 						add: {
 							func: function($grid) {							
-								$dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: 600, height: 'auto'});
-								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); }});	
+								$dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: 650, height: 'auto'});
+								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $(this).dialog('destroy');}});	
 							}
 						}
 					}, conf));
@@ -509,29 +536,33 @@ var easyObject = {
 					// (we make it very basic for now)
 					var $search_criterea = $('<div/>').css('width', '100%');
 					var fields = easyObject.get_fields(conf.class_name, conf.view_name);
-					var schemaObj  = easyObject.get_schema(conf.class_name);
+					var schemaObj = easyObject.get_schema(conf.class_name);
 					$.each(fields, function(i, field){
-						if(in_array(schemaObj[field]['type'], easyObject.simple_types)) {													
-							$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css('margin-right', '4px').append(field)).append($('<input type="text"/>').attr('id', field).css('margin-right', '10px'))));
+						if($.inArray(schemaObj[field]['type'], easyObject.simple_types) > -1  || (schemaObj[field]['type'] == 'function' && $.inArray(schemaObj[field]['result_type'], easyObject.simple_types) > -1)) {
+							$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css('margin-right', '4px').append(field)).append($('<input type="text"/>').attr('name', field).css('margin-right', '10px'))));
 						}						
 					});					
 					// create the grid
 					$grid = easyObject.UI.grid(easyObject.get_grid_config(conf));
-
+					// remember the original domain
+					var grid_domain_orig = $.extend(true, {}, $grid.data('conf').domain);
+					
 					// create the search button and the associated action when clicking 
-					$search = $('<div/>').append($('<table/>').append($('<tr/>').append($('<td>').attr('width', '90%').append($search_criterea)).append($('<td>').append($('<button/>').button()
+					$search = $('<div/>').append($('<table/>').append($('<tr/>').append($('<td>').attr('width', '90%').append($search_criterea)).append($('<td>').append($('<button type="button"/>').button()
 						.click(function(){
 							// 1) generate the new domain (array of conditions)
 							var grid_conf = $grid.data('conf');
-							// reset the domain
-							grid_conf.domain = [[]];
+							// reset the domain to its original state
+							grid_conf.domain = $.extend(true, {}, grid_domain_orig);
 							$search.find('input').each(function(){
 								var $item = $(this);
-								var field = $item.attr('id');
+								var field = $item.attr('name');
 								var value = $item.val();
 								if(value.length) {
 									// create the new domain to filter the results of the grid
-									switch(schemaObj[field]['type']) {
+									type = schemaObj[field]['type'];
+									if(schemaObj[field]['type'] == 'function' || schemaObj[field]['type'] == 'related') type = schemaObj[field]['result_type'];
+									switch(type) {
 										case 'boolean':
 										case 'integer':
 										case 'many2one':
@@ -566,6 +597,10 @@ var easyObject = {
 * easyObject standard API functions set
 * 
 */
+
+function user_id() {
+	return easyObject.user_id();
+}
 
 function user_key() {
 	return easyObject.user_key();
@@ -613,6 +648,30 @@ function edit(object_class, object_id, object_view, lang) {
 	}));
 }
 
+
+function logon_dialog() {
+	easyObject.UI.dialog({
+		content:
+			$('<form/>').attr('id', 'login_form').form({
+				class_name: 'core\\User',
+				view_name: 'form.login',
+				autosave: false,				
+				success_handler: function(json_data) {
+					// if logon was successful get the new user_id
+					if(json_data.result) {
+						easyObject.conf.user_id = 0;					
+						user_id();
+						$('#login_form').parent().dialog('close').dialog('destroy');						
+					}
+				}
+		}),
+		title: 'Logon',
+		width: 600,
+		height: 'auto'
+	});
+}
+
+
 /*
 function popup(object_class, object_id, object_view, lang) {
 	easyObject.UI.dialog({
@@ -623,7 +682,7 @@ function popup(object_class, object_id, object_view, lang) {
 				lang: lang
 			}), 
 			title: 'Edit object', 
-			width: 600, 
+			width: 650, 
 			height: 'auto'
 	});
 }

@@ -31,10 +31,9 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 load_class('utils/HtmlWrapper');
 
-$params = get_params(array('lang'=>DEFAULT_LANG));
+$params = get_params(array('ui'=>user_lang()));
 
 $user_key = user_key();
-$user_lang = user_lang();
 
 $html = new HtmlWrapper();
 
@@ -52,19 +51,28 @@ $html->addScript("
 $(document).ready(function() {
 	easyObject.init({
 		user_key: '$user_key',
-		user_lang: '$user_lang'
+		user_lang: '{$params['ui']}'
 	});
 
 	easyObject.UI.dialog({
-		content: easyObject.UI.form({
-					class_name: 'core\\\\User',
-					object_id: 0,
-					view_name: 'form.login',
-					lang: '{$params['lang']}'
-				}),
+		content:
+			$('<form/>').attr('id', 'login_form').form({
+				class_name: 'core\\\\User',
+				view_name: 'form.login',
+				autosave: false,
+				success_handler: function(json_data) {
+					// if logon was successful get the new user_id
+					if(json_data.result) {
+						easyObject.conf.user_id = 0;
+						user_id();
+						$('#login_form').parent().dialog('close').dialog('destroy');
+					}
+				}
+		}),
 		title: 'Logon',
 		width: 600,
-		height: 'auto'});
+		height: 'auto'
+	});
 });
 ");
 

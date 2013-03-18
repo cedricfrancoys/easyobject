@@ -29,11 +29,16 @@ define('SESSION_ID', session_id());
 $additional_params = array();
 $page_found = true;
 
+// get the base directory of the current script (easyObject directory being considered as root for URL redirection)
+$base = '/';
+$path = explode('/', $_SERVER['SCRIPT_NAME']);
+if(($len = count($path)) > 2) for($i = 1, $j = $len-1; $i < $j; ++$i) $base .= $path[$i].'/';
+
 // first look for exact match
-$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', $_SERVER['REQUEST_URI']))));
+$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', str_replace($base, '/', $_SERVER['REQUEST_URI'])))));
 // if no match, look for a resolver having same URL base location
 if(count($ids) <= 0) {
-	$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', $_SERVER['REDIRECT_URL']))));
+	$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', str_replace($base, '/', $_SERVER['REDIRECT_URL'])))));
 	// page not found
 	if(count($ids) <= 0) $page_found = false;
 	else $additional_params = extract_params($_SERVER['REQUEST_URI']);

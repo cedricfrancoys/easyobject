@@ -5,8 +5,8 @@ namespace core {
 
 		public static function getColumns() {
 			return array(
-				'human_readable_url'	=> array('type' => 'short_text'),
-				'complete_url'			=> array('type' => 'short_text'),
+				'human_readable_url'	=> array('type' => 'string'),
+				'complete_url'			=> array('type' => 'string'),
 			);
 		}
 	}

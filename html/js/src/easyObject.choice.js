@@ -84,7 +84,7 @@
 					methods.layout($choice, conf);
 					methods.feed($choice, conf);
 					$choice.data('conf', conf);
-					$choice.on("reload", function(event){
+					$choice.on('reload', function(event){
 						methods.feed($choice, conf);
 					});
 				})($(this), $.extend(true, default_conf, arg));

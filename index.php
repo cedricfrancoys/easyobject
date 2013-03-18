@@ -42,9 +42,9 @@ defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 // set current entry-point script as client
 define('OPERATION_SIDE', 'client');
 // try to start or resume the session
-session_start() or die(__FILE__.', line '.__LINE__.", unable to start session.");
+if(!strlen(session_id())) session_start() or die(__FILE__.', line '.__LINE__.", unable to start session.");
 // store current session_id into a constant (required as default parameter of several functions defined in easyobject library)
-define('SESSION_ID', session_id());
+if(!defined('SESSION_ID')) define('SESSION_ID', session_id());
 // store the languages in which UI and content must be displayed
 // content items :
 //	- for unidentified users, language is DEFAULT_LANG

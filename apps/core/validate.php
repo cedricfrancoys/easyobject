@@ -54,9 +54,8 @@ if($test_no > $total_tests || !isset($validation_tests[$test_id])) {
 		// show result grid
 		echo "<table border='1'><tr><td width='50'>Test id</td><td width='600'>description</td><td>expected</td><td>returned</td><td>result</td></tr>";
 		foreach($validation_tests as $test_id => $test) {
-
-			$expected = ((int)$test['expected_result']);
-			$returned = ((int)$_SESSION['results_array'][$test_id]);
+			$expected = sprintf("%s", $test['expected_result']);
+			$returned = $_SESSION['results_array'][$test_id];
 			$result = ($expected == $returned)?'<span style="color: green;">OK</span>':'<span style="color: red;">FAIL</span>';
 			echo "<tr><td>".$test_id."</td><td>".$test['description']."</td><td>".$expected."</td><td>".$returned."</td><td>".$result."</td></tr>";
 		}
@@ -92,8 +91,7 @@ echo "</head>
 </form>
 <br />\n";
 
-$expected_result = ($validation_tests[$test_id]['expected_result'])?'(should work)':'(should crash)';
-print("Test id : $test_id. ".$validation_tests[$test_id]['description'].' '.$expected_result."<br /><br />\n");
+print("Test id : $test_id. ".$validation_tests[$test_id]['description']." (expected result: {$validation_tests[$test_id]['expected_result']})<br /><br />\n");
 
 echo '<pre>';
 $result = call_user_func($validation_tests[$test_id]['test']);
@@ -101,4 +99,4 @@ print('Result ('.count($result)." values fetched):<br />\n");
 var_dump($result);
 echo '</pre>';
 
-if($result !== false) print("<script>$('#result_value').val(1);</script>");
+print("<script>$('#result_value').val('{$result}');</script>");

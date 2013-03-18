@@ -18,7 +18,7 @@ class HtmlTag {
 
 	public final function getHTML() {
         $result = "<{$this->tag_name}";
-        if(!empty($this->id)) $result .= " id=\"$this->id\"";
+        if(!empty($this->id)) $result .= " id=\"{$this->id}\"";
         if(!empty($this->style)) {
         	$result .= ' style="';
 	        foreach($this->style as $property => $value) $result .= "$property: $value;";
@@ -99,7 +99,7 @@ class HtmlBlock extends HtmlTag{
 
 	public function setTagName($tag) {
 		// todo : to complete, block html tags
-		if(in_array($tag, array('div', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ol', 'select', 'table', 'tr', 'td', 'ul')))
+		if(in_array($tag, array('body', 'div', 'pre', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ol', 'ul', 'select', 'table', 'tr', 'td')))
 			parent::setTagName($tag);
 	}
 
@@ -135,7 +135,7 @@ class HtmlWrapper {
 			$html .= '<script language="javascript" type="text/javascript">'.$this->script."</script>\n";
 		if(!empty($this->style))
 			$html .= '<style type="text/css">'.$this->style."</style>\n";
-		$html .= "</head>\n<body>\n".$this->htmlBody."\n</body>\n</html>\n";
+		$html .= "</head>\n".$this->htmlBody."\n</html>\n";
         $html .= "\n";
 		return $html;
 	}
@@ -170,6 +170,16 @@ class HtmlWrapper {
 		$this->style .= $style;
 	}
 
+	function add($html) {
+		if(is_null($this->htmlBody)) $this->htmlBody = new HtmlBlock(0, 'body');
+		$this->htmlBody->add($html);
+	}
+
+	/**
+	* deprecated : Use 'add' method instead
+	*
+	* @deprecated
+	*/
 	function setBody($html) {
 		if(is_string($html) || is_a($html, 'HtmlTag')) {
 			$this->htmlBody = &$html;

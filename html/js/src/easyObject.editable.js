@@ -10,36 +10,9 @@
  *
  */
 
-// require jquery-1.7.1.js (or later), fckeditor.js, jquery-ui.timepicker.js, easyObject.grid.js, easyObject.dropdownlist.js, easyObject.choice.js
+// require jquery-1.7.1.js (or later), ckeditor.js, jquery-ui.timepicker.js, easyObject.grid.js, easyObject.dropdownlist.js, easyObject.choice.js
  
 (function($){
-	/**
-	 * Alternate FCK editor constructor that allows to set all main options at once
-	 * and extends the created object so we can call a .val() method to obtain the editor's value (without having to use 'FCKeditorAPI')
-	 */
-	var FCKEditor = function(options) {
-		var defaults = {
-			name: 'editor',
-			height: 250,
-			toolbarSet: 'Basic',
-			basePath: 'fckeditor/',
-			CheckBrowser: true,
-			DisplayErrors: true
-		}
-		return (function (options) {
-			var fckEditor = new FCKeditor(options.name, 0, options.height, options.toolbarSet);
-			$.extend(fckEditor, {
-				BasePath: options.basePath,
-				CheckBrowser: options.CheckBrowser,
-				DisplayErrors: options.DisplayErrors,
-				val: function() {
-					return FCKeditorAPI.GetInstance(options.name).GetHTML();
-				}			
-			});			
-			return fckEditor;
-		})($.extend({}, defaults, options));	
-	};
- 
 	/** 
 	 * We use jQuery valHooks on textareas to modify the behaviour of the $.val method (that is used by $.serialize) in order to:
 	 *  - use wysiwyg editor value when one is attached to the textarea
@@ -47,7 +20,6 @@
 	 */
 	$.valHooks.textarea = {
 		get: function( elem ) {
-		console.log('valhooks');
 			if(typeof $(elem).data('value') == 'function') return $(elem).data('value')();
 			else return elem.value.replace(/\r?\n/g, "\r\n");
 		}
@@ -60,7 +32,7 @@
 			type: 'string', //boolean, integer, string, password, short_text, text, date, time, datetime, timestamp, selection, binary, one2many, many2one, many2many
 			readonly: false,
 			required: false,
-			onChange: function() {}
+			onchange: function() {}
 		}
 
 		if(typeof(arg) == 'object') {
@@ -68,46 +40,107 @@
 				return (function ($this, conf) {
 					switch(conf.type) {
 						case 'boolean':
-							$this.data('widget', $('<input type="checkbox"/>').attr({id: conf.name, name: conf.name, checked: (conf.value)?'checked':''}).val((conf.value)?1:0).change(function () {this.value = (int)(this.checked);}).appendTo($this));
+							$this.data('widget', $('<input type="checkbox"/>')
+												.attr({id: conf.name, name: conf.name, checked: (conf.value)?'checked':''})
+												.val((conf.value)?1:0)
+												.on('change', function () {
+																this.value = (int)(this.checked);
+																conf.onchange();
+															})
+												.appendTo($this)
+										);
 							break;
 						case 'integer':
 						case 'string': 
-							$this.data('widget', $('<input type="text"/>').attr({id: conf.name, name: conf.name}).val(conf.value).appendTo($this));
+							$this.data('widget', $('<input type="text"/>')
+												.attr({id: conf.name, name: conf.name})
+												.val(conf.value)
+												.on('change', conf.onchange)
+												.appendTo($this)
+										);
 							break;
 						case 'password':
-							// as password may be changed on submission (i.e. locked), we hide the associated input
+							// as password may be changed on submission, we hide the associated input
 							$this.append($('<input type="hidden"/>').attr({id: conf.name, name: conf.name}));
-							$this.data('widget', $('<input type="password"/>').change(function () {$('#'+conf.name).val($(this).val());}).appendTo($this)); 
+							$this.data('widget', $('<input type="password"/>')
+												.on('change', function () {
+																$('#'+conf.name).val($(this).val());
+																conf.onchange();
+															}
+													)
+												.appendTo($this)
+										); 
 							break;
 						case 'short_text':
-							$this.data('widget', $('<textarea />').attr({id: conf.name, name: conf.name}).css('height', '150px').html(conf.value).appendTo($this));
+							$this.data('widget', $('<textarea />')
+												.attr({id: conf.name, name: conf.name})
+												.css('height', '150px')
+												.html(conf.value)
+												.on('change', conf.onchange)
+												.appendTo($this)
+										);
 							break;
 						case 'text': 
-							// we use our alternate constructor
-							var editor = new FCKEditor({
-								name: conf.name,
-								height: 250, 
-								toolbarSet: 'knine_Simple',
-								basePath: 'html/js/fckeditor/'
+							$textarea = $('<textarea />')
+										.css('display', 'none')
+										.attr({id: conf.name, name: conf.name })
+										.html(conf.value)
+										.appendTo($this);
+							CKEDITOR.replace($textarea[0], {
+									height: 250,
+									toolbar: [
+										['Maximize'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],
+										'/',
+										['Source'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Table','SpecialChar']	
+									],
+									enterMode: CKEDITOR.ENTER_BR,
+									// change detection : we use the instanceReady event to catch the instance of the editor being created
+									on: {
+										instanceReady: function(event) {
+											event.editor.on('blur', function() { if (this.checkDirty()) conf.onchange(); });
+										}
+									}
 							});
-							$textarea = $('<textarea />').css('display', 'none').attr({id: conf.name, name: conf.name }).html(conf.value).data('value', editor.val).appendTo($this);
-							//we replace the ReplaceTextarea() method, since it tries to get the textarea from the document DOM object (what doesn't work here for the textarea is not yet in the document)
-							$textarea.before(editor._GetConfigHtml()).before(editor._GetIFrameHtml());
+							// this is the method that will be called by $.valHooks
+							$textarea.data('value', function() {
+								return CKEDITOR.instances[conf.name].getData();
+							});
 							break;
 						case 'date':
-							$this.data('widget', $('<input />').attr({id: conf.name, name: conf.name}).val(conf.value).datepicker({ dateFormat: 'yy-mm-dd' }).appendTo($this));
+							$this.data('widget', $('<input />')
+												.attr({id: conf.name, name: conf.name})
+												.val(conf.value)
+												.on('change', conf.onchange)												
+												.datepicker({ dateFormat: 'yy-mm-dd' })
+												.appendTo($this)
+										);
 							break;
 						case 'time': 
-							$this.data('widget', $('<input />').attr({id: conf.name, name: conf.name}).val(conf.value).timepicker({timeFormat: 'hh:mm:ss'}).appendTo($this));
+							$this.data('widget', $('<input />')
+												.attr({id: conf.name, name: conf.name})
+												.val(conf.value)
+												.on('change', conf.onchange)												
+												.timepicker({timeFormat: 'hh:mm:ss'})
+												.appendTo($this)
+										);
 							break;
 						case 'datetime':
-							$this.data('widget', $('<input />').attr({id: conf.name, name: conf.name}).val(conf.value).datetimepicker({ dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss' }).appendTo($this));
+							$this.data('widget', $('<input />')
+												.attr({id: conf.name, name: conf.name})
+												.val(conf.value)
+												.on('change', conf.onchange)												
+												.datetimepicker({ dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss' })
+												.appendTo($this)
+										);
 							break;
 						case 'timestamp':
 	//todo										
 							break;
 						case 'selection': 
-							$select = $('<select />').attr({id: conf.name, name: conf.name}).appendTo($this);
+							$select =	$('<select />')
+										.attr({id: conf.name, name: conf.name})
+										.on('change', conf.onchange)
+										.appendTo($this);
 							$this.data('widget', $select);
 							$.each(conf.selection, function(value, display) {
 								$option = $('<option />').attr('value', value).text(display);
@@ -116,12 +149,25 @@
 							});
 							break;
 						case 'binary':
-	//todo					
+							$this.data('widget', $('<input type="file" />')
+												.attr({id: conf.name, name: conf.name})
+												.on('change', conf.onchange)
+												.appendTo($this)
+										);
+							//$('<input type="hidden" />').attr('name', 'MAX_FILE_SIZE').val('256000')
 							break;
 						case 'many2one':
-							$this.append($('<input type="hidden"/>').attr({id: conf.name, name: conf.name}));
-							$this.choice(conf)
-							.change(function () {$('#'+conf.name).val($this.choice('selection'));});
+							$this.append($('<input type="hidden"/>')
+											.attr({id: conf.name, name: conf.name})
+											.on('change', conf.onchange)
+										);
+							$this
+							.choice(conf)
+							.on('change', function () {
+											$('#'+conf.name).val($this.choice('selection'));
+										}
+									);
+							// an element with id 'choice_input' is generated by the method .choice()
 							$this.data('widget', $('#choice_input', $this));
 							break;
 						case 'one2many':
@@ -130,9 +176,12 @@
 								$this.tree(conf);
 							}
 							else {
-								$this.append($('<input type="hidden"/>').attr({id: conf.name, name: conf.name}));
+								$this.append($('<input type="hidden"/>')
+												.attr({id: conf.name, name: conf.name})
+												.on('change', conf.onchange)
+											);
 								$this.dropdownlist(conf)
-								.change(function () {
+								.on('change', function () {
 									var conf = $this.data('conf');
 									var value = conf.more.toString();
 									for(i in conf.less) {
@@ -144,7 +193,10 @@
 							}
 							break;
 						case 'many2many':
-							$this.append($('<input type="hidden"/>').attr({id: conf.name, name: conf.name}));
+							$this.append($('<input type="hidden"/>')
+											.attr({id: conf.name, name: conf.name})
+											.on('change', conf.onchange)
+										);
 							$this.grid($.extend(true, {
 								del: {
 									text: 'remove',
@@ -155,7 +207,8 @@
 									icon: 'ui-icon-plus'
 								}
 							}, conf))
-							.change(function () {
+							.on('change', function () {
+								// note : doing so we might add already existing relations
 								var conf = $this.data('conf');
 								var value = conf.more.toString();
 								for(i in conf.less) {

@@ -23,13 +23,13 @@
 * Database parameters
 */
 	// this part is the most likely to be modified
-	define('DB_DBMS',		'MYSQL');
-	define('DB_HOST',		'localhost');
-	define('DB_PORT',		'3306');
+	define('DB_DBMS',		'MYSQL');		// only MySQL is supported so far
+	define('DB_HOST',		'localhost');   // the full qualified domain name (ex.: www.example.com)
+	define('DB_PORT',		'3306');		// this is the default port for MySQL
 	define('DB_USER',		'root');        // this should be changed for security reasons
 	define('DB_PASSWORD',	'');			// this should be changed for security reasons
-	define('DB_NAME', 		'easyobject');
-	define('DB_CHARSET',	'UTF8');
+	define('DB_NAME', 		'easyobject');	// specify the name of the DB that you have created or you plan to use
+	define('DB_CHARSET',	'UTF8');		// unless you are really sure of what you're doing, leave this constant to 'UTF8'
 
 /**
 * Language parameters
@@ -73,11 +73,16 @@
 	define('DEBUG_ORM',	4);
 	//define('DEBUG_',	8);
 
-	//define('DEBUG_MODE', false);
-	define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
+	define('DEBUG_MODE', 0);
+	//define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
 
     $SILENT_MODE = false;
 
+	/**
+	* Allows to force the script to be verbose or to mute it (no output).
+	*
+	* @param boolean $silent
+	*/
 	function set_silent($silent) {
 		global $SILENT_MODE;
 		$SILENT_MODE = $silent;
@@ -91,6 +96,10 @@
 		}
 	}
 
+	/**
+	* Returns the resulting debug mode (taking $SILENT_MODE under account)
+	*
+	*/
 	function debug_mode() {
 		global $SILENT_MODE;
 		if($SILENT_MODE) return 0;
@@ -125,6 +134,7 @@
 	define('R_MANAGE',	16);
 
 	// built-in users
+	// note : ensure that the ids in DB are matching these
 	define('SYSTEM_USER_ID', 0);	// this user is used when the modifier id must be kept to 0
 	define('GUEST_USER_ID', 1);
 	define('ROOT_USER_ID', 2);
@@ -134,8 +144,7 @@
 
 	// built-in default ACL
 	// if no ACL is defined (which is the case by default) for an object nor for its class, any user will be granted the permissions set below
-	// by default, we allow anyone to see any content
-// you may change it if necessary
+	// by default, we allow anyone to see any content (you may change it if necessary)
 	//define('DEFAULT_RIGHTS', R_READ);
 	define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE);
 	// to set several rights at once :
@@ -144,9 +153,9 @@
 /**
 * Logging
 */
-	// caution : disabling logging also disable updates of function fields having the 'store' attribute set
-	define('LOGGING_MODE', false);
-	//define('LOGGING_MODE', R_CREATE | R_WRITE| R_DELETE);
+	// note : keep in mind that enabling logging makes I/O operations a little bit longer
+	//define('LOGGING_MODE', false);
+	define('LOGGING_MODE', R_CREATE | R_WRITE | R_DELETE);
 
 
 /**

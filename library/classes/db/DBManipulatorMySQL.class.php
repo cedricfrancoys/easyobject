@@ -29,34 +29,27 @@ load_class('db/DBManipulator');
 class DBManipulatorMySQL extends DBManipulator {
 
 	/**
-	*  Checks the connectivity to an SQL server
-	*  returns false if no connection can be made
-	*
-	*/
-	function is_db_server($host, $port) {
-		if($fp = fsockopen($host, $port, $errno, $errstr, 1)) {
-			fclose($fp);
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Open the DBMS connection
 	 *
 	 * @return   integer   The status of the connect function call
 	 * @access   public
 	 */
-	public function connect() {
+	public function connect($auto_select=true) {
 		$result = false;
-		if($this->is_db_server($this->host_name, $this->port)) {
+		if(DBManipulator::is_db_server($this->host_name, $this->port)) {
 			if($this->mysql_handler = mysql_connect($this->host_name.':'.$this->port, $this->user_name, $this->password)){
-				$result = mysql_select_db($this->db_name);
-				mysql_query('SET NAMES '.DB_CHARSET);
-				$result = true;
+				if(!$auto_select) $result = true;
+				elseif($result = $this->select($this->db_name)) {
+					mysql_query('SET NAMES '.DB_CHARSET);
+					$result = true;
+				}
 			}
 		}
 		return $result;
+	}
+
+	public function select($db_name) {
+		return mysql_select_db($db_name);
 	}
 
 	/**
@@ -68,6 +61,7 @@ class DBManipulatorMySQL extends DBManipulator {
 	public function disconnect() {
         if(!$this->mysql_handler) return true;
 		if(!($result = mysql_close($this->mysql_handler))) throw new Exception(__METHOD__.' : unable to close connection to DB, '.mysql_error());
+		else $this->mysql_handler = false;
 		return $result;
 	}
 
@@ -151,11 +145,13 @@ class DBManipulatorMySQL extends DBManipulator {
 					$cond = $conditions[$j][$i];
 					// operator 'in' having a single value as right operand
 					if(strcasecmp($cond[1], 'in') == 0 && !is_array($cond[2])) $cond[2] = array($cond[2]);
-					// case insensitive comparison ('ilike' operator)
-					if(strcasecmp($cond[1], 'ilike') == 0){
+					// case-sensitive comparison ('like' operator)
+					if(strcasecmp($cond[1], 'like') == 0){
 						$sql .= ' BINARY ' ;
 						$cond[1] = 'LIKE';
 					}
+					// ilike operator does not exist in MySQL
+					if(strcasecmp($cond[1], 'ilike') == 0) $cond[1] = 'LIKE';
 	                // format the value operand
 					if(is_array($cond[2])) $value = '('.implode(',', array_map('DBManipulatorMySQL::escapeString', $cond[2])).')';
 					else $value = DBManipulatorMySQL::escapeString($cond[2]);
@@ -274,7 +270,8 @@ class DBManipulatorMySQL extends DBManipulator {
 		}
 		$vals = rtrim($vals, ',');
 		if(strlen($cols) > 0 && strlen($vals) > 0) {
-			$sql = "INSERT INTO `$table` ($cols) VALUES $vals;";
+			// note: we ignore duplicate enties, if any
+			$sql = "INSERT IGNORE INTO `$table` ($cols) VALUES $vals;";
 			$result = $this->sendQuery($sql);
 		}
 		return $result;

@@ -31,15 +31,6 @@ function explode(delimiter, value) {
 	return result;
 }
 
-// todo : use jQuery inArray method
-function in_array(needle, haystack) {
-	var result = false;
-	for(i = 0, j = haystack.length; i < j && !result; ++i) {
-		if(haystack[i] == needle) result = true;
-	}
-	return result;
-}
-
 // other utility functions
 function remove_value(list, value) {
 	var result = [];
@@ -62,16 +53,4 @@ function merge_domains(domA, domB) {
 		}
 	}
 	return result;
-}
-
-// todo : deprecate
-function domain_to_string(domain) {
-	var str_domain = '[';
-	for (i in domain) {
-		if(str_domain.length > 1) str_domain += ',';
-		if(typeof domain[i] == 'object') str_domain += domain_to_string(domain[i]);
-		else str_domain += domain[i];
-	}
-	str_domain += ']';					
-	return str_domain;
 }

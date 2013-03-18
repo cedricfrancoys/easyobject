@@ -20,11 +20,11 @@
 */
 
 /*
-* file: actions/core/user/list.php
+* file: data/core/objects/list.php
 *
 * Search and browse matching objects.
 *
-* input: 'class'
+* input: 'object_class'
 *
 * example
 * full URL : http://localhost/easyobject/index.php?get=core_objects_list&class=school\Student&fields=id,firstname,lastname,birthdate,subscription&rp=20&page=1&sortname=id&sortorder=asc&domain=[[]]

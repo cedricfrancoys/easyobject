@@ -66,20 +66,21 @@ class Object {
 	 */
 	public final function __construct() {
 		$this->langs = array(DEFAULT_LANG);
-		$this->fields_values = array(DEFAULT_LANG=>array('id'=>0));
-		$this->loaded_fields = array(DEFAULT_LANG=>array());
-		$this->modified_fields = array(DEFAULT_LANG=>array());
-		$this->schema = array_merge($this->getColumns(), $this->getSpecialFields());
+		// As a convention, the id field is always set for (and only for) the default language (as it never can be  multilang)
+		$this->fields_values	= array(DEFAULT_LANG=>array('id'=>0));
+		$this->loaded_fields	= array(DEFAULT_LANG=>array());
+		$this->modified_fields	= array(DEFAULT_LANG=>array());
+		$this->schema = array_merge($this->getSpecialFields(), $this->getColumns());
 		$this->setDefaults();
 	}
 
 	private final function setDefaults() {
 		if(method_exists($this, 'getDefaults')) {
 			$defaults = $this->getDefaults();
+			// get default values, set fields for default language, and mark fields as modified
 			foreach($defaults as $field => $default_value) if(isset($this->schema[$field]) && is_callable($default_value)) $fields_values[$field] = call_user_func($default_value);
-			// set values for default language and mark fields as modified
 			// we use the SYSTEM_USER_ID (=0) so that the modifier field is left to 0
-			// (which is necessary to make the distinction between objects being created and objects actualy created)
+			// (which is necessary to make the distinction between objects being created and objects actually created)
 			$this->setValues(SYSTEM_USER_ID, $fields_values);
     	}
 	}
@@ -106,7 +107,11 @@ class Object {
 		return $this->schema;
 	}
 
-	/* this method must be overridden by children classes */
+	/**
+	* This method must be overridden by children classes
+	*
+	* @access public
+	*/
 	public static function getColumns() {
 		return array();
 	}
@@ -116,11 +121,11 @@ class Object {
 	}
 
 	/**
-	 * Gets object id
-	 *
-	 * @access public
-	 * @return integer the unique identifier of this object (unicity's scope is the object class)
-	 */
+	* Gets object id
+	*
+	* @access public
+	* @return integer The unique identifier of the current object (unicity scope is the object class)
+	*/
 	public final function getId() {
 		return (isset($this->fields_values[DEFAULT_LANG]['id']))?$this->fields_values[DEFAULT_LANG]['id']:0;
 	}
@@ -134,8 +139,11 @@ class Object {
 		return $this->loaded_fields[$lang];
 	}
 
-	public final function resetLoadedFields() {
-		foreach($this->loaded_fields as $lang => $fields) $this->loaded_fields[$lang] = array();
+	public final function resetLoadedFields($fields_list=null) {
+		if($fields_list == null) $fields_list = $this->loaded_fields;
+		foreach($fields_list as $lang => $fields) {
+			foreach($fields as $field => $value) unset($this->loaded_fields[$lang][$field]);
+		}
 	}
 
 	public final function getModifiedFields($lang=DEFAULT_LANG)  {
@@ -143,22 +151,25 @@ class Object {
 		return $this->modified_fields[$lang];
 	}
 
-	public final function resetModifiedFields() {
-		foreach($this->modified_fields as $lang => $fields) $this->modified_fields[$lang] = array();
+	public final function resetModifiedFields($fields_list=null) {
+		if($fields_list == null) $fields_list = $this->modified_fields;
+		foreach($fields_list as $lang => $fields) {
+			foreach($fields as $field => $value) unset($this->modified_fields [$lang][$field]);
+		}
 	}
 
 	/**
 	* Returns the fields names of the specified types
 	*
-	* @param array $types_list limitative array (the method won't return fields of other types than the listed ones)
+	* @param array $types_list allows to restrict the result to specified types (the method willl only return fields from which type is present in the list)
 	*/
 	public final function getFieldsNames($types_list=null) {
-		if(!is_array($types_list) || is_null($types_list)) $types_list = array();
 		$result_array = array();
-		$schema = $this->schema;
-		foreach($schema as $field_name => $field_description) {
-			if(in_array($schema[$field_name]['type'], $types_list))
-				$result_array[] = $field_name;
+		if(!is_array($types_list) || is_null($types_list))	$result_array = array_keys($this->schema);
+		else {
+			foreach($this->schema as $field_name => $field_description) {
+				if(in_array($this->schema[$field_name]['type'], $types_list)) $result_array[] = $field_name;
+			}
 		}
 		return $result_array;
 	}
@@ -194,13 +205,13 @@ class Object {
 	 */
 	public final function setValues($user_id, $values, $lang=DEFAULT_LANG, $mark_as_modified = true) {
 		if(!is_array($values)) return;
-		$schema = array_keys($this->schema);
-		$keys = array_keys($values);
+		$schema	= array_keys($this->schema);
+		$keys	= array_keys($values);
 		if(!in_array($lang, $this->langs)) {
-			$this->langs[] = $lang;
-			$this->fields_values[$lang] = array();
-			$this->modified_fields[$lang] = array();
-			$this->loaded_fields[$lang] = array();
+				$this->langs[] = $lang;
+				$this->fields_values[$lang]		= array();
+				$this->modified_fields[$lang]	= array();
+				$this->loaded_fields[$lang]		= array();
 		}
 		foreach($keys as $field) {
 			if(in_array($field, $schema)) {
@@ -211,7 +222,7 @@ class Object {
 						// id is always set in DB (even for new objects)
 						if($field != 'id') {
 							$this->modified_fields[$lang][$field] = true;
-							// modifier is the last user to have made changes to the object
+							// modifier is the id of the last user who have made changes to the object
 							$this->fields_values[$lang]['modified'] = date("Y-m-d H:i:s");
 							$this->fields_values[$lang]['modifier'] = $user_id;
 							$this->modified_fields[$lang]['modified'] = $this->loaded_fields[$lang]['modified'] = true;
@@ -224,4 +235,33 @@ class Object {
 			}
 		}
 	}
+
+	/**
+	* Magic method for handling dynamic getters and setters methods
+	*
+	*	Note : This mechanism only works under standalone mode
+	*
+	* @param string $name
+	* @param array $arguments
+	*/
+	public function __call ($name, $arguments) {
+		// get the parts of the virtual method invoked
+		$method	= strtolower(substr($name, 0, 3));
+		$field	= strtolower(substr($name, 3));
+		// check that the specified field does exist
+		if(in_array($field, array_keys(array_change_key_case($this->schema, CASE_LOWER)))) {
+			switch($method) {
+				case 'get':
+					$values = $this->getValues(array($field));
+					return $values[$field];
+					break;
+				case 'set':
+					// we use the global method 'update' in order to retrieve the user id associated with the current session
+					// thus, this method can only be used in standalone mode
+					update(get_class($this), array($this->getId()), array($field=>$arguments[0]));
+					break;
+			}
+		}
+	}
+
 }

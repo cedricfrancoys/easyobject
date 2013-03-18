@@ -18,12 +18,25 @@ class DBConnection {
 			case 'MYSQL' :
 				$this->dbConnection = new DBManipulatorMySQL($host, $port, $name, $user, $password);
 				break;
+			/*
+			// insert handling of other DBMS here
+			case 'XYZ' :
+				$this->dbConnection = new DBManipulatorXyz($host, $port, $name, $user, $password);
+				break;
+			*/
 			default:
-				trigger_error('DBConnection::DBConnection, unknown DBMS : check configuration file', E_USER_ERROR);
+				$this->dbConnection = null;
 		}
-		if($this->dbConnection->connect() === false) {
-			trigger_error('DBConnection::DBConnection, unable to establish connection : check connection parameters', E_USER_ERROR);
-		}
+	}
+
+	public function connect() {
+		if(!isset($this->dbConnection)) return false;
+		return $this->dbConnection->connect();
+	}
+
+	public function disconnect() {
+		if(!isset($this->dbConnection)) return true;
+		return $this->dbConnection->disconnect();
 	}
 
 	public static function &getInstance($host='', $port=0, $name='', $user='', $password='', $dbms = 'MYSQL')	{

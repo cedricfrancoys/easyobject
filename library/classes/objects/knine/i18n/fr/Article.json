@@ -3,7 +3,8 @@
 		"title":{"label":"Titre","help":"Titre de l'article sans formatage ni retour à la ligne"},
 		"summary":{"label":"Résumé"},		
 		"content":{"label":"Contenu"},
-		"attributes_ids":{"label":"Attributs"},		
+		"attributes_ids":{"label":"Attributs"},
+		"publications_ids":{"label":"Publications"},
 		"labels_ids":{"label":"Labels"},				
 		"authors_ids":{"label":"Auteurs"}
 	},
@@ -15,6 +16,8 @@
 		"authors_ids":{"label":"Auteurs"},		
 		"summary":{"label":"Résumé"},
 		"content":{"label":"Contenu"},
-		"chapters":{"label":"Chaptitres"}		
+		"chapters":{"label":"Chaptitres"},
+		"more":{"label":"En lire davantage"},
+		"less":{"label":"Résumer"}		
 	}
 }

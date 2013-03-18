@@ -116,6 +116,16 @@ function validate($object_class, &$values) {
 	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
+/**
+* Returns an instance of the specified class holding data associated with specified identifier.
+*
+* 	Because handling the object instance required the class to be declared this method only works in PHP
+* 	(In order to use it in other languages, it would be necessary to declare the classes in each programming language and overload the setters and getters)
+*
+* @param string $object_class
+* @param integer $object_id
+* @param string $session_id
+*/
 function &get($object_class, $object_id, $session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
 		$om = &ObjectManager::getInstance();
@@ -155,7 +165,7 @@ function &browse($object_class, $ids=null, $fields=null, $lang=DEFAULT_LANG, $se
 	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
-function search($object_class, $domain=null, $order='', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG, $session_id=SESSION_ID) {
+function search($object_class, $domain=null, $order='id', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG, $session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
 		$om = &ObjectManager::getInstance();
 		return $om->search(user_id($session_id), $object_class, $domain, $order, $sort, $start, $limit);

@@ -44,50 +44,50 @@ Class ValidationTests {
 			//2xxx : calls related to the browse method
 			'2100' => array(
 							'description'		=> "Trying to get some User object",
-							'expected_result'	=> true,
+							'expected_result'	=> array(),
 							'test'				=> function (){
-														return browse('core\User', array('1'), array('lang','firstname','lastname'));
+														return browse('core\User', array('1'), array('language','firstname','lastname'));
 													},
 							),
 			'2110' => array(
 							'description'		=> "Trying to get all User objects",
-							'expected_result'	=> true,
+							'expected_result'	=> array(),
 							'test'				=> function (){
 														return browse('core\User');
 													},
 							),
 			'2200' => array(
 							'description'		=> "Trying to browse some unexisting object",
-							'expected_result'	=> false,
+							'expected_result'	=> UNKNOWN_OBJECT,
 							'test'				=> function (){
-														return browse('core\Foo', array('1'), array('lang','firstname','lastname'));
+														return browse('core\Foo', array('1'), array('language','firstname','lastname'));
 													},
 							),
 			'2300' => array(
-							'description'		=> "Calling browse method with wrong \$ids value : not an array (should crash)",
-							'expected_result'	=> false,
+							'description'		=> "Calling browse method with wrong value for \$ids parameter : not an array",
+							'expected_result'	=> INVALID_PARAM,
 							'test'				=> function (){
-														return browse('core\User', 1, array('lang','firstname','lastname'));
+														return browse('core\User', 1, array('language','firstname','lastname'));
 													},
 							),
 			'2310' => array(
-							'description'		=> "Calling browse method with empty \$ids value : empty array",
-							'expected_result'	=> true,
+							'description'		=> "Calling browse method with empty value for \$ids parameter : empty array",
+							'expected_result'	=> array(),
 							'test'				=> function (){
-														return browse('core\User', array(), array('lang','firstname','lastname'));
+														return browse('core\User', array(), array('language','firstname','lastname'));
 													},
 							),
 			'2320' => array(
-							'description'		=> "Calling browse method with empty \$ids value : null",
-							'expected_result'	=> true,
+							'description'		=> "Calling browse method with empty value for \$ids parameter : null",
+							'expected_result'	=> array(),
 							'test'				=> function (){
-														$values = &browse('core\User', null, array('lang','firstname','lastname'));
+														$values = &browse('core\User', null, array('language','firstname','lastname'));
 														return $values;
 													},
 							),
 			'2330' => array(
-							'description'		=> "Calling browse method with wrong \$fields value : not an array",
-							'expected_result'	=> false,
+							'description'		=> "Calling browse method with wrong value for \$fields parameter : not an array",
+							'expected_result'	=> INVALID_PARAM,
 							'test'				=> function (){
 														$values = &browse('core\User', array('1'), 'firstname');
 														return $values;
@@ -95,7 +95,7 @@ Class ValidationTests {
 							),
 			'2340' => array(
 							'description'		=> "Calling browse method with wrong \$fields value : unexisting field name",
-							'expected_result'	=> false,
+							'expected_result'	=> UNKNOWN_ERROR,
 							'test'				=> function (){
 														$values = &browse('core\User', array('1'), array('foo'));
 														return $values;
@@ -103,7 +103,7 @@ Class ValidationTests {
 							),
 			'2510' => array(
 							'description'		=> "Calling browse method on related \$fields : one2many, 1 step path",
-							'expected_result'	=> true,
+							'expected_result'	=> array(),
 							'test'				=> function (){
 														$values = &browse('school\Lesson', array(1), array('students_ids'));
 														return $values;
@@ -111,7 +111,7 @@ Class ValidationTests {
 							),
 			'2520' => array(
 							'description'		=> "Calling browse method on related \$fields : one2many, 2 steps path",
-							'expected_result'	=> true,
+							'expected_result'	=> array(),
 							'test'				=> function (){
 														$values = &browse('school\Lesson', array(1), array('teacher_courses_ids'));
 														return $values;
@@ -119,7 +119,7 @@ Class ValidationTests {
 							),
 			'2530' => array(
 							'description'		=> "Calling browse method on related \$fields : many2one, 1 step path",
-							'expected_result'	=> true,
+							'expected_result'	=> array(),
 							'test'				=> function (){
 														$values = &browse('school\Lesson', array(1), array('teacher_id'));
 														return $values;
@@ -127,7 +127,7 @@ Class ValidationTests {
 							),
 			'2540' => array(
 							'description'		=> "Calling browse method on related \$fields : many2one, 2 steps path",
-							'expected_result'	=> true,
+							'expected_result'	=> array(),
 							'test'				=> function (){
 														$values = &browse('school\Lesson', array(2), array('school_id'));
 														return $values;
@@ -139,7 +139,7 @@ Class ValidationTests {
 							'description'		=> "Trying to search for some object : clause 'ilike'",
 							'expected_result'	=> true,
 							'test'				=> function (){
-														$values = search('Article', array(array('parent_id', '=', '1'), array('id', 'in', array(1, 3, 4, 8, 15)), array('summary', 'ilike', '%Belgique%')));
+														$values = search('knine\Article', array(array('parent_id', '=', '1'), array('id', 'in', array(1, 3, 4, 8, 15)), array('summary', 'ilike', '%Belgique%')));
 														return $values;
 													},
 							),
@@ -147,7 +147,7 @@ Class ValidationTests {
 							'description'		=> "Trying to search for some object : clause 'contains' on one2many field",
 							'expected_result'	=> true,
 							'test'				=> function (){
-														$values = search('Article', array(array('attributes_ids', 'contains', array(1, 2))));
+														$values = search('knine\Article', array(array('attributes_ids', 'contains', array(1, 2))));
 														return $values;
 													},
 							),
@@ -155,7 +155,7 @@ Class ValidationTests {
 							'description'		=> "Trying to search for some object : clause 'contains' on one2many field (using a foreign key different from 'id')",
 							'expected_result'	=> true,
 							'test'				=> function (){
-		                                                $values = search('Article', array(array('attributes_types', 'contains', array('author', 'editor'))));
+		                                                $values = search('knine\Article', array(array('attributes_types', 'contains', array('author', 'editor'))));
 														return $values;
 													},
 							),
@@ -163,7 +163,7 @@ Class ValidationTests {
 							'description'		=> "Trying to search for some object : clause 'contains' on many2one field",
 							'expected_result'	=> true,
 							'test'				=> function (){
-														$values = search('Article', array(array('parent_id', '=', '1')));
+														$values = search('knine\Article', array(array('parent_id', '=', '1')));
 														return $values;
 													},
 							),
@@ -171,13 +171,13 @@ Class ValidationTests {
 							'description'		=> "Trying to search for some object : clause contain on many2many field",
 							'expected_result'	=> true,
 							'test'				=> function (){
-														$values = search('Article', array(array('labels_ids', 'contains', array(1, 2, 3))));
+														$values = search('knine\Article', array(array('labels_ids', 'contains', array(1, 2, 3))));
 														return $values;
 												}	,
 							),
 			'9999' => array(
 							'description'		=> "tests",
-							'expected_result'	=> true,
+							'expected_result'	=> array(),
 							'test'				=> function (){
 														$values = browse('core\User', array('0'));
 														$user_id = $values[0]['id'];

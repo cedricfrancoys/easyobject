@@ -8,7 +8,7 @@ namespace core {
 				'action'			=> array('type' => 'selection', 'selection' => array('R_CREATE' => R_CREATE, 'R_READ' => R_READ, 'R_WRITE' => R_WRITE, 'R_DELETE' => R_DELETE)),
 				'object_class'		=> array('type' => 'string'),
 				'object_id'			=> array('type' => 'integer'),
-				'object_field'		=> array('type' => 'short_text'),
+				'object_fields'		=> array('type' => 'short_text'),
 			);
 		}
 	}

@@ -228,9 +228,10 @@ class I18n {
     * This method allows to manage translations server-side.
     * However, keep in mind that it is recommanded to do translations on the client side.
     *
-    * object_class => (class name), object_part => ('model' | 'view'), object_field => (field name), field_attr => ('label' | 'help' | 'sequence')
-    * @param mixed $code
-    * @param mixed $path
+    * 	Path syntax: object_class => (class name), object_part => ('model' | 'view'), object_field => (field name), field_attr => ('label' | 'help' | 'sequence')
+    *
+    * @param string $code
+    * @param array $path
     */
 	public function getClassTranslationValue($code, $path=array()) {
         // check request validity
@@ -245,6 +246,7 @@ class I18n {
 			$php_data = json_decode($json_data, true);
 			$this->translations[$package][$code][$object_class] = $php_data;
 		}
+		// check if the the term to be translated is present in the json file
 		if (!isset($this->translations[$package][$code][$object_class]) ||
 			!isset($this->translations[$package][$code][$object_class][$path['object_part']]) ||
 			!isset($this->translations[$package][$code][$object_class][$path['object_part']][$path['object_field']]) ||

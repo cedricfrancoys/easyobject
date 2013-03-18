@@ -100,10 +100,13 @@ class DBManipulator {
 	/**
 	 * Open the DBMS connection
 	 *
-	 * @return   integer   The status of the connect function call
+	 * @return   integer   The status of the connect function call (ie: a handler to identify the connection)
 	 * @access   public
 	 */
-	public function connect() {
+	public function connect($auto_select=true) {
+	}
+
+	public function select($db_name) {
 	}
 
 	/**
@@ -115,6 +118,19 @@ class DBManipulator {
 	public function disconnect() {
 	}
 
+
+	/**
+	*  Checks the connectivity to an SQL server
+	*  returns false if no connection can be made
+	*
+	*/
+	public final static function is_db_server($host, $port) {
+		if($fp = fsockopen($host, $port, $errno, $errstr, 1)) {
+			fclose($fp);
+			return true;
+		}
+		return false;
+	}
 
 	public final function isEmpty($value) {
 		return (empty($value) || $value == '0000-00-00' || !strcasecmp($value, 'false') || !strcasecmp($value, 'null'));

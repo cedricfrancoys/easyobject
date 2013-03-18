@@ -41,6 +41,15 @@ class ErrorHandler {
     	trigger_error('Error raised by '.$exception_thrower.' : '.$exception->getFile().'@'.$exception->getLine().', '.$exception->getMessage(), E_USER_WARNING);
 	}
 
+	/**
+	* We user PHP constant E_USER_ERROR for critical errors that need an immedaite stop
+	*
+	* @param mixed $errno
+	* @param mixed $errmsg
+	* @param mixed $filename
+	* @param mixed $linenum
+	* @param mixed $vars
+	*/
 	public static function ErrorHandling($errno, $errmsg, $filename, $linenum, $vars) {
 	    $error_types = array (
 		                E_ERROR				=> 'Error',
@@ -59,15 +68,24 @@ class ErrorHandler {
 	                );
 	    $user_errors = array(E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);
 	    $dt = date("Y-m-d H:i:s (T)");
-		$error = error_get_last();
-		$error_message = $error['message'];
+		$last_error = error_get_last();
 
-	    if (in_array($errno, $user_errors)) $err = "$dt, $errmsg.\n";
-	    else $err = "$dt, {$error_types[$errno]} ($filename@$linenum), $error_message : $errmsg.\n";
+	    if (in_array($errno, $user_errors)) $err = "$dt, $errmsg";
+	    else $err = "$dt, {$error_types[$errno]} ($filename@$linenum), {$last_error['message']} : $errmsg";
 
-	    if ($errno == E_USER_ERROR) die($err);
+	    self::$errors_stack[] = $err;
+
+	    // fatal error
+	    if ($errno == E_USER_ERROR) {
+	    	// if we can output messages, display the whole stack
+	    	if(function_exists('debug_mode') && debug_mode()) {
+	    		print("<pre>A fatal error has been raised. Flushing errors stack:\n");
+	    		foreach(self::$errors_stack as $line) print($line."\n");
+			}
+	     	die();
+		}
+		// other error
+		// if we are in debug mode, then immidiately display the error
 	    elseif(function_exists('debug_mode') && (debug_mode() & DEBUG_PHP)) print($err);
-
-	    self::$errors_stack[] = $errmsg;
 	}
 }

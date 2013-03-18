@@ -57,7 +57,7 @@ html, body {
   font-size: 14px;
   color: red;
 }
-#login_input {
+#login {
 	width: 180px;
 }
 #password_input {

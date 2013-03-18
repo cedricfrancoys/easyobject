@@ -1,8 +1,16 @@
+/**
+ * easyObject.form : A jquery form plugin intended to be used with easyObject
+ * 
+ * Author	: Cedric Francoys
+ * Launch	: July 2012
+ * Version	: 1.0
+ *
+ * Licensed under GPLv3
+ * http://www.opensource.org/licenses/gpl-3.0.html
+ *
+ */
 
-
-// todo : review the new object edition (and auto save mechanism)
-// delete the temporary object in case the user press the 'cancel' button
-// autosave : voir si on peut trouver un moyen simple de détecter si le formulaire a été modifié
+// require jquery-1.7.1.js (or later)
 
 (function($) {
 	/**
@@ -12,11 +20,15 @@
 	*/
 	$.fn.form = function(conf) {
 		var default_conf = {
-			class_name: '',
-			object_id: 0,
-			view_name: 'form.default',
-			lang: easyObject.conf.content_lang,
-			ui: easyObject.conf.user_lang
+			class_name: '',							// class of the object to edit
+			object_id: 0,							// id of the object to edit
+			view_name: 'form.default',				// view to use for the object edition
+			lang: easyObject.conf.content_lang,		// language in which request the content to server
+			ui: easyObject.conf.user_lang,			// language in which display UI texts
+			modified: false,						// state of the form
+			autosave: true,							// do we autosave drafts of the object being edited
+			success_handler: null,					// bypass the standard action listener and execute some function in case of success
+			predefined: {}							// assign predefined values to some fields or insert hidden controls when those fields are not present in selected view
 		};
 
 		var methods = {
@@ -128,7 +140,7 @@
 						.append($('<button type="button" />').attr('name', 'save').attr('action', 'save').attr('default', 'true'))
 						.append($('<button type="button" />').attr('name', 'cancel').attr('action', 'cancel'))
 						.append($('<button type="button" />').attr('name', 'apply').attr('action', 'apply')));
-					if(typeof conf.autosave == 'undefined' || conf.autosave == true)	
+					if(conf.autosave)	
 						$view.append($('<button type="button" />').css('display', 'none').attr('name', 'autosave').attr('action', 'draft'));
 				}
 				$form.append(transform_html($view));
@@ -173,7 +185,13 @@
 							value: object_values[field],
 							type: schemaObj[field]['type'],
 							readonly: (attr_readonly != undefined),
-							required: (attr_required != undefined)
+							required: (attr_required != undefined),
+							onchange: 	function() {
+											if(!conf.modified) {
+												conf.modified = true;
+												easyObject.log('some change have been made to an object being edited ('+conf.class_name+', '+conf.object_id+')');
+											}
+										}							
 						};
 
 						// set the proper type of the widget					
@@ -183,7 +201,6 @@
 						// set additional config params for special fields
 						switch(config.type) {
 							case 'function':
-								break;
 							case 'related':
 								break;
 							case 'selection':
@@ -193,10 +210,11 @@
 								break;
 							case 'many2one':
 								var class_name = schemaObj[field]['foreign_object'];
+								// we use the get_grid_config although we'll generate a 'choice' widget
 								$.extend(config, easyObject.get_grid_config({
 										class_name: class_name,
 										view_name: (attr_view != undefined)?attr_view:'list.default',
-										domain: [[[ schemaObj[field]['foreign_field'], 'contains', conf.object_id ]]]
+										domain: [[[ 'id', '=', object_values[field] ]]]
 								}));
 
 								$.extend(config, {
@@ -205,7 +223,7 @@
 											$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
 											$dia = easyObject.UI.dialog({
 													content: $list,
-													title: 'Choose item', width: 600, height: 'auto'});
+													title: 'Choose item', width: 650, height: 'auto'});
 											$dia.dialog({
 												buttons: {
 													"Ok": function() {
@@ -215,7 +233,7 @@
 															conf.domain = [[[ 'id', '=', id ]]];
 														});
 														// closing the dialog will trigger the widget reload
-														$(this).dialog("close");
+														$(this).dialog("close").dialog("destroy");
 													}
 												},
 												close: function(event, ui) {
@@ -256,7 +274,7 @@
 												$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
 												$dia = easyObject.UI.dialog({
 														content: $list,
-														title: 'Add item', width: 600, height: 'auto'});
+														title: 'Add item', width: 650, height: 'auto'});
 												$dia.dialog({
 													buttons: {
 														"Ok": function() {
@@ -267,7 +285,7 @@
 																conf.less = remove_value(conf.less, id);
 															});
 															// closing the dialog will trigger the list reload
-															$(this).dialog("close");
+															$(this).dialog("close").dialog("destroy");
 														}
 													},
 													close: function(event, ui) {
@@ -317,7 +335,7 @@
 																			predefined: predefined
 															}),
 															title: 'New object - '+class_name,
-															width: 600,
+															width: 650,
 															height: 'auto'});
 
 												$dia.dialog({close: function(event, ui) {
@@ -325,6 +343,7 @@
 																$ddlist.trigger('reload');
 																// update the value of the widget
 																$ddlist.trigger('change');
+																$(this).dialog('destroy');
 															}
 												});
 											}
@@ -332,14 +351,14 @@
 										edit: {
 											func: function($ddlist) {		
 												var id = $ddlist.dropdownlist('selection');
-												
+												$subform = easyObject.UI.form({class_name: class_name, object_id: id, view_name: 'form.default'});
 												$dia = easyObject.UI.dialog({
-														content: easyObject.UI.form({class_name: class_name, object_id: id, view_name: 'form.default'}),
+														content: $subform,
 														title: 'Object edition - '+class_name,
-														width: 600,
+														width: 650,
 														height: 'auto'
 												});
-												$dia.dialog({close: function(event, ui) { $ddlist.trigger('reload'); }});
+												$dia.dialog({close: function(event, ui) { $ddlist.trigger('reload'); $subform.trigger('destroy'); $(this).dialog('destroy');}});
 
 											}
 										}										
@@ -364,17 +383,14 @@
 								$.extend(config, {
 									edit: {
 										func: function($grid, ids) {
-											for(i = 0; i < ids.length; ++i)	{
-												$dia = easyObject.UI.dialog({
-														content: easyObject.UI.form({class_name: class_name, object_id: ids[i], view_name: 'form.default'}),
-														title: 'Object edition - '+class_name,
-														width: 600,
-														height: 'auto',
-														x_offset: (i*20),
-														y_offset: (i*20)
-												});
-												$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); }});
-											}
+											$subform = easyObject.UI.form({class_name: class_name, object_id: ids[0], view_name: 'form.default'});
+											$dia = easyObject.UI.dialog({
+													content: $subform,
+													title: 'Object edition - '+ class_name,
+													width: 650,
+													height: 'auto'
+											});
+											$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $subform.trigger('destroy'); $(this).dialog('destroy');}});
 										}
 									},
 									del: {
@@ -396,7 +412,7 @@
 											$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
 											$dia = easyObject.UI.dialog({
 													content: $list,
-													title: 'Add relation', width: 600, height: 'auto'});
+													title: 'Add relation', width: 650, height: 'auto'});
 											$dia.dialog({
 												buttons: {
 													"Ok": function() {
@@ -408,7 +424,7 @@
 														});
 
 														// closing the dialog will trigger the grid reload
-														$(this).dialog("close");
+														$(this).dialog("close").dialog("destroy");
 													}
 												},
 												close: function(event, ui) {
@@ -430,8 +446,8 @@
 						// add onSubmit callback to the form, if any
 						if(attr_onsubmit != undefined) {
 							$form.data('conf').onSubmitCallbacks.add(function() {
+								// we don't use $.globalEval because we need an access to the current context
 								eval(attr_onsubmit);
-								//$.globalEval(attr_onsubmit);
 							});
 						}
 
@@ -463,8 +479,8 @@
 
 				// insert some hidden controls : predefined fields not present in the specified view
 				if(typeof conf.predefined == 'object') {
-					$.each(conf.predefined, function(field, value){
-						if(!in_array(field, fields)) {
+					$.each(conf.predefined, function(field, value){					
+						if($.inArray(field, fields) < 0) {
 							if(typeof(value) == 'object') field += '[]';
 							$form.append($('<input type="hidden"/>').attr({id: field, name: field, value: value}));
 						}
@@ -482,20 +498,24 @@
 						$form.trigger('submit', action);
 					});
 
-					// if we need to auto-save drafts, set the timeout handle
+					// if we need to auto-save drafts, set the timeout handle				
 					if($this.attr('name') == 'autosave') {
 						var autosaving = function(){
-							// note : simulates a click, even if no changes were made
-							$this.trigger('click');
-							setTimeout(autosaving, easyObject.conf.auto_save_delay * 60000);
+							if(conf.modified) {
+								// we simulate a click on the button
+								$this.trigger('click');
+								// reset the modification flag
+								conf.modified = false;
+							}
+							conf.timer_id = setTimeout(autosaving, easyObject.conf.auto_save_delay * 60000);
 						}
 						// init timer
-						setTimeout(autosaving, easyObject.conf.auto_save_delay * 60000);
+						conf.timer_id = setTimeout(autosaving, easyObject.conf.auto_save_delay * 60000);
 					}
 
 					if($this.attr('default') == 'true') {
 						$this.focus();
-// this causes conflict when more than one form is displayed at a time
+// note: this causes conflict when more than one form is displayed at a time
 // in addition it makes muli-lines inputs lose the focus when going to a newline
 /*						
 						$(document).bind('keyup', function(e) {
@@ -513,7 +533,7 @@
 			},
 
 			/**
-			* translate terms of the form (UI)
+			* Translates terms of the form (UI)
 			* into the lang specified in the configuration object
 			*/
 			translate: function($form, conf) {
@@ -630,44 +650,48 @@
 					.appendTo('body')
 					.load(function(){
 						var response = window.frames[ iframe_name ].document.getElementsByTagName("body")[0].innerHTML;
-						// we must check the received data to ensure it matches JSON
+						// we must check the received data to ensure it matches JSON format
 						// this test is not completely safe, but good enough for now
 						if(response.charAt(0) == '{') {
 							var json_data = eval("(" + response + ")");
+
 							// ensure evaluated code is an object
 							if(typeof json_data == 'object') {
-								// process the returned data
-								if(typeof json_data.result != 'object') {
-									// json_data.result is an error_code
-									//var message = 'Execution error(s):' + "\n";
-// todo : to check
-									// get an array of messages for the current language
-									var langObj = easyObject.get_lang(easyObject.getObjectPackageName(conf.class_name), easyObject.getObjectName(conf.class_name), conf.lang);
-
-									var message = ucfirst(easyObject.error_codes[json_data.result]) + "\n";
-									$.each(json_data.error_message_ids, function (index, item) {
-										 if(typeof langObj['view'][item] != 'undefined') message += langObj['view'][item]['label'] + "\n";
-										else message += item + "\n";
-									});
-									alert(message);
-								}
+								if(typeof conf.success_handler == 'function') conf.success_handler(json_data);
 								else {
-									if(no_redirect) json_data.url = '';
-									// if action require a redirection, go to the new location
-									if(typeof(json_data.url) != 'undefined' && json_data.url.length > 0) window.location.href = json_data.url;
+									// process the returned data
+									if(typeof json_data.result != 'object' && !json_data.result) {
+										// json_data.result is an error_code
+										//var message = 'Execution error(s):' + "\n";
+	// todo : to check
+										// get an array of messages for the current language
+										var langObj = easyObject.get_lang(easyObject.getObjectPackageName(conf.class_name), easyObject.getObjectName(conf.class_name), conf.lang);
+
+										var message = ucfirst(easyObject.error_codes[json_data.result]) + "\n";
+										$.each(json_data.error_message_ids, function (index, item) {
+											 if(typeof langObj['view'][item] != 'undefined') message += langObj['view'][item]['label'] + "\n";
+											else message += item + "\n";
+										});
+										alert(message);
+									}
 									else {
-	// temporary
-										if(no_redirect) alert('Action ' + action + ' successfuly executed');
-										else return close('ok', 'Action ' + action + ' successfuly executed');
+										if(no_redirect) json_data.url = '';
+										// if action require a redirection, go to the new location
+										if(typeof(json_data.url) != 'undefined' && json_data.url.length > 0) window.location.href = json_data.url;
+										else {
+		// temporary
+											if(no_redirect) alert('Action ' + action + ' successfuly executed');
+											else return close('ok', 'Action ' + action + ' successfuly executed');
+										}
 									}
 								}
 							}
 						}
-
+						// when finished, remove the iframe
 						setTimeout(function(){$(this).remove();}, 100);
 					});
 
-					// define url, method, content-type and target window
+					// define url, method, content-type and target window (to be able to post binary data)
 					$form
 					.attr('action', 'index.php?do='+action)
 					.attr('method', "post")
@@ -681,7 +705,7 @@
 
 		return this.each(function() {
 			(function ($form, conf) {
-				// 1) display a loading spinner and returns result immediately
+				// 1) display a loading spinner and return the result immediately
 				$loader = $('<div/>').addClass('loading').append('loading...').appendTo($form);
 				$container = $('<div/>').css('display', 'none').appendTo($form);
 				// 2) do the other tasks asynchronously
@@ -704,6 +728,11 @@
 							var position = $dia.dialog('option', 'position');
 							$dia.dialog('option', 'position', [position[0], (window_height-dialog_height)/3]);								
 						}
+						// register a 'destroy' event for removing the form and its content and killing any attached timer
+						$form.bind('destroy', function() {
+							$form.empty().remove();
+							if(typeof conf.timer_id != 'undefined') clearTimeout(conf.timer_id);
+						});
 					};
 
 					// we check if there is a draft pending
