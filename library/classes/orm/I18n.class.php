@@ -242,7 +242,7 @@ class I18n {
 		if(!isset($this->translations[$package])) $this->translations[$package] = array();
 		if(!isset($this->translations[$package][$code])) {
 			$this->translations[$package][$code] = array();
-         	$json_data = file_get_contents("library/classes/objects/{$package}/i18n/{$code}/{$object_name}.json", FILE_TEXT);
+         	$json_data = file_get_contents("packages/{$package}/i18n/{$code}/{$object_name}.json", FILE_TEXT);
 			$php_data = json_decode($json_data, true);
 			$this->translations[$package][$code][$object_class] = $php_data;
 		}

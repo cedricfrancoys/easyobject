@@ -100,14 +100,15 @@ class ObjectManager {
 			// if it hasn't already be done, load the file containing the class declaration of the requested object
 			if(!class_exists($object_class)) {
 				// first, read the file content to see if the class extends from another, which could not be loaded yet
-				// (we do so because we cannot use __autoload mechanism since the script may be run in CLI SAPI)
-				if(!($file_content = file_get_contents('classes/objects/'.$this->getObjectClassFileName($object_class).'.class.php', FILE_USE_INCLUDE_PATH))) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
-				preg_match('/\bextends\b(.*)\{/iU', $file_content, $matches);
+				// (we do so because we cannot use __autoload mechanism since the script might be run in CLI SAPI)
+				$filename = 'packages/'.$this->getObjectPackageName($object_class).'/classes/'.$this->getObjectName($object_class).'.class.php';
+				if(!is_file($filename)) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
+				preg_match('/\bextends\b(.*)\{/iU', file_get_contents($filename, FILE_USE_INCLUDE_PATH), $matches);
 				if(!isset($matches[1])) throw new Exception("malformed class file for object '$object_class' : parent class name not found", INVALID_PARAM);
 				else $parent_class = trim($matches[1]);
 				// caution : no mutual inclusion check is done, so this call might result in an infinite loop
 				if($parent_class != '\core\Object') $this->getObjectStaticInstance($parent_class);
-				if(!load_class('objects/'.$this->getObjectClassFileName($object_class))) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
+				if(!(include $filename)) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
 			}
 			if(!isset($this->objectsArray[$object_class])) {
 				$this->objectsArray[$object_class] = array();
@@ -203,7 +204,7 @@ class ObjectManager {
 	* @return string
 	*/
 	public static function getObjectPackageName($object_class) {
-		return substr($object_class, 0, strrpos($object_class, '\\'));
+		return str_replace('\\', '', substr($object_class, 0, strrpos($object_class, '\\')));
 	}
 
    	/**
@@ -213,7 +214,7 @@ class ObjectManager {
 	* @return string
 	*/
 	public static function getObjectName($object_class) {
-		return substr($object_class, strpos($object_class, '\\')+1);
+		return substr($object_class, strrpos($object_class, '\\')+1);
 	}
 
 	/**
@@ -288,13 +289,13 @@ class ObjectManager {
 			$schema = $object->getSchema();
 			// first pass :  load complex fields one by one, and list names of the simple fields that must be loaded
 			foreach($object_fields as $field) {
-				if(!isset($schema[$field]) || ! isset($schema[$field]['type'])) throw new Exception("unknown field or missing mandatory data for field '$field' of class '$object_class'");
+				if(!isset($schema[$field]) || ! isset($schema[$field]['type'])) throw new Exception("unknown field or missing mandatory data for field '$field' of class '$object_class'", INVALID_PARAM);
 				if($lang != DEFAULT_LANG && isset($schema[$field]['multilang']) && $schema[$field]['multilang']) $simple_fields_multilang[] = $field;
 				else if(in_array($schema[$field]['type'], $this->simple_types)) $simple_fields[] = $field;
 				else {
 					switch($schema[$field]['type']) {
 						case 'related':
-							if(!$this->checkFieldAttributes(array('result_type', 'foreign_object', 'path'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'");
+							if(!$this->checkFieldAttributes(array('result_type', 'foreign_object', 'path'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
 							// class of the object at the current position (of the 'path' variable), start with the $object_class given as parameter
 							$path_object_class = $object_class;
 							// list of the parent objects ids, start with the $object_id given as parameter
@@ -322,7 +323,7 @@ class ObjectManager {
 							else $value_array[$field] = $path_objects_ids;
 							break;
 						case 'function':
-							if(!$this->checkFieldAttributes(array('function', 'result_type'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'");
+							if(!$this->checkFieldAttributes(array('function', 'result_type'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
 							// handle the 'store' attribute
                         	// if set and equals to true, value should be in database
 							if(isset($schema[$field]['store']) && $schema[$field]['store']) $simple_fields[] = $field;
@@ -333,12 +334,12 @@ class ObjectManager {
 							}
 							break;
 						case 'one2many':
-							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'");
+							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'", INVALID_PARAM);
 							// obtain the ids by searching among objects having symmetrical field ('foreign_field') set to $object_id
 		                    $value_array[$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'in', $object_id))));
 							break;
 						case 'many2many':
-							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for many2many field '$field' of class '$object_class'");
+							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for many2many field '$field' of class '$object_class'", INVALID_PARAM);
 							// obtain the ids by searching among objects having symmetrical field ('foreign_field') set to $object_id
 		                    $value_array[$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'contains', $object_id))));
 							break;
@@ -384,7 +385,7 @@ class ObjectManager {
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
-			throw new Exception('unable to load object fields');
+			throw new Exception('unable to load object fields', $e->getCode());
 		}
 	}
 

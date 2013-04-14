@@ -38,49 +38,50 @@ defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 /**
 * Define the context
 */
+// prevent vars initialization from generating output
+set_silent(true); 		
 
 // set current entry-point script as client
 define('OPERATION_SIDE', 'client');
+
 // try to start or resume the session
 if(!strlen(session_id())) session_start() or die(__FILE__.', line '.__LINE__.", unable to start session.");
+
 // store current session_id into a constant (required as default parameter of several functions defined in easyobject library)
 if(!defined('SESSION_ID')) define('SESSION_ID', session_id());
-// store the languages in which UI and content must be displayed
-// content items :
+
+// set the languages in which UI and content must be displayed
+
+// UI items : UI language is the one defined in the user's settings (core/User object)
+define('SESSION_LANG_UI', user_lang());
+
+// Content items :
 //	- for unidentified users, language is DEFAULT_LANG
 //	- for identified users language is the one defined in the user's settings
 //	- if a parameter lang is defined in the HTTP request, it overrides user's language
-// UI language is always the one defined in the user's settings
-
-
-set_silent(true); // prevent vars initialization from generating output
-
 $params = get_params(array('lang'=>DEFAULT_LANG));
-define('SESSION_LANG_UI', user_lang());
 define('SESSION_LANG', $params['lang']);
 
-set_silent(false);
+// from now on, we let the script decide whether or not to output errors messages if any
+set_silent(false);		
 
 
 /**
-* Dispatching : redirect to the requested script
+* Dispatching : include the requested script
 */
 
-// just do something
-if(isset($_REQUEST['do'])) {
-	$filename = 'actions/'.str_replace('_', '/', $_REQUEST['do']).'.php';
-	is_file($filename) or die ("'{$_REQUEST['do']}' is not a valid action.");
-	include($filename);
-}
-// return some data
-elseif(isset($_REQUEST['get'])) {
-	$filename = 'data/'.str_replace('_', '/', $_REQUEST['get']).'.php';
-	is_file($filename) or die ("'{$_REQUEST['get']}' is not a valid data provider.");
-	include($filename);
-}
-// display html stuff
-elseif(isset($_REQUEST['show'])) {
-	$filename = 'apps/'.str_replace('_', '/', $_REQUEST['show']).'.php';
-	is_file($filename) or die ("'{$_REQUEST['show']}' is not a valid application.");
-	include($filename);
+$accepted_requests = array(
+							'do'	=> array('type' => 'action', 'dir' => 'actions'),		// do something server-side
+							'get'	=> array('type' => 'data provider', 'dir' => 'data'), 	// return some data (json)
+							'show'	=> array('type' => 'application', 'dir' => 'apps')		// output some html
+					);
+
+foreach($accepted_requests as $request_key => $request_conf) {
+	if(isset($_REQUEST[$request_key])) {
+		$parts = explode('_', $_REQUEST[$request_key]);
+		$filename = 'packages/'.array_shift($parts).'/'.$request_conf['dir'].'/'.implode('/', $parts).'.php';
+		is_file($filename) or die ("'{$_REQUEST[$request_key]}' is not a valid {$request_conf['type']}.");
+		include($filename);
+		break;
+	}
 }

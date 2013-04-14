@@ -1,0 +1,42 @@
+<form>
+	<section name="tab1">
+		<fieldset title="identification">
+			<span width="50%">
+				<label for="firstname"></label><var id="firstname" required="true"></var>
+				<br />
+				<label for="lastname"></label><var id="lastname" required="true"></var>
+			</span>
+			<span width="50%">
+				<label for="birthdate"></label><var id="birthdate" required="true"></var>
+			</span>
+			<div>
+				<section name="tab11">
+					<label for="birthdate"></label><var id="birthdate" required="true"></var>
+				</section>
+				<section name="tab12">
+					<label for="firstname"></label><var id="firstname" required="true"></var>
+					<br />
+					<label for="lastname"></label><var id="lastname" required="true"></var>
+				</section>
+			</div>							
+		</fieldset>
+	</section>
+	<section name="tab2">
+		<fieldset title="data">
+			<span width="50%">			
+				<label name="classes_ids"></label>
+				<br />
+				<var id="classes_ids"></var>
+			</span>								
+			<span width="50%">			
+				<label name="test_ids"></label>
+				<br />						
+				<var id="test_ids"></var>
+			</span>												
+		</fieldset>
+	</section>
+	<div align="right">
+		<button name="ok" type="button" action="core_objects_save" error="error_identification" default="true"></button>
+		<button name="cancel" type="button" action=""></button>
+	</div>
+</form>

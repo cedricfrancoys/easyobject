@@ -320,7 +320,8 @@ var easyObject = {
 				$.ajax({
 					type: 'GET',
 					//url: 'index.php?get=core_i18n_lang&package='+package_name+'&lang='+lang,
-					url: 'library/classes/objects/'+package_name+'/i18n/'+lang+'/'+object_name+'.json',
+					//url: 'library/classes/objects/'+package_name+'/i18n/'+lang+'/'+object_name+'.json',
+					url: 'packages/'+package_name+'/i18n/'+lang+'/'+object_name+'.json',
 					async: false,
 					dataType: 'json',
 					contentType: 'application/json; charset=utf-8',
@@ -346,7 +347,8 @@ var easyObject = {
 		load_view: function(package_name, object_name, view_name) {
 				$.ajax({
 					type: 'GET',
-					url: 'library/classes/objects/'+package_name+'/views/'+object_name+'.'+view_name+'.html',
+					//url: 'library/classes/objects/'+package_name+'/views/'+object_name+'.'+view_name+'.html',
+					url: 'packages/'+package_name+'/views/'+object_name+'.'+view_name+'.html',
 					async: false,
 					dataType: 'html',
 					contentType: 'application/html; charset=utf-8',

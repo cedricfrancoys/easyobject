@@ -143,12 +143,17 @@ class FClib {
 	}
 
 	/**
-	* Checks if all parameters passed as argument have been received in the HTTP request. If not, the script is terminated.
+	* Checks if all parameters have been received in the HTTP request. If not, the script is terminated.
 	*
     * @static
 	*/
 	public static function check_params($mandatory_params) {
-		count(array_intersect($mandatory_params, array_keys($_REQUEST))) == count($mandatory_params) or die(__FILE__.', unable to retrieve at least a mandatory parameter');
+		if(count(array_intersect($mandatory_params, array_keys($_REQUEST))) != count($mandatory_params)) {
+			// alternate output: send json data telling which params are expected
+			echo json_encode(array('expected_params' => $mandatory_params), JSON_FORCE_OBJECT);
+			// terminate script
+			die();
+		}
 	}
 
 	/**
@@ -189,7 +194,7 @@ class FClib {
     * @static
     * @example	load_class('db/DBConnection');
     * @param	string	$class_path
-    * @param	string	$class_name	in case the actual name of the class differs from the class file name(which may be the case when using namespaces)
+    * @param	string	$class_name	in case the actual name of the class differs from the class file name (which may be the case when using namespaces)
 	* @return	bool
 	*/
 	public static function load_class($class_path, $class_name='') {

@@ -1,0 +1,8 @@
+{
+	"model": {
+		"type":{"label":"Type","help":""},
+		"value":{"label":"Valeur"}
+	},
+	"view": {
+	}
+}

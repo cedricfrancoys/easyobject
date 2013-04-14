@@ -1,0 +1,11 @@
+{
+	"model": {
+		"url_resolver_id":{"label":"URL"},
+		"labels_ids":{"label":"Labels"},
+		"related_posts_ids":{"label":"Related posts"}
+	},
+	"view": {
+		"labels_ids":{"label":"Labels"},
+		"related_posts_ids":{"label":"Related posts"}	
+	}
+}

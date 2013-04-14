@@ -1,0 +1,11 @@
+{
+	"model": {
+		"firstname":{"label":"Firstname","help":"Firstname of the student"},
+		"lastname":{"label":"Lastname","help":"Lastname of the student"},
+		"birthdate":{"label":"Birthdate","help":"Birthdate of the student\nDate format : YYYY-MM-DD"},
+		"subscription":{"label":"Subscription"}
+	},
+	"view": {
+		"identification":{"label":"Personal details"}
+	}
+}

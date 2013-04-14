@@ -225,10 +225,9 @@ function remove($object_class, $ids, $permanent=false, $session_id=SESSION_ID) {
 
 function get_classes($package_name) {
 	$classes_list = array();
-	$package_directory = getcwd().'/library/classes/objects/'.$package_name;
+	$package_directory = getcwd().'/packages/'.$package_name.'/classes';
 	if(is_dir($package_directory) && ($list = scandir($package_directory))) {
 		foreach($list as $node) if (stristr($node, '.class.php') && is_file($package_directory.'/'.$node)) $classes_list[] = substr($node, 0, -10);
 	}
 	return $classes_list;
 }
-

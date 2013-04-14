@@ -1,0 +1,65 @@
+html, body {
+  background-color:#f4f2f4;
+}
+#main {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  margin-left: -220px;
+  margin-top: -70px;
+  width: 440px;
+  height: 300px;
+  border: solid 1px black;
+  background-color: #ffffff;
+}
+#title {
+  position: absolute;
+  top: 30px;
+  width: 360px;
+  height: 60px;
+  font-family: Arial, Verdana, Helvetica;
+  font-size: 22px;
+  line-height: 40px;
+  color: #3c8ec4;
+  padding-left: 80px;
+}
+#fields {
+  position: absolute;
+  top: 110px;
+  width: 395px;
+  font-family: Verdana, Arial, Helvetica;
+  font-size: 14px;
+  color: #808080;
+  padding-left: 45px;
+}
+#buttons {
+  position: absolute;
+  top: 220px;
+  right: 40px;
+  font-family: Verdana, Arial, Helvetica;
+  font-size: 14px;
+  color: #808080;
+  padding-left: 45px;
+}
+#subscribe {
+  position: absolute;
+  top: 250px;
+  font-family: Verdana, Arial, Helvetica;
+  font-size: 14px;
+  color: #808080;
+  padding-left: 40px;
+}
+#message {
+  position: absolute;
+  top: 180px;
+  left: 45px;
+  font-family: Verdana, Arial, Helvetica;
+  font-size: 14px;
+  color: red;
+}
+#login {
+	width: 180px;
+}
+#password_input {
+	width: 180px;
+}

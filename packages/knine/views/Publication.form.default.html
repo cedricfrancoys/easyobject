@@ -1,0 +1,31 @@
+<form action="core_objects_update">
+	<div>
+		<span width="100%">
+			<label for="title"></label><var id="title" required="true"></var>
+		</span>				
+		<span width="50%">			
+			<label for="type"></label><var id="type" required="true"></var>											
+			<br />
+			<label for="place"></label><var id="place"></var>
+			<br />
+			<label for="pages"></label><var id="pages"></var>			
+		</span>
+		<span width="50%">			
+			<label for="publisher"></label><var id="publisher"></var>
+			<br />
+			<label for="year"></label><var id="year"></var>
+			<br />
+			<label for="number"></label><var id="number"></var>			
+		</span>	
+		<fieldset title="details">	
+			<div>
+				<section name="authors_ids">
+					<var id="authors_ids" view="list.default"></var>							
+				</section>						
+				<section name="articles_ids">
+					<var id="articles_ids" view="list.default"></var>				
+				</section>
+			</div>
+		</fieldset>					
+	</div>
+</form>

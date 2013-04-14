@@ -1,0 +1,135 @@
+.ui-grid {
+	display: block;
+	margin: 0;
+	padding: 0;
+	border: solid 1px #ccc;
+	width: 100%;
+}
+
+
+.ui-grid table, .ui-grid thead, .ui-grid tbody, .ui-grid thead tr, .ui-grid tbody tr {
+	width: 100%;		
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+.ui-grid th, .ui-grid td{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	border-left: 1px solid #fff;
+}
+
+.ui-grid th {
+	height: 23px;
+	cursor: default;
+	border-right: 1px solid #E7E7E7;
+	vertical-align: baseline;
+	background: url("../jquery/base/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;	
+}
+
+.ui-grid td {
+	vertical-align: top;
+	border-right: 1px solid #E7E7E7;	
+}
+
+.ui-grid th div, .ui-grid td div {
+	margin: 0;
+	border: 0;
+	padding: 3px;
+	overflow: hidden;
+}
+
+.ui-grid th div {
+	font-weight: normal;
+	text-align: left;
+	border-bottom: 1px solid #E7E7E7;			
+}
+.ui-grid th .checkbox, .ui-grid td .checkbox {
+	width: 20px;
+}
+
+.ui-grid td div {
+	overflow:auto;	
+}
+
+.ui-grid th div.asc {
+	background: url("images/up.png") no-repeat scroll center top transparent;
+}		
+
+.ui-grid th div.desc {
+	background: url("images/dn.png") no-repeat scroll center top transparent;
+}
+
+.ui-grid tr.erow td {
+	background: none repeat scroll 0 0 #F7F7F7;
+}
+
+.ui-grid th.thOver div {
+	border-bottom: 1px solid orange;
+}
+
+.ui-grid th.sorted {
+	background:url(images/wbg.gif) repeat-x 0 -1px;
+}
+
+.ui-grid .pager {
+	position: relative;
+	padding-top: 3px;
+	height: 24px;
+	color: #777;
+	background: url("images/wbg.gif") repeat-x scroll 0 -1px transparent;		
+}
+
+.ui-grid .loader {
+	display: block;
+	position: absolute;
+	left: 50%;	
+	margin-left: -40px;
+	margin-top: 2px;
+	font-style: italic;
+	width: 80px;
+	height: 16px;
+	text-align: right;
+	background: url("images/load.gif") no-repeat transparent;			
+}
+
+.ui-grid .pager span {
+	display: block;
+	float: left;
+	margin: 1px;
+	font-style: italic;
+}
+
+.ui-grid .pager div {	
+	position: absolute;
+}
+
+.ui-grid .pager input {
+	height: 15px;
+}
+
+.ui-grid .pager select {	
+	height: 21px;
+}
+
+.ui-grid .pager span.separator{
+	color: #aaa;
+	font-style: normal;
+	width: 20px;
+	text-align: center;
+}		
+
+.ui-grid .pager span.ui-widget{
+	font-size: 0;
+}
+
+.ui-grid .pager span.ui-button{
+	padding: 0;
+}		
+
+.ui-grid .pager span.ui-button-icon-primary {
+	position: relative;
+}		
