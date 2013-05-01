@@ -844,11 +844,12 @@ class ObjectManager {
 			};
 
 			$table_alias = $add_table($this->getObjectTableName($object_class));
-
-			if(!empty($domain) && !empty($domain[0]) && !empty($domain[0][0])) {
+			// first pass : build conditions and the tables names arrays
+			if(!empty($domain) && !empty($domain[0]) && !empty($domain[0][0])) { // domain structure is correct and contains at least one condition
 				$schema = $this->getObjectSchema($object_class);
+				// if, in any clause, one of the fields is set to 'deleted', results won't be limited to non-deleted records
+				$deleted_flag = false;
 				for($j = 0, $max_j = count($domain); $j < $max_j; ++$j) {
-					// first pass : build conditions and the tables names arrays
 					for($i = 0, $max_i = count($domain[$j]); $i < $max_i; ++$i) {
 						if(!isset($domain[$j][$i]) || !is_array($domain[$j][$i])) throw new Exception("malformed domain", INVALID_PARAM);
 						if(!isset($domain[$j][$i][0]) || !isset($domain[$j][$i][1]) || !isset($domain[$j][$i][2])) throw new Exception("invalid domain, a mandatory attribute is missing", INVALID_PARAM);
@@ -861,7 +862,9 @@ class ObjectManager {
 						if(!in_array($field, array_keys($schema))) throw new Exception("invalid domain, unexisting field '$field' for object '$object_class'", INVALID_PARAM);
 						if(!in_array($operator, $valid_operators[$type])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' in object '$object_class'", INVALID_PARAM);
 
-// todo : do we need to test user permissions on foreign objects
+						$deleted_flag |= ($field == 'deleted');
+
+						// note: we don't test user permissions on foreign objects here
 						switch($type) {
 							case 'one2many':
 								if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory parameter for one2many field '$field' of class '$object_class'", INVALID_PARAM);
@@ -902,15 +905,16 @@ class ObjectManager {
 						}
 						$conditions[$j][] = array($field, $operator, $value);
 					}
-					// search only among non-draft and non-deleted records
-					$conditions[$j][] = array($table_alias.'.deleted', '=', '0');
+					// search only among non-draft records
 					$conditions[$j][] = array($table_alias.'.modifier', '>', '0');
+					// if no clause is related to the 'deleted' field, search only among non-deleted records
+					if(!$deleted_flag) $conditions[$j][] = array($table_alias.'.deleted', '=', '0');
 				}
 			}
-			else {
+			else { // no domain is specified
 				// search only among non-draft and non-deleted records
-				$conditions[0][] = array($table_alias.'.deleted', '=', '0');
 				$conditions[0][] = array($table_alias.'.modifier', '>', '0');
+				$conditions[0][] = array($table_alias.'.deleted', '=', '0');
 			}
 
 			// second pass : fetch the ids of matching objects
@@ -918,9 +922,9 @@ class ObjectManager {
 			if($order != 'id') $select_fields[] = $table_alias.'.'.$order;
 			$res = $this->dbConnection->getRecords($tables, $select_fields, null, $conditions, $table_alias.'.id', $order, $sort, $start, $limit);
 			while ($row = $this->dbConnection->fetchArray($res)) {
-				// if we are in cstandalone mode, we take advantage of the SQL sort
+				// if we are in standalone mode, we take advantage of the SQL sort
 				$res_list[] = $row['id'];
-				// if we are in client-server mode, we may need further sort
+				// if we are in client-server mode, we could need further sort
 				$res_assoc_db[$row['id']] = $row[$order];
 			}
 
@@ -969,20 +973,20 @@ class ObjectManager {
 										$match = stripos($value, $condition[2]);
 										break;
 								}
-								// if one the conditions is not met, we can stop and try the next disjunction
+								// if one of the conditions is not met, we can stop and try the next disjunction
 								if($match === false) break;
 						}
 						if($match !== false) {
 							// if any of the disjunctions is a match the whole domain is validated :
 							// we add the object if to the result list and we go to the next object
-							// we get the value of the 'order' field for further sort
+							// we keep the value of the 'order' field for further sort
 							$values = $object->getValues(array($order), $lang);
 							$res_assoc_mem[$ids[$i]] = $values[$order];
 							break;
 						}
 					}
 				}
-				// if we found add least one more object matching the domain
+				// if we found at least one more object matching the domain
 				if(count($res_assoc_mem)) {
 					// we merge both associative arrays (from DB and from memory), we sort the result and keep only the keys (which hold matching objects ids)
 					$res_list = array_keys(asort(array_merge($res_assoc_db, $res_assoc_mem)));

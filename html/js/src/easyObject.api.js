@@ -178,14 +178,13 @@ var easyObject = {
 				var result = [];
 				$.ajax({
 					type: 'GET',
-					//url: 'index.php?do=core_objects_remove&class_name='+class_name+'&ids='+ids+'&permanent='+permanent,
 					url: 'index.php?do=core_objects_remove',
 					async: false,
 					dataType: 'json',
 					data: {
 						object_class: class_name,
 						ids: ids,
-						permanent: permanent
+						permanent: Number(new Boolean(permanent))
 					},					
 					contentType: 'application/json; charset=utf-8',
 					success: function(json_data){
@@ -402,7 +401,7 @@ var easyObject = {
 			var default_conf = {
 				class_name: '',
 				view_name: 'list.default',
-				domain: [],
+				domain: [[]],
 				ui: easyObject.conf.user_lang
 			};
 			return (function(conf){
@@ -424,7 +423,7 @@ var easyObject = {
 					result.col_model.push({display: name, name: name, width: $(this).attr('width')});
 					result.fields.push(name);
 				});			
-				result.url = 'index.php?get=core_objects_list';
+				if(result.url.length == 0) result.url = 'index.php?get=core_objects_list';
 				return result;
 			})($.extend(default_conf, conf));
 		},

@@ -46,7 +46,6 @@ $html->addJSFile('html/js/easyObject.loader.js');
 
 
 $js_packages = function () {
-	//$packages_directory = getcwd().'/library/classes/objects';
 	$packages_directory = 'packages';
 	$packages_list = array();
 	if(is_dir($packages_directory) && ($list = scandir($packages_directory))) {
@@ -67,6 +66,10 @@ $(document).ready(function() {
 	.append($('<div/>').attr('id', 'menu').css({'height': $(window).height()+'px', 'float':'left', 'width':'200px'})
 			.append($('<label/>').css({'margin': '4px', 'font-weight': 'bold', 'display': 'block'}).html('Package: '))
 			.append($('<select/>').attr('id', 'package').css({'margin': '4px'}))
+			.append($('<div/>')
+				.append($('<label/>').css({'margin': '4px', 'font-weight': 'normal'}).html('recylce bin'))
+				.append($('<input type=\"checkbox\"/>').attr('id', 'recycle').css({'margin': '4px'}))
+			)
 			.append($('<label/>').css({'margin': '4px', 'font-weight': 'bold', 'display': 'block'}).html('Classes: '))
     		.append($('<div/>').attr('id', 'classes').css({'margin': '4px', 'height': ($(window).height()-100)+'px', 'width': '200px', 'overflow': 'auto'}))
 	)
@@ -82,21 +85,28 @@ $(document).ready(function() {
 		$.getJSON('index.php?get=core_packages_listing&package='+$(this).val(), function (json_data) {
 				$('#classes').empty()
 				$.each(json_data, function(i, item){
+
 					$('#classes').append($('<span/>').css({'display': 'block', 'cursor': 'pointer'}).append(item)
 						.click(function() {
 							selection.removeClass('selected');
 							selection = $(this);
 							selection.addClass('selected');
 
-							$('#main')
-							.empty()
-							.append(easyObject.UI.list({class_name: $('#package').val()+'\\\\'+$(this).html(), view_name: 'list.default'}));
+							$('#recycle').on('change', function() {
+								$('#main')
+								.empty()
+								.append(easyObject.UI.list({
+															class_name: $('#package').val()+'\\\\'+selection.html(),
+															view_name: 'list.default',
+															url: ($('#recycle')[0].checked)?'index.php?get=core_objects_list&mode=recycle':''}
+														));
+							});
+							$('#recycle').trigger('change');
 						})
 					);
 				});
 		});
 	});
-
 	// init
 	$('#package').trigger('change');
 });

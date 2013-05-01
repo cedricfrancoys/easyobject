@@ -20,7 +20,7 @@
 */
 
 /*
-* file: apps/core/setup.php
+* file: packages/core/apps/setup.php
 *
 * Checks the current installation.
 *
@@ -35,7 +35,7 @@ load_class('utils/HtmlWrapper');
 $dbConnection = &DBConnection::getInstance(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_DBMS);
 
 
-// result of the tests : array containing errors (if no errors are found, array is empty)
+// result of the tests : array containing errors (when no errors are found, array is empty)
 $result = array();
 
 // A) DATABASE ACCESS
@@ -67,7 +67,11 @@ $html = new HtmlWrapper();
 
 if(!count($result)) {
 	$html->add("<b>Congratulations, your installation of easyObject is ready to be used!</b><br /><br />\n");
-	$html->add("Now, you might want to:<br />&nbsp; - <a href=\"index.php?show=core_user_login\">Login</a> with a specific account<br />&nbsp; - Run some <a href=\"index.php?show=core_utils\">utilities</a><br />&nbsp; - Start using the <a href=\"index.php?show=core_manage\">manager</a>.\n");
+	$html->add("Now, you might want to:\n");
+	$html->add($ul = new HtmlBlock(0, 'ul'));
+	$ul->add("<li><a href=\"index.php?show=core_user_login\">Login</a> with a specific account</li>\n");
+	$ul->add("<li>Run some <a href=\"index.php?show=core_utils\">utilities</a></li>\n");
+	$ul->add("<li>Start using the <a href=\"index.php?show=core_manage\">manager</a></li>\n");
 }
 else {
 	$html->add($pre = new HtmlBlock(0, 'pre'));

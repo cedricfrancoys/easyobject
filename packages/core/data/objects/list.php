@@ -57,8 +57,8 @@ check_params(array('object_class'));
 // todo : add lang parameter
 
 
-$params = get_params(array('object_class'=>null, 'fields'=>null, 'domain'=>null, 'page'=>1, 'rp'=>10, 'sortname'=>'id', 'sortorder'=>'asc', 'records'=>null));
-
+// 1) get parameters values
+$params = get_params(array('object_class'=>null, 'fields'=>null, 'domain'=>null, 'page'=>1, 'rp'=>10, 'sortname'=>'id', 'sortorder'=>'asc', 'records'=>null, 'mode'=>null));
 $object_class = $params['object_class'];
 $page 	= $params['page']; 		// the requested page
 $limit	= $params['rp']; 		// how many rows we want to have into the grid
@@ -69,14 +69,26 @@ $domain = $params['domain'];
 if($params['fields'] && !is_array($params['fields'])) $fields = explode(',', $params['fields']);
 else $fields = $params['fields'];
 
+if(is_null($domain)) $domain = array(array());
+
 $start = ($page-1) * $limit;
 if($start < 0) $start = 0;
 
+// 2) check for special option 'mode' (that allows to limit result to deleted objects)
+if($params['mode'] == 'recycle') {
+	// add the (deleted = 1) clause to every condition
+	for($i = 0, $j = count($domain); $i < $j; ++$i)
+		$domain[$i] = array_merge($domain[$i], array(array('deleted', '=', '1')));
+}
+
+// 3) search and browse
 $ids = search($object_class, $domain, $order, $sort);
 $list = &browse($object_class, array_slice($ids, $start , $limit, true), $fields);
 $count_ids = count($ids);
 
-// generate json result
+
+
+// 4) generate json result
 $html = '{'."\n";
 $html .= '	"page": "'.$page.'",'."\n";
 $html .= '	"total": "'.ceil($count_ids/$limit).'",'."\n";
