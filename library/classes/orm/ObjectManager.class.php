@@ -847,8 +847,8 @@ class ObjectManager {
 			// first pass : build conditions and the tables names arrays
 			if(!empty($domain) && !empty($domain[0]) && !empty($domain[0][0])) { // domain structure is correct and contains at least one condition
 				$schema = $this->getObjectSchema($object_class);
-				// if, in any clause, one of the fields is set to 'deleted', results won't be limited to non-deleted records
-				$deleted_flag = false;
+				// we check, for each clause, if it's about a "special field"
+				$special_fields = array_keys(\core\Object::getSpecialFields());
 				for($j = 0, $max_j = count($domain); $j < $max_j; ++$j) {
 					for($i = 0, $max_i = count($domain[$j]); $i < $max_i; ++$i) {
 						if(!isset($domain[$j][$i]) || !is_array($domain[$j][$i])) throw new Exception("malformed domain", INVALID_PARAM);
@@ -861,8 +861,8 @@ class ObjectManager {
 
 						if(!in_array($field, array_keys($schema))) throw new Exception("invalid domain, unexisting field '$field' for object '$object_class'", INVALID_PARAM);
 						if(!in_array($operator, $valid_operators[$type])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' in object '$object_class'", INVALID_PARAM);
-
-						$deleted_flag |= ($field == 'deleted');
+						// remember special fields involved in the domain (by removing them from the special_fields list)
+						if(in_array($field, $special_fields)) unset($special_fields[$field]);
 
 						// note: we don't test user permissions on foreign objects here
 						switch($type) {
@@ -905,10 +905,9 @@ class ObjectManager {
 						}
 						$conditions[$j][] = array($field, $operator, $value);
 					}
-					// search only among non-draft records
-					$conditions[$j][] = array($table_alias.'.modifier', '>', '0');
-					// if no clause is related to the 'deleted' field, search only among non-deleted records
-					if(!$deleted_flag) $conditions[$j][] = array($table_alias.'.deleted', '=', '0');
+					// search only among non-draft and non-deleted records (unless at least one clause was related to those fields)
+					if(isset($special_fields['modifier']))	$conditions[$j][] = array($table_alias.'.modifier', '>', '0');
+					if(isset($special_fields['deleted']))	$conditions[$j][] = array($table_alias.'.deleted', '=', '0');
 				}
 			}
 			else { // no domain is specified

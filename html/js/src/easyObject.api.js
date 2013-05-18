@@ -196,6 +196,7 @@ var easyObject = {
 				});
 				return result;
 		},
+// todo : undelete (force deleted field to 0)		
 		restore: function(class_name, id) {
 				var result = [];
 				$.ajax({
@@ -402,7 +403,8 @@ var easyObject = {
 				class_name: '',
 				view_name: 'list.default',
 				domain: [[]],
-				ui: easyObject.conf.user_lang
+				ui: easyObject.conf.user_lang,
+				permanent_deletion: false
 			};
 			return (function(conf){
 				var view_html = easyObject.get_view(conf.class_name, conf.view_name);
@@ -520,7 +522,7 @@ var easyObject = {
 						},
 						del: {
 							func: function($grid, ids) {
-								remove(conf.class_name, ids, false);
+								remove(conf.class_name, ids, conf.permanent_deletion);
 								$grid.trigger('reload');
 							}
 						},

@@ -98,7 +98,9 @@ $(document).ready(function() {
 								.append(easyObject.UI.list({
 															class_name: $('#package').val()+'\\\\'+selection.html(),
 															view_name: 'list.default',
-															url: ($('#recycle')[0].checked)?'index.php?get=core_objects_list&mode=recycle':''}
+															url: ($('#recycle')[0].checked)?'index.php?get=core_objects_list&mode=recycle':'',
+															permanent_deletion: ($('#recycle')[0].checked)?true:false
+														   }
 														));
 							});
 							$('#recycle').trigger('change');
