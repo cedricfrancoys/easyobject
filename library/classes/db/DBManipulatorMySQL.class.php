@@ -76,8 +76,14 @@ class DBManipulatorMySQL extends DBManipulator {
 		$this->last_query = $query;
 		if(($result = mysql_query($query)) === false) throw new Exception(__METHOD__.' : query failure, '.mysql_error(), SQL_ERROR);
 		else {
-			// select, show
-			if(stristr($query, 'select') || stristr($query, 'show')) $this->setAffectedRows(mysql_num_rows($result));
+			// select
+			if(stristr(substr($query, 0, 6), 'select')) {
+				if(($res = mysql_query("SELECT FOUND_ROWS();")) === false) throw new Exception(__METHOD__.' : query failure, '.mysql_error(), SQL_ERROR);
+				$row = mysql_fetch_row($res);
+				$this->setAffectedRows($row[0]);
+			}
+			// show
+			else if(stristr(substr($query, 0, 4), 'show')) $this->setAffectedRows(mysql_num_rows($result));
 			// insert, update, replace, delete
 			else $this->setAffectedRows(mysql_affected_rows());
 			$this->setLastId(mysql_insert_id());
@@ -113,7 +119,8 @@ class DBManipulatorMySQL extends DBManipulator {
 	private static function escapeString($value) {
 		$result = '';
 		if($value{0} == '`') {
-			$result = '`'.substr($value, 1, -1).'`';
+			// $result = '`'.substr($value, 1, -1).'`';
+			$result = DBManipulatorMySQL::escapeFieldName($value);
 		}
 		else $result = "'".mysql_real_escape_string($value)."'";
 		return $result;
@@ -132,35 +139,38 @@ class DBManipulatorMySQL extends DBManipulator {
 	*/
 	private function getConditionClause($id_field, $ids, $conditions) {
 		$sql = '';
-		if(!empty($ids) && empty($conditions)) $conditions = array(array(array($id_field, 'in', $ids)));
-		if(!empty($conditions)) {
-			$sql .= ' WHERE (';
-			for($j = 0, $max_j = count($conditions); $j < $max_j; ++$j) {
-				if($j > 0) {
-					$sql .= ') OR (';
-					if(!empty($ids)) $conditions[$j][] = array($id_field, 'in', $ids);
+		if(empty($conditions)) $conditions = array(array(array()));
+		for($j = 0, $max_j = count($conditions); $j < $max_j; ++$j) {
+			if($j > 0 && strlen($sql) > 0) $sql .= ') OR (';
+			if(!empty($ids)) $conditions[$j][] = array($id_field, 'in', $ids);
+			for($i = 0, $max_i = count($conditions[$j]); $i < $max_i; ++$i) {
+				if($i > 0 && strlen($sql) > 0) $sql .= ' AND ';
+				$cond = $conditions[$j][$i];
+				if(!count($cond)) continue;
+				// adjust the field syntax (if necessary)
+				$cond[0] = DBManipulatorMySQL::escapeFieldName($cond[0]);
+				// operator 'in' having a single value as right operand
+				if(strcasecmp($cond[1], 'in') == 0 && !is_array($cond[2])) $cond[2] = array($cond[2]);
+				// case-sensitive comparison ('like' operator)
+				if(strcasecmp($cond[1], 'like') == 0){
+					// force mysql to convert field to binary (result will be case-sensitive comparison)
+					$cond[0] = 'BINARY '.$cond[0];
+					$cond[1] = 'LIKE';
 				}
-				for($i = 0, $max_i = count($conditions[$j]); $i < $max_i; ++$i) {
-					if($i > 0) $sql .= ' AND ';
-					$cond = $conditions[$j][$i];
-					// operator 'in' having a single value as right operand
-					if(strcasecmp($cond[1], 'in') == 0 && !is_array($cond[2])) $cond[2] = array($cond[2]);
-					// case-sensitive comparison ('like' operator)
-					if(strcasecmp($cond[1], 'like') == 0){
-						$sql .= ' BINARY ' ;
-						$cond[1] = 'LIKE';
-					}
-					// ilike operator does not exist in MySQL
-					if(strcasecmp($cond[1], 'ilike') == 0) $cond[1] = 'LIKE';
-	                // format the value operand
-					if(is_array($cond[2])) $value = '('.implode(',', array_map('DBManipulatorMySQL::escapeString', $cond[2])).')';
-					else $value = DBManipulatorMySQL::escapeString($cond[2]);
-					// concatenate query string with current condition
-					$sql .= $this->escapeFieldName($cond[0]).' '.$cond[1].' '.$value;
+				// ilike operator does not exist in MySQL
+				if(strcasecmp($cond[1], 'ilike') == 0) {
+					// force mysql to handle the field as a char (necessary for translations that are stored in a binary field)
+					$cond[0] = ' CAST('.$cond[0].' AS CHAR )';
+					$cond[1] = 'LIKE';
 				}
+	            // format the value operand
+				if(is_array($cond[2])) $value = '('.implode(',', array_map('DBManipulatorMySQL::escapeString', $cond[2])).')';
+				else $value = DBManipulatorMySQL::escapeString($cond[2]);
+				// concatenate query string with current condition
+				$sql .= $cond[0].' '.$cond[1].' '.$value;
 			}
-			$sql .= ')';
 		}
+		if(strlen($sql) > 0) $sql = ' WHERE ('.$sql.')';
 		return $sql;
 	}
 
@@ -183,9 +193,9 @@ class DBManipulatorMySQL extends DBManipulator {
 		if(!empty($conditions) && !is_array($conditions)) throw new Exception(__METHOD__." : unable to build sql query ($sql), parameter 'conditions' is not an array.", SQL_ERROR);
 
 		// select clause
-		$sql = 'SELECT ';
+		$sql = 'SELECT SQL_CALC_FOUND_ROWS ';
 		if(empty($fields)) $sql .= '*';
-		else foreach($fields as $field) $sql .= $this->escapeFieldName($field).', ';
+		else foreach($fields as $field) $sql .= DBManipulatorMySQL::escapeFieldName($field).', ';
 		$sql = rtrim($sql, ' ,');
 
 		// from clause
@@ -200,11 +210,10 @@ class DBManipulatorMySQL extends DBManipulator {
 		$sql .= $this->getConditionClause($id_field, $ids, $conditions);
 
 		// order clause
-		if(!empty($order)) $sql .= " ORDER BY `$order` $sort";
+		if(!empty($order)) $sql .= ' ORDER BY '.DBManipulatorMySQL::escapeFieldName($order)." $sort";
 
 		// limit clause
 		if(!empty($limit)) $sql .= " LIMIT $start, $limit";
-
 		return $this->sendQuery($sql);
 	}
 

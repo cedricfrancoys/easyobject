@@ -176,6 +176,7 @@
 						var attr_onsubmit = $item.attr('onsubmit');
 						var attr_view = $item.attr('view');
 						var attr_domain = $item.attr('domain');
+						var attr_widget = $item.attr('widget');	
 
 						var config = {
 							name: field,
@@ -199,7 +200,7 @@
 						if(attr_type == 'password') config.type = 'password';
 
 						// set additional config params for special fields
-						switch(config.type) {
+						switch(config.type) {						
 							case 'function':
 							case 'related':
 								break;
@@ -301,7 +302,9 @@
 
 								}
 								else {
-									// dropdown list
+									// dropdown list, grid, ...
+									if(typeof attr_widget != 'undefined') config.type = attr_widget;
+
 									// obtain listiew for target object and generate grid config (col_model & url)
 									$.extend(config, easyObject.get_grid_config({
 											class_name: class_name,
@@ -309,6 +312,7 @@
 											domain: [[[ schemaObj[field]['foreign_field'], '=', conf.object_id]]]
 									}));
 // todo : use attr_domain : conf.domain.push(...)
+// todo : make this part compatible for all widgets
 									$.extend(config, {
 										del: {
 											func: function($ddlist) {

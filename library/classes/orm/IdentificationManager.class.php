@@ -7,10 +7,12 @@ load_class('orm/ObjectManager') or die(__FILE__.' unable to load mandatory class
 class IdentificationManager {
 
 	private $usersTable;
+	private $groupsTable;
 	private $permissionsTable;
 
 	private function __construct() {
 		$this->usersTable = array();
+		$this->groupsTable = array();
 		$this->permissionsTable = array();
 	}
 
@@ -61,20 +63,25 @@ class IdentificationManager {
 				else {
 					// we have to fetch data directly from database otherwise access would results in infinite loops of permissions check
 					$db = &DBConnection::getInstance();
+
 					// get the user groups
-					$groups_ids = array();
-					$result = $db->getRecords(array('core_rel_group_user'), array('group_id'), null, array(array(array('user_id', '=', $user_id))));
-					if($db->getAffectedRows()) {
-						while($row = $db->fetchArray($result)) $groups_ids[] = $row['group_id'];
-						// check if permissions are defined for the current object class
-						$result = $db->getRecords(array('core_permission'), array('id', 'rights'), null, array(array(array('class_name', '=', $object_class), array('group_id', 'in', $groups_ids), array('deleted', '=', 0), array('modifier', '>', 0))));
-						// get the user permissions
-						if($db->getAffectedRows()) while($row = $db->fetchArray($result)) $user_rights |= $row['rights'];
+					if(!isset($this->groupsTable[$user_id])) {
+						$groups_ids = array();
+						$result = $db->getRecords(array('core_rel_group_user'), array('group_id'), null, array(array(array('user_id', '=', $user_id))));
+						if($db->getAffectedRows()) while($row = $db->fetchArray($result)) $groups_ids[] = $row['group_id'];
+						// use the default permission (DEFAULT_RIGHTS)
 						else $user_rights |= DEFAULT_RIGHTS;
+						$this->groupsTable[$user_id] = $groups_ids;
 					}
-					// use the default permission (DEFAULT_RIGHTS)
+					else $groups_ids = $this->groupsTable[$user_id];
+
+					// check if permissions are defined for the current object class
+					$result = $db->getRecords(array('core_permission'), array('id', 'rights'), null, array(array(array('class_name', '=', $object_class), array('group_id', 'in', $groups_ids), array('deleted', '=', 0), array('modifier', '>', 0))));
+					// get the user permissions
+					if($db->getAffectedRows()) while($row = $db->fetchArray($result)) $user_rights |= $row['rights'];
 					else $user_rights |= DEFAULT_RIGHTS;
-					if(isset($this->permissionsTable[$user_id])) $this->permissionsTable[$user_id] = array();
+
+					if(!isset($this->permissionsTable[$user_id])) $this->permissionsTable[$user_id] = array();
 					$this->permissionsTable[$user_id][$object_class] = $user_rights;
 				}
 			}

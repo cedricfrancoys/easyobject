@@ -39,7 +39,7 @@ defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 * Define the context
 */
 // prevent vars initialization from generating output
-set_silent(true); 		
+set_silent(true);
 
 // set current entry-point script as client
 define('OPERATION_SIDE', 'client');
@@ -62,8 +62,8 @@ define('SESSION_LANG_UI', user_lang());
 $params = get_params(array('lang'=>DEFAULT_LANG));
 define('SESSION_LANG', $params['lang']);
 
-// from now on, we let the script decide whether or not to output errors messages if any
-set_silent(false);		
+// from now on, we let the script decide whether or not to output error messages if any
+set_silent(false);
 
 
 /**

@@ -87,11 +87,12 @@
 										.html(conf.value)
 										.appendTo($this);
 							CKEDITOR.replace($textarea[0], {
+									filebrowserImageBrowseUrl : 'picasaBrowser.php',
 									height: 250,
 									toolbar: [
 										['Maximize'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],
 										'/',
-										['Source'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Table','SpecialChar']	
+										['Source'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Link','Image','Table','SpecialChar']	
 									],
 									enterMode: CKEDITOR.ENTER_BR,
 									// change detection : we use the instanceReady event to catch the instance of the editor being created

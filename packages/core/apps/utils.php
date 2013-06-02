@@ -20,7 +20,7 @@
 */
 
 /*
-* file: apps/core/user/utils.php
+* file: packages/core/apps/utils.php
 *
 * App for using utility plugins
 *
@@ -111,9 +111,6 @@ $(document).ready(function() {
 				}
 		});
 	});
-
-	// init
-
 });
 ");
 

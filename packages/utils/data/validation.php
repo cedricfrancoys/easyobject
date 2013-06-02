@@ -20,7 +20,7 @@
 */
 
 /*
-* file: data/utils/validation.php
+* file: packages/utils/data/validation.php
 *
 * Returns the errors found in the specified package.
 *
@@ -175,15 +175,15 @@ foreach($classes_list as $class) {
 $allowed_associations = array(
 	'boolean' 		=> array('bool', 'tinyint', 'smallint', 'mediumint', 'int', 'bigint'),
 	'integer' 		=> array('tinyint', 'smallint', 'mediumint', 'int', 'bigint'),
-	'string' 		=> array('char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext'),
-	'short_text' 	=> array('char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext'),
-	'text' 			=> array('tinytext', 'text', 'mediumtext', 'longtext'),
+	'string' 		=> array('char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'blob', 'mediumblob'),
+	'short_text' 	=> array('char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'blob', 'mediumblob'),
+	'text' 			=> array('tinytext', 'text', 'mediumtext', 'longtext', 'blob'),
 	'date' 			=> array('date', 'datetime'),
 	'time' 			=> array('time'),
 	'datetime' 		=> array('datetime'),
 	'timestamp' 	=> array('timestamp'),
 	'selection' 	=> array('char', 'varchar'),
-	'binary' 		=> array('mediumblob', 'blob', 'longblob'),
+	'binary' 		=> array('blob', 'mediumblob', 'longblob'),
 	'many2one' 		=> array('int')
 );
 

@@ -95,7 +95,7 @@ Class ValidationTests {
 							),
 			'2340' => array(
 							'description'		=> "Calling browse method with wrong \$fields value : unexisting field name",
-							'expected_result'	=> UNKNOWN_ERROR,
+							'expected_result'	=> INVALID_PARAM,
 							'test'				=> function (){
 														$values = &browse('core\User', array('1'), array('foo'));
 														return $values;

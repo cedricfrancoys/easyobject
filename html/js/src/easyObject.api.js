@@ -562,6 +562,8 @@ var easyObject = {
 								var field = $item.attr('name');
 								var value = $item.val();
 								if(value.length) {
+									// reset the number ofmatching records
+									grid_conf.records = '';
 									// create the new domain to filter the results of the grid
 									type = schemaObj[field]['type'];
 									if(schemaObj[field]['type'] == 'function' || schemaObj[field]['type'] == 'related') type = schemaObj[field]['result_type'];
@@ -579,11 +581,14 @@ var easyObject = {
 										case 'string':
 										case 'short_text':								
 										case 'text':
+										case 'binary':										
 											grid_conf.domain[0].push([ field, 'like', '%' + value + '%']);
 											break;
+/*											
 										case 'binary':
 											// no filter allowed on this kind of field
 											break;
+*/											
 									}
 								}
 							});

@@ -43,6 +43,8 @@ class HtmlTag {
 
 	public function setTagName($tag) {$this->tag_name = $tag;}
 
+	public final function getTagName() {return $this->tag_name;}
+	
 	public final function setStyle($style) {
 		if(empty($style)) return;
 		foreach($style as $property => $value) $this->style[$property] = $value;
@@ -171,7 +173,10 @@ class HtmlWrapper {
 	}
 
 	function add($html) {
-		if(is_null($this->htmlBody)) $this->htmlBody = new HtmlBlock(0, 'body');
+		if(is_null($this->htmlBody)) {
+			if(is_a($html, 'HtmlTag') && $html->getTagName() == 'body') $this->htmlBody = $html;
+			else $this->htmlBody = new HtmlBlock(0, 'body');
+		}
 		$this->htmlBody->add($html);
 	}
 

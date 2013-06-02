@@ -168,13 +168,13 @@ function &browse($object_class, $ids=null, $fields=null, $lang=DEFAULT_LANG, $se
 function search($object_class, $domain=null, $order='id', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG, $session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
 		$om = &ObjectManager::getInstance();
-		return $om->search(user_id($session_id), $object_class, $domain, $order, $sort, $start, $limit);
+		return $om->search(user_id($session_id), $object_class, $domain, $order, $sort, $start, $limit, $lang);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = array();
 		try {
 			$rpc_client = new PHPRPC_Client(RPC_HOST, RPC_PORT);
-			$result = $rpc_client->call(array('search', array($object_class, $domain, $order, $sort, $start, $limit, $session_id)));
+			$result = $rpc_client->call(array('search', array($object_class, $domain, $order, $sort, $start, $limit, $lang, $session_id)));
 		}
 		catch(Exception $e) {
 			trigger_error('unable to search for data : '.$e->getMessage(), E_USER_WARNING);

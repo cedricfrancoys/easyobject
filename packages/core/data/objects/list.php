@@ -54,17 +54,15 @@ set_silent(true);
 // ensure required parameters have been transmitted
 check_params(array('object_class'));
 
-// todo : add lang parameter
-
-
 // 1) get parameters values
-$params = get_params(array('object_class'=>null, 'fields'=>null, 'domain'=>null, 'page'=>1, 'rp'=>10, 'sortname'=>'id', 'sortorder'=>'asc', 'records'=>null, 'mode'=>null));
+$params = get_params(array('object_class'=>null, 'fields'=>null, 'domain'=>null, 'page'=>1, 'rp'=>10, 'sortname'=>'id', 'sortorder'=>'asc', 'records'=>null, 'mode'=>null, 'lang'=>DEFAULT_LANG));
 $object_class = $params['object_class'];
 $page 	= $params['page']; 		// the requested page
 $limit	= $params['rp']; 		// how many rows we want to have into the grid
 $order	= $params['sortname'];	// index column - i.e. user click to sort
 $sort	= $params['sortorder'];	// the direction  - i.e. 'asc' or 'desc'
 $domain = $params['domain'];
+$lang	= $params['lang'];
 
 if($params['fields'] && !is_array($params['fields'])) $fields = explode(',', $params['fields']);
 else $fields = $params['fields'];
@@ -81,11 +79,35 @@ if($params['mode'] == 'recycle') {
 		$domain[$i] = array_merge($domain[$i], array(array('deleted', '=', '1')));
 }
 
-// 3) search and browse
-$ids = search($object_class, $domain, $order, $sort);
-$list = &browse($object_class, array_slice($ids, $start , $limit, true), $fields);
-$count_ids = count($ids);
 
+// 3) search and browse
+if(empty($params['records'])) {
+	// This way we search all possible results : that might result in a quite long process if the tables are big
+	// but it is the only way to determine the number of results,
+	// so we do it only when the number of results is unknown
+	if(OPERATION_MODE == 'standalone') {
+		// if we are in standalone mode, however, the DBMS might offer some options to do this quicker (for example with MySQL FOUND_ROWS())
+		// first ensure objectManger is instanciated
+		$om = &ObjectManager::getInstance();
+		// get an instance of the DBMS manipulator
+		$db = &DBConnection::getInstance();
+		$ids = search($object_class, $domain, $order, $sort, $start, $limit, $lang);
+		// use the getAffectedRows method to get the total number of reords
+		$count_ids = $db->getAffectedRows();
+		$list = &browse($object_class, $ids, $fields, $lang);
+	}
+	else {
+		$ids = search($object_class, $domain, $order, $sort, 0, '', $lang);
+		$list = &browse($object_class, array_slice($ids, $start , $limit, true), $fields, $lang);
+		$count_ids = count($ids);
+	}
+}
+else {
+	// This is a faster way to do the search but it requires the number of total results
+	$ids = search($object_class, $domain, $order, $sort, $start, $limit, $lang);
+	$list = &browse($object_class, $ids, $fields, $lang);
+	$count_ids = $params['records'];
+}
 
 
 // 4) generate json result

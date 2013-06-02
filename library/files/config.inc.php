@@ -73,9 +73,9 @@
 	define('DEBUG_ORM',	4);
 	//define('DEBUG_',	8);
 
-	define('DEBUG_MODE', 0);
+	//define('DEBUG_MODE', 0);
 	//define('DEBUG_MODE', DEBUG_PHP);
-	//define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
+	define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
 
     $SILENT_MODE = false;
 
@@ -135,12 +135,13 @@
 	define('R_MANAGE',	16);
 
 	// built-in users
-	// note : ensure that the ids in DB are matching these
+	// note : make sure that the ids in DB are matching these (and are not used for other users)
 	define('SYSTEM_USER_ID', 0);	// this user is used when the modifier id must be kept to 0
 	define('GUEST_USER_ID', 1);
 	define('ROOT_USER_ID', 2);
 
 	// built-in default group
+	// note : make sure that an identical group is set in DB
 	define('DEFAULT_GROUP_ID', 1);
 
 	// built-in default ACL

@@ -168,7 +168,7 @@ class Object {
 		if(!is_array($types_list) || is_null($types_list))	$result_array = array_keys($this->schema);
 		else {
 			foreach($this->schema as $field_name => $field_description) {
-				if(in_array($this->schema[$field_name]['type'], $types_list)) $result_array[] = $field_name;
+				if(in_array($field_description['type'], $types_list)) $result_array[] = $field_name;
 			}
 		}
 		return $result_array;
@@ -188,8 +188,7 @@ class Object {
 		if(is_null($fields)) $fields = array_keys($this->schema);
 		foreach($fields as $field) {
 			if(isset($this->fields_values[$lang]) && isset($this->fields_values[$lang][$field])) $result_array[$field] = $this->fields_values[$lang][$field];
-// todo : check if we shouldn't use a default value depending on the field's type
-			else $result_array[$field] = '';
+			else $result_array[$field] = null;
 		}
 		return $result_array;
 	}
@@ -230,14 +229,15 @@ class Object {
 						}
 					}
 				}
-				// mark field as loaded (if field has been modified, this allows to make a check to prevent it from being overwritten with further loading operations)
+				// mark field as loaded
+				// (if field has been modified, this allows to make a check to prevent it from being overwritten with further loading operations)
 				$this->loaded_fields[$lang][$field] = true;
 			}
 		}
 	}
 
 	/**
-	* Magic method for handling dynamic getters and setters methods
+	* Magic method for handling dynamic getters and setters
 	*
 	*	Note : This mechanism only works under standalone mode
 	*

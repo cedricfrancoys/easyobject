@@ -268,12 +268,161 @@ class ObjectManager {
 	/**
 	* Loads a bunch of fields values form DB.
 	* The function can load any type of field, however complex fields are loaded one by one, while simple fields are loaded all at once.
+	* We assume that if we have to query the DB, it is best to do it for an entire objects set at once (rather than one object at a time)
 	*
 	* @param integer $user_id
 	* @param string $object_class
-	* @param mixed $object_id
+	* @param array $ids
 	* @param array $object_fields
+	* @param string $lang
 	*/
+	private function loadObjectFields($user_id, $object_class, $ids, $object_fields, $lang) {
+		try {
+			// array to store the values of the loaded fields, for each object
+			$values_array = array();
+			// get the name of the DB table associated to the object
+			$table_name = $this->getObjectTableName($object_class);
+			// array to store which simple fields need to be loaded (this is done at the end of the function)
+			$simple_fields = array();
+			// we also may need additional query for translations of some fields
+			$simple_fields_multilang = array();
+			// get the object instance (if the current user has R_READ permission for the specified object)
+			$object = &$this->getObjectStaticInstance($object_class);
+			// get the complete schema of the object (including special fields)
+			$schema = $object->getSchema();
+
+			// first pass :  load complex fields one by one, and list names of the simple fields that must be loaded
+			foreach($object_fields as $field) {
+				if(!isset($schema[$field]) || ! isset($schema[$field]['type'])) throw new Exception("unknown field or missing mandatory data for field '$field' of class '$object_class'", INVALID_PARAM);
+				if($lang != DEFAULT_LANG && isset($schema[$field]['multilang']) && $schema[$field]['multilang']) $simple_fields_multilang[] = $field;
+				else if(in_array($schema[$field]['type'], $this->simple_types)) $simple_fields[] = $field;
+				else {
+					foreach($ids as $object_id) {
+						// if field is already loaded and/or has been modified, there is nothing to do
+						$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
+				   		$loaded_fields = array_keys($object->getLoadedFields($lang));
+				   		if(in_array($field, $loaded_fields)) continue;
+
+						switch($schema[$field]['type']) {
+							case 'related':
+								if(!$this->checkFieldAttributes(array('result_type', 'foreign_object', 'path'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
+								// class of the object at the current position (of the 'path' variable), start with the $object_class given as parameter
+								$path_object_class = $object_class;
+								// list of the parent objects ids, start with the $object_id given as parameter
+								$path_prev_ids = array($object_id);
+								// schema of the object at the current position, start with the schema of the $object_class given as parameter
+								$path_schema = $schema;
+								// walk through the path variable (containing the fields hierarchy)
+								foreach($schema[$field]['path'] as $path_field) {
+									// list of selected ids for the object at the current position of the 'path' variable (i.e. $path_object_class)
+									$path_objects_ids = array();
+									// fetch all ids for every parent object (whose ids are stored in $path_prev_ids)
+									foreach($path_prev_ids as $path_object_id) {
+										$path_values = $this->getFields($user_id, $path_object_class, $path_object_id, array($path_field), $lang);
+										// type of returned values may vary (integer or array) depending on the type of the field (i.e. many2many, one2many or many2one)
+										if(!is_array($path_values[$path_field])) $path_values[$path_field] = array($path_values[$path_field]);
+										$path_objects_ids = array_merge($path_objects_ids, $path_values[$path_field]);
+									}
+									// obtain the next object name (given the name of the current field, $path_field, and the schema of the current object, $path_schema)
+									if(isset($path_schema[$path_field]['foreign_object']))
+										$path_object_class = $path_schema[$path_field]['foreign_object'];
+									$path_prev_ids = $path_objects_ids;
+									$path_schema = $this->getObjectSchema($path_object_class);
+								}
+								if(in_array($schema[$field]['result_type'], $this->simple_types)) $values_array[$object_id][$field] = $path_objects_ids[0];
+								else $values_array[$object_id][$field] = $path_objects_ids;
+								break;
+							case 'function':
+								if(!$this->checkFieldAttributes(array('function', 'result_type'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
+								// handle the 'store' attribute
+                        		// if set and equals to true, value should be in database
+								if(isset($schema[$field]['store']) && $schema[$field]['store']) $simple_fields[] = $field;
+								// otherwise, we have to compute its value
+								else {
+									if(!is_callable($schema[$field]['function'])) throw new Exception("error in schema parameter for function field '$field' of class '$object_class' : function cannot be called");
+									$values_array[$object_id][$field] = call_user_func($schema[$field]['function'], $this, $user_id, $object_id, $lang);
+								}
+								break;
+							case 'one2many':
+								if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'", INVALID_PARAM);
+								// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
+			                    $values_array[$object_id][$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'in', $object_id))));
+								break;
+							case 'many2many':
+								if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for many2many field '$field' of class '$object_class'", INVALID_PARAM);
+								// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
+			                    $values_array[$object_id][$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'contains', $object_id))));
+								break;
+							default :
+								throw new Exception("unknown type '{$schema[$field]['type']}' for field '$field' of class '$object_class'");
+								break;
+						}
+					}
+				}
+			}
+			// second pass : a) load all simple fields at once, if any
+			if(count($simple_fields)) {
+				// we'll need the id column below
+				array_push($simple_fields, 'id');
+				// get all records at once
+				$result = $this->dbConnection->getRecords(array($table_name), $simple_fields, $ids);
+				while($row = $this->dbConnection->fetchArray($result)) {
+				    $object_id = $row['id'];
+				    $object = &$this->getObjectInstance($user_id, $object_class, $object_id);
+				   	$loaded_fields = array_keys($object->getLoadedFields($lang));
+					// check each value to ensure not to erase fields already loaded or default value for empty fields
+					foreach($row as $column => $value) {
+						if(in_array($column, $loaded_fields)) continue;
+						// we need to check column type as simple_fields may contain complex fields with result_type set to a simple type
+						// for functional fields : if no value is specified in DB, then compute the value by calling the associated method
+						// note : we use is_null() rather than empty() because an empty value could be the result of the calculated field (this implies that the DB schema has DDEFAULT NULL for the associated column)
+						if($schema[$column]['type'] == 'function' && is_null($value) && isset($schema[$column]['store']) && $schema[$column]['store'] && is_callable($schema[$column]['function'])) {
+							$computed_value = call_user_func($schema[$column]['function'], $this, $user_id, $object_id, $lang);
+							// assign the field to the computed value and mark it as modified (to prevent doing so at each load)
+							$object->setValues($user_id, array($column => $computed_value), $lang, true);
+						}
+						// note : sometimes, we need the value, even if it is empty (and it is important that it overwrites the default value, if any)
+						// it means that, for existing objects, default value might be overwritten by an empty value
+						else $values_array[$object_id][$column] = $value;
+					}
+				}
+			}
+			// second pass : b) load multilang fields, if any
+			if(count($simple_fields_multilang)) {
+				$result = $this->dbConnection->getRecords(
+					array('core_translation'),
+					array('object_id', 'object_field', 'value'),
+					$ids,
+					array(array(
+							array('language','=',$lang),
+							array('object_class','=',$object_class),
+							array('object_field','in',$simple_fields_multilang))
+					),
+					'object_id');
+ 				// fill in the object values array (use 'value' instead of field name)
+				while($row = $this->dbConnection->fetchArray($result)) {
+					// check value to ensure not to erase default value for empty field
+					// note : sometimes, we need the value, even if it is empty (and it is important that it overwrites the default value, if any)
+					// it means that, for existing objects, default value may be overwritten by an empty value
+					// if(!$this->dbConnection->isEmpty($row['value'])) $values_array[$row['object_field']] = $row['value'];
+					$values_array[$row['object_id']][$row['object_field']] = $row['value'];
+				}
+			}
+			// set objects values according to the loaded fields (do not mark as modified)
+			foreach($ids as $object_id) {
+				if(isset($values_array[$object_id])) {
+					$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
+					$object->setValues($user_id, $values_array[$object_id], $lang, false);
+				}
+			}
+		}
+		catch(Exception $e) {
+			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			throw new Exception('unable to load object fields', $e->getCode());
+		}
+	}
+
+/*
 	private function loadObjectFields($user_id, $object_class, $object_id, $object_fields, $lang) {
 		try {
 			// array to store the values of the loaded fields
@@ -289,6 +438,7 @@ class ObjectManager {
 			$schema = $object->getSchema();
 			// first pass :  load complex fields one by one, and list names of the simple fields that must be loaded
 			foreach($object_fields as $field) {
+// définir ici les listes d'ids devant être utilisés pour les requêtes ultérieures (pour éviter de recharger un champ complexe)
 				if(!isset($schema[$field]) || ! isset($schema[$field]['type'])) throw new Exception("unknown field or missing mandatory data for field '$field' of class '$object_class'", INVALID_PARAM);
 				if($lang != DEFAULT_LANG && isset($schema[$field]['multilang']) && $schema[$field]['multilang']) $simple_fields_multilang[] = $field;
 				else if(in_array($schema[$field]['type'], $this->simple_types)) $simple_fields[] = $field;
@@ -335,12 +485,12 @@ class ObjectManager {
 							break;
 						case 'one2many':
 							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'", INVALID_PARAM);
-							// obtain the ids by searching among objects having symmetrical field ('foreign_field') set to $object_id
+							// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
 		                    $value_array[$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'in', $object_id))));
 							break;
 						case 'many2many':
 							if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for many2many field '$field' of class '$object_class'", INVALID_PARAM);
-							// obtain the ids by searching among objects having symmetrical field ('foreign_field') set to $object_id
+							// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
 		                    $value_array[$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'contains', $object_id))));
 							break;
 						default :
@@ -356,10 +506,11 @@ class ObjectManager {
 					// check each value to ensure not to erase default value for empty fields
 					foreach($row as $column => $value) {
 						// for functional fields : if no value is specified in DB, then compute the value by calling the associated method
-						// note : we use is_null() rather than empty() because an empty value could be the result of the calculated field (this implies thaht the DB schema has DDEFAULT NULL for the associated column)
+						// note : we use is_null() rather than empty() because an empty value could be the result of the calculated field (this implies that the DB schema has DDEFAULT NULL for the associated column)
 						if($schema[$column]['type'] == 'function' && is_null($value) && isset($schema[$column]['store']) && $schema[$column]['store'] && is_callable($schema[$column]['function'])) {
 							$computed_value = call_user_func($schema[$column]['function'], $this, $user_id, $object_id, $lang);
 							// assign the field to the computed value and mark it as modified (to prevent doing so at each load)
+// $object->setValues
 							$object->setValues($user_id, array($column => $computed_value), $lang, true);
 						}
 						else
@@ -371,7 +522,17 @@ class ObjectManager {
 			}
 			// second pass : b) load multilang fields, if any
 			if(count($simple_fields_multilang)) {
-				$result = $this->dbConnection->getRecords(array('core_translation'), array('object_field', 'value'), array($object_id), array(array(array('lang','=',$lang), array('object_class','=',$object_class), array('object_field','in',$simple_fields_multilang))), 'object_id');
+				$result = $this->dbConnection->getRecords(
+					array('core_translation'),
+					array('object_field', 'value'),
+					array($object_id),
+					array(array(
+							array('language','=',$lang),
+							array('object_class','=',$object_class),
+							array('object_field','in',$simple_fields_multilang))
+					),
+					'object_id');
+ 				// fill in the object values array (use 'value' instead of field name)
 				while($row = $this->dbConnection->fetchArray($result)) {
 					// check value to ensure not to erase default value for empty field
 					// note : sometimes, we need the value, even if it is empty (and it is important that it overwrites the default value, if any)
@@ -381,6 +542,7 @@ class ObjectManager {
 				}
 			}
 			// set the object values according to the loaded fields (do not mark as modified)
+// $object->setValues
 			$object->setValues($user_id, $value_array, $lang, false);
 		}
 		catch(Exception $e) {
@@ -388,7 +550,7 @@ class ObjectManager {
 			throw new Exception('unable to load object fields', $e->getCode());
 		}
 	}
-
+*/
 	/**
 	* Stores the values of specified fields to database.
 	* If no fields are specified, stores all simple fields of the object.
@@ -483,8 +645,8 @@ class ObjectManager {
 						$fields_list[] = $field;
 						$values_list[] = array($lang, $object_class, $field, $object_id, $value);
 					}
-					$this->dbConnection->deleteRecords('core_translation', array($object_id), array(array(array('lang', '=', $lang), array('object_class', '=', $object_class), array('object_field', 'in', $fields_list), array('object_id', '=', $object_id))));
-					$this->dbConnection->addRecords('core_translation', array('lang', 'object_class', 'object_field', 'object_id', 'value'), $values_list);
+					$this->dbConnection->deleteRecords('core_translation', array($object_id), array(array(array('language', '=', $lang), array('object_class', '=', $object_class), array('object_field', 'in', $fields_list), array('object_id', '=', $object_id))));
+					$this->dbConnection->addRecords('core_translation', array('language', 'object_class', 'object_field', 'object_id', 'value'), $values_list);
 				}
 			}
 		}
@@ -501,20 +663,22 @@ class ObjectManager {
 	* Gets the value of the required fields for the specified object.
 	*
 	* @param string $object_class
-	* @param mixed $object_id
+	* @param integer $object_id
 	* @param array $object_fields
 	* @return array
 	*/
 	private function &getFields($user_id, $object_class, $object_id, $object_fields=null, $lang=DEFAULT_LANG) {
 		try {
+ 			// get the associated instance
 			$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 			// if no fields have been defined, then we will return every simple fields of the object
  			if(empty($object_fields)) $object_fields = $object->getFieldsNames($this->simple_types);
+ 			// otherwise, we ensure that there is no duplicate
  			else $object_fields = array_unique($object_fields);
-			// first, determine which fields have not yet been loaded
+			// first, determine which fields (among the requested ones) have not yet been loaded (or modified)
 			$missing_fields = array_diff($object_fields, array_keys($object->getLoadedFields($lang)));
 			// then load the missing fields
-			$this->loadObjectFields($user_id, $object_class, $object_id, $missing_fields, $lang);
+			$this->loadObjectFields($user_id, $object_class, array($object_id), $missing_fields, $lang);
 			return $object->getValues($object_fields, $lang);
 		}
 		catch(Exception $e) {
@@ -768,7 +932,20 @@ class ObjectManager {
 			$result = array();
 			if(!empty($ids) && !is_array($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
 			if(!empty($fields) && !is_array($fields)) throw new Exception("argument is not an array of objects fields : '$fields'", INVALID_PARAM);
-			if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, '', 'asc', 0, '', $lang);
+			if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, 'id', 'asc', 0, '', $lang);
+
+			// if the script is running in standalone mode
+			if(OPERATION_MODE == 'standalone') {
+				// first we request all fields of all objects at once to generate a bulk query
+				// in order to minimize the numlber of SQL queries
+				// (if some multilang field are required they'll be loaded all at once from the core_translation)
+				// note : an sql query will be generated for:
+				//  - every simple field (even the ones already loaded!)
+				//  - complex fields not yet loaded
+// todo : we could maybe improve this by removing fully loaded objects from the ids list
+				$this->loadObjectFields($user_id, $object_class, $ids, $fields, $lang);
+			}
+
 			foreach($ids as $object_id) {
 				if($object_id == 0) {
 					// we cannot use getFields here, since it would result in the creation of a new object (which is a behaviour reserved to the 'update' method)
@@ -820,6 +997,7 @@ class ObjectManager {
 			$valid_operators = array(
 								'boolean'		=> array('=', '<>'),
 								'integer'		=> array('in', 'not in', '=', '<>', '<', '>', '<=', '>='),
+								'float'			=> array('=', '<>', '<', '>', '<=', '>='),
 								'string'		=> array('like', 'ilike', '=', '<>'),
 								'short_text'	=> array('like', 'ilike','='),
 								'text'			=> array('like', 'ilike','='),
@@ -828,6 +1006,7 @@ class ObjectManager {
 								'datetime'		=> array('=', '<>', '<', '>', '<=', '>='),
 								'timestamp'		=> array('=', '<>', '<', '>', '<=', '>='),
 								'selection'		=> array('in', '=', '<>'),
+								'binary'		=> array('like', 'ilike', '='),
 								'many2one'		=> array('in', '='),
 								'one2many'		=> array('contains'),
 								'many2many'		=> array('contains'),
@@ -838,15 +1017,19 @@ class ObjectManager {
 
 			// we use a nested closure to define a function that stores original table names and returns corresponding aliases
 			$add_table = function ($table_name) use (&$tables) {
+// todo : following condition has not been tested yet (should be ok though)
+				if(in_array($table_name, $tables)) return array_search($table_name, $tables);
 				$table_alias = 't'.count($tables);
 				$tables[$table_alias] = $table_name;
 				return $table_alias;
 			};
 
+			$schema = $this->getObjectSchema($object_class);
 			$table_alias = $add_table($this->getObjectTableName($object_class));
+
 			// first pass : build conditions and the tables names arrays
 			if(!empty($domain) && !empty($domain[0]) && !empty($domain[0][0])) { // domain structure is correct and contains at least one condition
-				$schema = $this->getObjectSchema($object_class);
+
 				// we check, for each clause, if it's about a "special field"
 				$special_fields = array_keys(\core\Object::getSpecialFields());
 				for($j = 0, $max_j = count($domain); $j < $max_j; ++$j) {
@@ -859,6 +1042,7 @@ class ObjectManager {
 						$type 		= $schema[$field]['type'];
 						if(in_array($type, array('function', 'related'))) $type = $schema[$field]['result_type'];
 
+						// check the validity of the field name and the operator
 						if(!in_array($field, array_keys($schema))) throw new Exception("invalid domain, unexisting field '$field' for object '$object_class'", INVALID_PARAM);
 						if(!in_array($operator, $valid_operators[$type])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' in object '$object_class'", INVALID_PARAM);
 						// remember special fields involved in the domain (by removing them from the special_fields list)
@@ -899,13 +1083,24 @@ class ObjectManager {
 								$operator = 'in';
 								break;
 							default:
+								// add some conditions if field is multilang (and the search is made on another language than the default one)
+								if($lang != DEFAULT_LANG && isset($schema[$field]['multilang']) && $schema[$field]['multilang']) {
+// todo : validate this code
+									$translation_table_alias = $add_table('core_translation');
+									// add joint conditions
+									$conditions[$j][] = array($table_alias.'.id', '=', '`'.$translation_table_alias.'.object_id`');
+									$conditions[$j][] = array($translation_table_alias.'.object_class', '=', $object_class);
+									$conditions[$j][] = array($translation_table_alias.'.object_field', '=', $field);
+									$field = $translation_table_alias.'.value';
+								}
 								// simple fields always match table fields
-								$field = $table_alias.'.'.$field;
+								else $field = $table_alias.'.'.$field;
 								break;
 						}
 						$conditions[$j][] = array($field, $operator, $value);
 					}
-					// search only among non-draft and non-deleted records (unless at least one clause was related to those fields)
+					// search only among non-draft and non-deleted records
+					// (unless at least one clause was related to those fields - and consequently corresponding key in array $special_fields has been unset in the code above)
 					if(isset($special_fields['modifier']))	$conditions[$j][] = array($table_alias.'.modifier', '>', '0');
 					if(isset($special_fields['deleted']))	$conditions[$j][] = array($table_alias.'.deleted', '=', '0');
 				}
@@ -918,13 +1113,24 @@ class ObjectManager {
 
 			// second pass : fetch the ids of matching objects
 			$select_fields = array($table_alias.'.id');
-			if($order != 'id') $select_fields[] = $table_alias.'.'.$order;
-			$res = $this->dbConnection->getRecords($tables, $select_fields, null, $conditions, $table_alias.'.id', $order, $sort, $start, $limit);
+			$order_table_alias = $table_alias;
+			$order_field = $order;
+			// we might need to request more than the id field (for example, for sorting purpose)
+			if(isset($schema[$order]['multilang']) && $schema[$order]['multilang']) {
+// todo : validate this code (we should probabily add joint conditions in some cases)
+				$translation_table_alias = $add_table('core_translation');
+				$select_fields[] = $translation_table_alias.'.value';
+				$order_table_alias = $translation_table_alias;
+				$order_field = 'value';
+			}
+			elseif($order != 'id') $select_fields[] = $table_alias.'.'.$order;
+			// get the matching records by generating the resulting SQL query
+			$res = $this->dbConnection->getRecords($tables, $select_fields, null, $conditions, $table_alias.'.id', $order_table_alias.'.'.$order_field, $sort, $start, $limit);
 			while ($row = $this->dbConnection->fetchArray($res)) {
 				// if we are in standalone mode, we take advantage of the SQL sort
 				$res_list[] = $row['id'];
 				// if we are in client-server mode, we could need further sort
-				$res_assoc_db[$row['id']] = $row[$order];
+				$res_assoc_db[$row['id']] = $row[$order_field];
 			}
 
 // todo : validate this code
@@ -977,7 +1183,7 @@ class ObjectManager {
 						}
 						if($match !== false) {
 							// if any of the disjunctions is a match the whole domain is validated :
-							// we add the object if to the result list and we go to the next object
+							// we add the object to the result list and we go to the next object
 							// we keep the value of the 'order' field for further sort
 							$values = $object->getValues(array($order), $lang);
 							$res_assoc_mem[$ids[$i]] = $values[$order];
