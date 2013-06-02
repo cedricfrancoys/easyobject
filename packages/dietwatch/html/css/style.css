@@ -1,0 +1,113 @@
+body {
+	font: 400 1em arial, helvetica;
+}
+.ui-widget {
+	font-size: 75% !important;
+}
+# list {
+}
+fieldset {
+	margin-bottom: 5px;
+}
+.aliment {
+	width: auto;
+	border: solid 1px gray;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+.aliment label {
+	font-size: 0.9em;
+	margin-right: 3px;
+}
+.aliment input {
+	font-size: 0.8em;			
+}
+.aliment .quantity {
+	width: 40px;		
+}
+.aliment .autocomplete {
+	width: 135px;		
+}
+.aliment button {
+	float: right;
+}
+.aliment div.show_nutr a, .aliment div.show_nutr a:hover {
+	font-size: 0.8em;
+	color: #1010F0;
+	cursor: pointer;
+}
+.aliment div.show_nutr a:hover {
+	text-decoration: underline;
+}
+div.details{
+	width: auto;
+	border: solid 1px #e3e3e3;
+}
+div.details ul {
+	background: url('images/icon_plus.png') no-repeat 28px 3px transparent;
+	list-style: none outside none;
+	font: 600 0.8em Arial, Helvetica;
+	width: auto;
+	padding-right: 25%;
+	padding-left: 43px;
+	cursor: pointer;
+}
+div.details ul.unfolded {
+	background: url('images/icon_minus.png') no-repeat 28px 3px transparent;
+}
+div.details li {
+	position: relative;
+	background-color: #f3f3f3;
+	margin-left: 20px;
+	font-weight: normal;
+	width: auto;
+	height: auto;
+}
+div.odd {
+	background-color: #e8e8e8;
+}
+.expandNode {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  background-color: #000;
+  float: left;
+  margin-right: 8px;
+}
+.expand {
+  background: url('images/icon_plus.png') no-repeat 4px 5px transparent;  
+}
+.collapse {
+  background: url('images/icon_minus.png') no-repeat 4px 5px transparent;
+}
+.NodeContents {
+  border-left: 6px solid #D2FFCC;
+  margin-left: 4px;
+  display: none;
+  padding-left: 5px;
+}
+div.category {
+	font-size: 0.95em;
+}
+div.NodeItem {
+	position: relative;
+	font-size: 0.8em;
+	height: 17px;
+	width: auto;
+}
+div.ItemTitle {
+	position: absolute;
+	left: 40px;
+}
+div.ItemValue {
+	position: absolute;
+	right: 160px;
+}
+div.ItemRatio {
+	position: absolute;
+	right: 90px;
+}
+div.ItemRDI {
+	position: absolute;
+	right: 20px;
+}

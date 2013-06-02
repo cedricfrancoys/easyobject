@@ -1,0 +1,18 @@
+<form action="core_objects_update">
+	<div>
+		<span width="100%">
+			<label for="Long_Desc"></label><var id="Long_Desc" required="true"></var>
+			<br />
+			<label for="FdGrp_Cd"></label><var id="FdGrp_Cd"></var>			
+		</span>		
+	</div>
+	<div>	
+        <fieldset title="nutrients">
+            <span width="100%">			
+                <label name="values_ids"></label>
+                <br />
+                <var id="values_ids" widget="many2many" view="list.nutrients"></var>
+            </span>								
+        </fieldset>
+	</div>	
+</form>
