@@ -91,7 +91,7 @@ $get_html = function ($attributes) {
 			$dateFormatter = new DateFormatter();
 			foreach($comments_values as $comment) {
 				$author = $comment['author'];
-				$content = $comment['content'];
+				$content = str_replace("\n", "<br />", $comment['content']);
 				$dateFormatter->setDate($comment['created'], DATE_TIME_SQL);
 				$date = $dateFormatter->getDate(DATE_STRING);
 				$html .= "<li><span>par $author ($date):</span><p>$content</p></li>";

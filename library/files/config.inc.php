@@ -147,10 +147,10 @@
 	// built-in default ACL
 	// if no ACL is defined (which is the case by default) for an object nor for its class, any user will be granted the permissions set below
 	// by default, we allow anyone to see any content (you may change it if necessary)
-	//define('DEFAULT_RIGHTS', R_READ);
-	define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE);
-	// to set several rights at once :
-	// define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE);
+	define('DEFAULT_RIGHTS', R_READ);
+
+	// tip : to set several rights at once, you may use the OR binary operator
+	//define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE);
 
 /**
 * Logging

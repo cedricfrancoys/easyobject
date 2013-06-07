@@ -563,7 +563,7 @@ class ObjectManager {
 		try {
 			if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_WRITE)) throw new Exception("user $user_id does not have write permission on object $object_id of class $object_class");
 			if($object_id <= 0) throw new Exception("unable to store non-existing object : create a new instance first");
-			$object =  &$this->getObjectInstance($user_id, $object_class, $object_id);
+			$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 
 			// get the columns of the object (schema)
 			$columns = $object->getSchema();
@@ -792,7 +792,8 @@ class ObjectManager {
 			$object_fields = array_diff($object_fields, array('created', 'modified', 'creator', 'modifier'));
 			$values['object_fields'] = implode(',', $object_fields);
 		}
-		$this->update($user_id, 'core\Log', array(0), $values);
+		// logs are system objects, so the permissions are not related to the user generating log
+		$this->update(ROOT_USER_ID, 'core\Log', array(0), $values);
 	}
 
 
@@ -1234,17 +1235,17 @@ class ObjectManager {
 			// keep only values which key is matching one of the object's fields
 			$values = array_intersect_key($values, $object->getColumns());
 			foreach($ids as $object_id) {
-				// checking for permissions
-				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_WRITE)) throw new Exception("user '$user_id' does not have permission to write object '$object_id' of class '$object_class'", NOT_ALLOWED);
-				$id = $this->setFields($user_id, $object_class, $object_id, $values, $lang);
 				if($object_id == 0) {
-					$result[] = $object_id = $id;
+					$result[] = $object_id;
 					// log R_CREATE
-					$log_action = R_CREATE;
+					$action = R_CREATE;
 				}
 				// log R_WRITE
-				else $log_action = R_WRITE;
-				$this->setLog($user_id, $log_action, $object_class, $object_id, array_keys($values), $lang);
+				else $action = R_WRITE;
+				// checking for permissions
+				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, $action)) throw new Exception("user '$user_id' does not have permission to write object '$object_id' of class '$object_class'", NOT_ALLOWED);
+				$id = $this->setFields($user_id, $object_class, $object_id, $values, $lang);
+				$this->setLog($user_id, $action, $object_class, $object_id, array_keys($values), $lang);
 			}
 		}
 		catch(Exception $e) {

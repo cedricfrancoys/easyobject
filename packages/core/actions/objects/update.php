@@ -20,7 +20,7 @@
 */
 
 /*
-* file: actions/core/objects/update.php
+* file: packages/core/actions/objects/update.php
 *
 * Update an object.
 *

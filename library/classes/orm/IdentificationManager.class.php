@@ -55,18 +55,32 @@ class IdentificationManager {
 
     private function getUserPermissions($user_id, $object_class, $object_id) {
 		$user_rights = 0;
-		if(isset($this->permissionsTable[$user_id][$object_class])) $user_rights = $this->permissionsTable[$user_id][$object_class];
+
+		if(isset($this->permissionsTable[$user_id][$object_class][$object_id])) {
+			$user_rights = $this->permissionsTable[$user_id][$object_class][$object_id];
+		}
 		else {
 			try {
+				// we have to fetch data directly from database since we cannot call the Objet Manager
+				// (otherwise access would results in infinite loops of permissions check)
+        		$db = &DBConnection::getInstance();
+
+				if($object_id > 0) {
+					// creator of an object always has write permission on it
+					$om = &ObjectManager::getInstance();
+					$object_table = $om->getObjectTableName($object_class);
+					$result = $db->getRecords(array($object_table), array('creator'), array($object_id));
+					if($db->getAffectedRows() && ($row = $db->fetchArray($result)) && $row['creator'] == $user_id) $user_rights |= R_WRITE;
+// todo: adapt core_permission table in order to allow rights management at object-level
+				}
+
 				// root user always has full rights
 				if($user_id == ROOT_USER_ID) $user_rights = R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE;
 				else {
-					// we have to fetch data directly from database otherwise access would results in infinite loops of permissions check
-					$db = &DBConnection::getInstance();
 
 					// get the user groups
 					if(!isset($this->groupsTable[$user_id])) {
-						$groups_ids = array();
+						$groups_ids = array(DEFAULT_GROUP_ID);
 						$result = $db->getRecords(array('core_rel_group_user'), array('group_id'), null, array(array(array('user_id', '=', $user_id))));
 						if($db->getAffectedRows()) while($row = $db->fetchArray($result)) $groups_ids[] = $row['group_id'];
 						// use the default permission (DEFAULT_RIGHTS)
@@ -82,7 +96,9 @@ class IdentificationManager {
 					else $user_rights |= DEFAULT_RIGHTS;
 
 					if(!isset($this->permissionsTable[$user_id])) $this->permissionsTable[$user_id] = array();
-					$this->permissionsTable[$user_id][$object_class] = $user_rights;
+					$this->permissionsTable[$user_id][$object_class] = array();
+					// first element of the class-related array is used to store the user permissions for the whole class
+					$this->permissionsTable[$user_id][$object_class][0] = $user_rights;
 				}
 			}
 			catch(Exception $e) {
