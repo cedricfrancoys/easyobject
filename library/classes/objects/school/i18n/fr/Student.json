@@ -1,0 +1,10 @@
+{
+	"model": {
+		"firstname":{"label":"Prénom","help":"Le prénom de l'étudiant"},
+		"lastname":{"label":"Nom de famille","help":"Le nom de famille de l'étudiant"},
+		"birthdate":{"label":"Date de naissance"},
+		"subscription":{"label":"Date d'inscription"}
+	},
+	"view": {
+	}
+}

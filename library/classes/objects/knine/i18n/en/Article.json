@@ -1,0 +1,23 @@
+{
+	"model": {
+		"title":{"label":"Title","help":"Title (no formatting and no carriage return)"},
+		"summary":{"label":"Summary"},		
+		"content":{"label":"Content"},
+		"attributes_ids":{"label":"Attributes"},	
+		"publications_ids":{"label":"Publications"},		
+		"labels_ids":{"label":"Labels"},				
+		"authors_ids":{"label":"Authors"}
+	},
+	"view": {
+		"description":{"label":"Description"},	
+		"details":{"label":"Details"},
+		"attributes_ids":{"label":"Attributes"},
+		"labels_ids":{"label":"Labels"},				
+		"authors_ids":{"label":"Authors"},		
+		"summary":{"label":"Summary"},
+		"content":{"label":"Content"},
+		"chapters":{"label":"Chapters"},
+		"more":{"label":"Read more"},
+		"less":{"label":"Summarize"}
+	}
+}
