@@ -36,13 +36,12 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 load_class('utils/HtmlWrapper');
 
 $html = new HtmlWrapper();
-$html->addCSSFile('packages/dietwatch/html/css/style.css');
-$html->addCSSFile('html/css/jquery/base/jquery.ui.all.css');
 $html->addJSFile('html/js/jquery-1.7.1.min.js');
 $html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
-$html->addJSFile('packages/dietwatch/html/js/diet.js');
 $html->addJSFile('packages/dietwatch/html/js/config.js');
-
+$html->addJSFile('packages/dietwatch/html/js/diet.js');
+$html->addCSSFile('packages/dietwatch/html/css/style.css');
+$html->addCSSFile('html/css/jquery/base/jquery.ui.all.css');
 $html->addStyle("body {visibility: hidden;}");
 $html->add('
 	<div id="main" class="ui-tabs">
@@ -53,7 +52,8 @@ $html->add('
 		<div id="compose" class="ui-tabs-hide">
 			<fieldset id="list"><legend><label for="composition">Composition du repas</label></legend></fieldset>
 			<button id="add" type="button"><label for="add_food_item">Ajouter un aliment</label></button>		
-			<button id="export" type="button"><label for="save_list">Sauvegarder la liste</label></button>					
+			<button id="export" type="button"><label for="save_list">Sauvegarder la liste</label></button>
+			<button id="import" type="button"><label for="load_list">Importer une liste</label></button>
 		</div>		 
 		<div id="view" class="ui-tabs-hide">
 			<fieldset><legend><label for="content">Contenance en nutriments du repas</label></legend>

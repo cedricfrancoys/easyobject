@@ -336,7 +336,13 @@ class ObjectManager {
 								if(!$this->checkFieldAttributes(array('function', 'result_type'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
 								// handle the 'store' attribute
                         		// if set and equals to true, value should be in database
-								if(isset($schema[$field]['store']) && $schema[$field]['store']) $simple_fields[] = $field;
+                        		// (case with NULL DB value handled during second pass)
+// todo : validate this code
+								// note: only simple types can be stored
+								if(isset($schema[$field]['store']) && $schema[$field]['store'] && in_array($schema[$field]['result_type'], $this->simple_types)) {
+									if($lang != DEFAULT_LANG && isset($schema[$field]['multilang']) && $schema[$field]['multilang']) $simple_fields_multilang[] = $field;
+									else $simple_fields[] = $field;
+								}
 								// otherwise, we have to compute its value
 								else {
 									if(!is_callable($schema[$field]['function'])) throw new Exception("error in schema parameter for function field '$field' of class '$object_class' : function cannot be called");

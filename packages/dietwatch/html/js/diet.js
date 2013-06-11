@@ -30,11 +30,11 @@ var nutrients_RDI = {
  The terms to use are defined by the value of the 'Lang' parameter (defined above)
  Notes : 
 	- As those objects are quite small (less than 3ko), they are not put in separate files
-	- If you modify this, ensure the maintain keys unicity
+	- If you modify this, ensure to maintain keys unicity
 */
 var UI_terms = {
-		'en': {compose:'Composition',result:'Result',composition:'Description of the meal',food: 'Food',quantity: 'Quantity (g):',remove: 'Remove',display_nutr: 'show nutrients',hide_nutr: 'hide  nutrients',add_food_item:'Add food item',save_list:'Export list',content:'Nutrients contained in the meal',Lipids:'Lipids',Total_fat:'Total fat',Monounsaturated:'Monounsaturated fatty acids',Polyunsaturated:'Polyunsaturated fatty acids',Omega_3:'Omega 3 (n-3)',Omega_6:'Omega 6 (n-6)',Total_PU_fat:'Total',Sterols:'Sterols',Total_sterols:'Total',Cholesterol:'Cholest\u00e9rol',Phytosterol:'Phytost\u00e9rol',Protids:'Protids',Protein:'Proteins',Amino_acids:'Amino acids',Fibres:'Fibres',Total_fibres:'Total',Methylxanthins:'Methylxanthins',Caffeine:'Caffeine',Theobromine:'Theobromine',Water:'Liquides',Total_water:'Water',Alcohol:'Alcohol',Ethanol:'Ethanol',Energy:'Energy',Total_energy:'Total',Minerals:'Minerals',Calcium:'Calcium (Ca)',Iron:'Iron (Fe)',Magnesium:'Magnesium (Mg)',Phosphorus:'Phosphorus (P)',Potassium:'Potassium (K)',Sodium:'Sodium (Na)',Zinc:'Zinc (Zn)',Copper:'Copper (Cu)',Manganese:'Manganese (Mn)',Selenium:'Selenium (Se)',Fluoride:'Fluoride',Glucids:'Glucids',Carbohydrate:'Carbohydrate',Saccharides:'Saccharides',Total_saccharides:'Total',Monosaccharides:'Monosaccharides',Glucose:'Glucose',Fructose:'Fructose',Galactose:'Galactose',Disaccharides:'Disaccharides',Sucrose:'Sucrose',Lactose:'Lactose',Maltose:'Maltose',Starch:'Starch',Vitamins:'Vitamins',C:'Vitamin C (ascorbic acid)',B1:'Vitamin B1 (Thiamin)',B2:'Vitamin B2 (Riboflavin)',B3:'Vitamin B3 (Niacin)',B5:'Vitamin B5 (Pantothenic acid)',B6:'Vitamin B6 (Pyridoxal phosphat)',B9:'Vitamin B9 (Folic acid)',B12:'Vitamin B12 (Cobalamin)',A:'Vitamin A (Retinol)',E:'Vitamin E (alpha-tocopherol)',D:'Vitamin D (calciferol)',K:'Vitamin K (phylloquinone)'},
-		'fr': {compose: 'Composition',result: 'Résultat',composition: 'Composition du repas',food: 'Aliment',quantity: 'Quantité (g):',remove: 'Supprimer',display_nutr: 'afficher les nutriments',hide_nutr: 'masquer les nutriments',add_food_item: 'Ajouter un aliment',save_list: 'Sauvegarder la liste',content: 'Contenance en nutriments du repas',Lipids: 'Lipides',Total_fat: 'Matières grasses',Monounsaturated: 'Acides gras mono-insaturés',Polyunsaturated: 'Acides gras poly-insaturés',Omega_3: 'Omega 3 (n-3)',Omega_6: 'Omega 6 (n-6)',Total_PU_fat: 'Total',Sterols: 'Stérols',Total_sterols: 'Total',Cholesterol: 'Cholestérol',Phytosterol: 'Phytostérol',Protids: 'Protides',Protein: 'Protéines',		Amino_acids: 'Acides aminés',Fibres: 'Fibres',Total_fibres: 'Total',Methylxanthins: 'Méthylxanthines',Caffeine: 'Caféine',Theobromine: 'Théobromine',Water: 'Liquides',Total_water: 'Eau',Alcohol: 'Alcool',Ethanol: 'Ethanol',Energy: 'Énergie',Total_energy: 'Total',Minerals: 'Oligo-éléments',Calcium: 'Calcium (Ca)',Iron: 'Fer (Fe)',Magnesium: 'Magnesium (Mg)',Phosphorus: 'Phosphore (P)',Potassium: 'Potassium (K)',Sodium: 'Sodium (Na)',Zinc: 'Zinc (Zn)',Copper: 'Cuivre (Cu)',Manganese: 'Manganèse (Mn)',Selenium: 'Selenium (Se)',Fluoride: 'Fluor',Glucids: 'Glucides',Carbohydrate: 'Hydrates de carbone',Saccharides: 'Saccharides',	Total_saccharides: 'Total',Monosaccharides: 'Monosaccharides',Glucose: 'Glucose',Fructose: 'Fructose',Galactose: 'Galactose',Disaccharides: 'Disaccharides',Sucrose: 'Saccharose',Lactose: 'Lactose',Maltose: 'Maltose',Starch: 'Amidon',Vitamins: 'Vitamines',C: 'Vitamine C (acide ascorbic)',B1: 'Vitamine B1 (Thiamine)',B2: 'Vitamine B2 (Riboflavine)',B3: 'Vitamine B3 (Niacine)',B5: 'Vitamine B5 (Acide pantothenique)',B6: 'Vitamine B6 (Phosphate pyridoxal)',B9: 'Vitamine B9 (Acide folique)',B12: 'Vitamine B12 (Cobalamine)',A: 'Vitamine A (Retinol)',E: 'Vitamine E (alpha-tocopherol)',D: 'Vitamine D (calciferole)',K: 'Vitamine K (phylloquinone)'}
+		'en': {compose:'Composition',result:'Result',composition:'Description of the meal',food: 'Food',quantity: 'Quantity (g):',remove: 'Remove',display_nutr: 'show nutrients',hide_nutr: 'hide  nutrients',add_food_item:'Add food item',save_list:'Export list',load_list:'Import list',content:'Nutrients contained in the meal',Lipids:'Lipids',Total_fat:'Total fat',Monounsaturated:'Monounsaturated fatty acids',Polyunsaturated:'Polyunsaturated fatty acids',Omega_3:'Omega 3 (n-3)',Omega_6:'Omega 6 (n-6)',Total_PU_fat:'Total',Sterols:'Sterols',Total_sterols:'Total',Cholesterol:'Cholest\u00e9rol',Phytosterol:'Phytost\u00e9rol',Protids:'Protids',Protein:'Proteins',Amino_acids:'Amino acids',Fibres:'Fibres',Total_fibres:'Total',Methylxanthins:'Methylxanthins',Caffeine:'Caffeine',Theobromine:'Theobromine',Water:'Liquides',Total_water:'Water',Alcohol:'Alcohol',Ethanol:'Ethanol',Energy:'Energy',Total_energy:'Total',Minerals:'Minerals',Calcium:'Calcium (Ca)',Iron:'Iron (Fe)',Magnesium:'Magnesium (Mg)',Phosphorus:'Phosphorus (P)',Potassium:'Potassium (K)',Sodium:'Sodium (Na)',Zinc:'Zinc (Zn)',Copper:'Copper (Cu)',Manganese:'Manganese (Mn)',Selenium:'Selenium (Se)',Fluoride:'Fluoride',Glucids:'Glucids',Carbohydrate:'Carbohydrate',Saccharides:'Saccharides',Total_saccharides:'Total',Monosaccharides:'Monosaccharides',Glucose:'Glucose',Fructose:'Fructose',Galactose:'Galactose',Disaccharides:'Disaccharides',Sucrose:'Sucrose',Lactose:'Lactose',Maltose:'Maltose',Starch:'Starch',Vitamins:'Vitamins',C:'Vitamin C (ascorbic acid)',B1:'Vitamin B1 (Thiamin)',B2:'Vitamin B2 (Riboflavin)',B3:'Vitamin B3 (Niacin)',B5:'Vitamin B5 (Pantothenic acid)',B6:'Vitamin B6 (Pyridoxal phosphat)',B9:'Vitamin B9 (Folic acid)',B12:'Vitamin B12 (Cobalamin)',A:'Vitamin A (Retinol)',E:'Vitamin E (alpha-tocopherol)',D:'Vitamin D (calciferol)',K:'Vitamin K (phylloquinone)'},
+		'fr': {compose: 'Composition',result: 'Résultat',composition: 'Composition du repas',food: 'Aliment',quantity: 'Quantité (g):',remove: 'Supprimer',display_nutr: 'afficher les nutriments',hide_nutr: 'masquer les nutriments',add_food_item: 'Ajouter un aliment',save_list: 'Sauvegarder la liste',load_list:'Importer une liste',content: 'Contenance en nutriments du repas',Lipids: 'Lipides',Total_fat: 'Matières grasses',Monounsaturated: 'Acides gras mono-insaturés',Polyunsaturated: 'Acides gras poly-insaturés',Omega_3: 'Omega 3 (n-3)',Omega_6: 'Omega 6 (n-6)',Total_PU_fat: 'Total',Sterols: 'Stérols',Total_sterols: 'Total',Cholesterol: 'Cholestérol',Phytosterol: 'Phytostérol',Protids: 'Protides',Protein: 'Protéines',		Amino_acids: 'Acides aminés',Fibres: 'Fibres',Total_fibres: 'Total',Methylxanthins: 'Méthylxanthines',Caffeine: 'Caféine',Theobromine: 'Théobromine',Water: 'Liquides',Total_water: 'Eau',Alcohol: 'Alcool',Ethanol: 'Ethanol',Energy: 'Énergie',Total_energy: 'Total',Minerals: 'Oligo-éléments',Calcium: 'Calcium (Ca)',Iron: 'Fer (Fe)',Magnesium: 'Magnesium (Mg)',Phosphorus: 'Phosphore (P)',Potassium: 'Potassium (K)',Sodium: 'Sodium (Na)',Zinc: 'Zinc (Zn)',Copper: 'Cuivre (Cu)',Manganese: 'Manganèse (Mn)',Selenium: 'Selenium (Se)',Fluoride: 'Fluor',Glucids: 'Glucides',Carbohydrate: 'Hydrates de carbone',Saccharides: 'Saccharides',	Total_saccharides: 'Total',Monosaccharides: 'Monosaccharides',Glucose: 'Glucose',Fructose: 'Fructose',Galactose: 'Galactose',Disaccharides: 'Disaccharides',Sucrose: 'Saccharose',Lactose: 'Lactose',Maltose: 'Maltose',Starch: 'Amidon',Vitamins: 'Vitamines',C: 'Vitamine C (acide ascorbic)',B1: 'Vitamine B1 (Thiamine)',B2: 'Vitamine B2 (Riboflavine)',B3: 'Vitamine B3 (Niacine)',B5: 'Vitamine B5 (Acide pantothenique)',B6: 'Vitamine B6 (Phosphate pyridoxal)',B9: 'Vitamine B9 (Acide folique)',B12: 'Vitamine B12 (Cobalamine)',A: 'Vitamine A (Retinol)',E: 'Vitamine E (alpha-tocopherol)',D: 'Vitamine D (calciferole)',K: 'Vitamine K (phylloquinone)'}
 };
 
 
@@ -52,6 +52,9 @@ var UI_terms = {
 	  .append( $( "<a></a>" ).html( item.label ) )
 	  .appendTo( ul );
 	};
+	// we'll cache some results to minimize the number of server requests
+	var nutrients_cache = {};
+	var result_refresh = false;
 	
 	var treeView = function(data, $container, quantity, highlight) {
 		var is_empty = ($container.children().length > 0)?0:1;	
@@ -101,15 +104,18 @@ var UI_terms = {
 					else {						
 						var $node = $container.find('div.'+id).parent();
 					}
-					$node.find('div.ItemValue').html(easy_to_read(value));
-					if(typeof quantity != 'undefined') 
-						$node.find('div.ItemRatio').html((new Number(100*value/quantity)).toFixed(2)+'%');
-					if(typeof nutrients_RDI[config.RDI_type][id] != 'undefined') {
-						var rdi_ratio = (new Number(100*value/nutrients_RDI[config.RDI_type][id])).toFixed(2);
-						$node.find('div.ItemRDI').html(rdi_ratio+'%');
-						if(typeof highlight != 'undefined' && rdi_ratio < 100) 
-							$node.find('div.ItemValue').css({'color':'red'});
-						else $node.find('div.ItemValue').css({'color':'black'});
+					if(id == 'Total_energy') $node.find('div.ItemValue').html((new Number(value)).toFixed(0)+' Kcal');
+					else {
+						$node.find('div.ItemValue').html(easy_to_read(value));
+						if(typeof quantity != 'undefined') 
+							$node.find('div.ItemRatio').html((new Number(100*value/quantity)).toFixed(2)+'%');
+						if(typeof nutrients_RDI[config.RDI_type][id] != 'undefined') {
+							var rdi_ratio = (new Number(100*value/nutrients_RDI[config.RDI_type][id])).toFixed(2);
+							$node.find('div.ItemRDI').html(rdi_ratio+'%');
+							if(typeof highlight != 'undefined' && rdi_ratio < 100) 
+								$node.find('div.ItemValue').css({'color':'red'});
+							else $node.find('div.ItemValue').css({'color':'black'});
+						}
 					}
 					++i;
 				}
@@ -140,7 +146,7 @@ var UI_terms = {
 		if($.isArray(categories)) result = 0.0;
 		else result = {};
 		$.each(categories, function(id, value){	
-			if(typeof value == 'number' && typeof data[value] != 'undefined') {
+			if(typeof value == 'number' && typeof data[value] != 'undefined' && $.inArray(data[value][1], ['g', 'mg', 'µg'])) {
 				// we convert everything in grams
 				var ratio = 1.0;
 				if(data[value][1] == 'µg') ratio = 0.000001;
@@ -162,167 +168,228 @@ var UI_terms = {
 	}
 
 	// application init
-	$(document).ready(function() {	
-			$('#main').tabs();
-			
-			$('#result').bind('refresh', function() {
-				var result_table = {}, i = 0;
-				var total_qty = 0.0;
-				$('#list').find('div.aliment').each(function(id, elem) {		
-					var $elem = $(elem);
-					var elem_res = $elem.data('result_table');			
-					var elem_qty = $elem.find('input.quantity').val();
-					total_qty += (new Number(elem_qty));
-					if(typeof elem_res != 'undefined') {
-						if(i == 0) $.extend(true, result_table, elem_res);
-						else result_table = add_result_table(result_table, elem_res);
-					}
-					++i;
-				});
-				if(i <= 0) $('#result').empty();
-				treeView(result_table, $('#result'), total_qty, true);
-			});
+	$(window).load(function() {	
+		$('#main').tabs().bind('tabsselect', function(event, ui) {
+			if(ui.index == 1) {
+				// re-compute the meal result
+				setTimeout(function (){	
+					$('#result').trigger('refresh');
+				}, 125);
+			}
+		});		
 
-			$('#export').on('click', function() {
-				var result = '';
-				$('#list').find('div.aliment').each(function(id, elem) {		
-					var $elem = $(elem);
-					result += $elem.find('input.identifier').val()+';'+ $elem.find('input.food').val()+';'+$elem.find('input.quantity').val()+"\r\n";
-				});
-				alert(result);
+		$('#result').bind('refresh', function() {
+			if(!result_refresh) return true;
+			result_refresh = false;
+			var result_table = {}, i = 0;
+			var total_qty = 0.0;
+			$('#list').find('div.aliment').each(function(id, elem) {		
+				var $elem = $(elem);
+				var elem_res = $elem.data('result_table');			
+				var elem_qty = $elem.find('input.quantity').val();
+				total_qty += (new Number(elem_qty));
+				if(typeof elem_res != 'undefined') {
+					if(i == 0) $.extend(true, result_table, elem_res);
+					else result_table = add_result_table(result_table, elem_res);
+				}
+				++i;
 			});
-			
-			$('#add').on('click', function() {		
-				var new_id = $('#list').children().length;
-				var $new_item = $('<div>').addClass('aliment')
-					.append($('<label/>').attr('for', 'food'))
-					.append($('<input>').attr('id', 'alim-'+new_id).addClass('food').addClass('autocomplete').css({'margin-right': '15px'})
-						.autocomplete({
-							delay: 500,
-							minLength: 4,
-							source: [],
-							select: function(event, ui) {
-								// we intercept the selection in the autocomplete list in order to display the label 
-								// and to store the id in a hidden input
-								$(event.target).val(ui.item.label.replace(/(<b>)*(<\/b>)*/gi, ''));
-								$('#'+$(event.target).attr('id')+'-id').val(ui.item.value);
-								$('#'+$(event.target).attr('id')+'-qte').focus();
-								// on food-item change : modify the nutrients list
-								// delay the refresh so dropdown list is removed
-								var $details = $(this).parent().find('div.details');
-								setTimeout(function (){	
-									$details.trigger('refresh');
-									$('#result').trigger('refresh');
-								}, 500);
-								return false;
-							},
-							search: function(event, ui) {
-								$.ajax({
-									type: 'GET',
-									url: '?get=dietwatch_food',
-									async: false,
-									dataType: 'text',
-// todo : add limitation to specified groups (if any)									
-									data: {	
-										lang: config.Lang,
-										content: event.target.value
-									},					
-									contentType: 'application/json; charset=utf-8',
-									success: function(json_txt){
-											if(json_txt && json_txt.length) {
-												var obj = $.parseJSON(json_txt);
-												$(event.target).autocomplete( "option", "source",  obj);
-											}
-									},
-									error: function(e){console.log('error: '+e);}
-								});
-								return true;
+			if(i <= 0) $('#result').empty();
+			treeView(result_table, $('#result'), total_qty, true);
+		});
+
+		$('#export').on('click', function() {
+			var result = '';
+			$('#list').find('div.aliment').each(function(id, elem) {		
+				var $elem = $(elem);
+				result += $elem.find('input.identifier').val()+';'+ $elem.find('input.food').val()+';'+$elem.find('input.quantity').val()+"\r\n";
+			});
+			$content = $('<div />').attr('title', 'export').append($('<textarea />').css({'width': '100%', 'min-height': '150px'}).html(result));
+			$content.dialog({ 
+				buttons: { 
+							"Ok": function() { 
+								$(this).dialog("close");
 							}
-						})
-					)
-					.append($('<input type="hidden">').addClass('identifier').attr('id', 'alim-'+new_id+'-id'))
-					.append($('<label/>').attr('for', 'quantity'))
-					.append($('<input>').attr('id', 'alim-'+new_id+'-qte').addClass('quantity').val(100)
-						.on('change', function() {
-							// on quantity change : modify the nutrients list
-							$(this).parent().find('div.details').trigger('refresh');
-							$('#result').trigger('refresh');
-						})
-					)
-					.append($('<button typ="button" />').append($('<label/>').attr('for', 'remove')).on('click', function() {
-							$(this).parent().remove();
-						})
-					)
-					.append($('<div/>').addClass('show_nutr')
-						.append($('<a/>').addClass('display_link').append($('<label/>').attr('for', 'display_nutr'))
-							.on('click', function() {
-								var $this = $(this);
-								var $parent = $this.parent().parent();
-								$this.toggle();
-								$this.parent().find('a.hide_link').toggle();
-								$details = $parent.find('div.details')
-								// $details.trigger('refresh');
-								$details.toggle();
-							})
-						)
-						.append($('<a/>').addClass('hide_link').append($('<label/>').attr('for', 'hide_nutr')).css({'display': 'none'})
-							.on('click', function() {
-								var $this = $(this);
-								var $parent = $this.parent().parent();
-								$this.toggle();
-								$this.parent().find('a.display_link').toggle();
-								$parent.find('div.details').toggle();
-							})
-						)
-					)
-					.append($('<div/>').addClass('details').css({'display':'none'}).bind('refresh', function() {
-						var $this = $(this);
-						var $parent = $this.parent();
-						var food_quantity = $parent.find('input.quantity').val();
+				}		
+			});
+			
+		});
 
-						$parent.find('input.identifier').each(function(i, elem) {
-							var food_id = $(elem).val();
-							if(typeof food_id == 'undefined' || !food_id.length) return;
-							// var id = $(elem).attr('id');
-							// var food_name = $('#'+id.substring(0,id.length-3)).val();
+		$('#import').on('click', function() {
+			$content = $('<div />').attr('title', 'import').append($('<textarea />').css({'width': '100%', 'min-height': '150px'}));
+
+			$content.dialog({ 
+				buttons: { 
+							"Ok": function() {
+								var content = $(this).find('textarea').val();								
+								$.each(content.split("\n"), function(i, value) {
+									if(value.length > 1) {
+										var res = value.split(";");
+										var new_id = add_item(res[0], res[1], res[2]);
+										console.log($('#alim-'+new_id).parent().find('div.details'));
+										$('#alim-'+new_id).parent().find('div.details').trigger('refresh');
+									}
+								});
+								$(this).dialog("close");
+							}
+				}		
+			});
+		});
+		
+		var add_item = function(food_id, label, quantity) {
+			var new_label, new_quantity;			
+			var new_id = $('#list').children().length;
+			if(typeof food_id == 'undefined') food_id = '';			
+			if(typeof label != 'undefined') new_label = label;
+			else new_label = '';
+			if(typeof quantity != 'undefined') new_quantity = quantity;
+			else new_quantity = 100;
+			
+			var $new_item = $('<div>').addClass('aliment')
+				.append($('<label/>').attr('for', 'food'))
+				.append($('<input>').attr('id', 'alim-'+new_id).val(new_label).addClass('food').addClass('autocomplete').css({'margin-right': '15px'})
+					.autocomplete({
+						delay: 500,
+						minLength: 4,
+						source: [],
+						select: function(event, ui) {
+							// we intercept the selection in the autocomplete list in order to display the label 
+							// and to store the id in a hidden input
+							$(event.target).val(ui.item.label.replace(/(<b>)*(<\/b>)*/gi, ''));
+							$('#'+$(event.target).attr('id')+'-id').val(ui.item.value);
+							$('#'+$(event.target).attr('id')+'-qte').focus();
+							// on food-item change : modify the nutrients list
+							// delay the refresh so dropdown list is removed
+							var $details = $(this).parent().find('div.details');
+							setTimeout(function (){	
+								$details.trigger('refresh');
+							}, 125);
+							return false;
+						},
+						search: function(event, ui) {
+							$.ajax({
+								type: 'GET',
+								url: '?get=dietwatch_food',
+								async: false,
+								dataType: 'text',
+// todo : add limitation to specified groups (if any)									
+								data: {	
+									lang: config.Lang,
+									content: event.target.value
+								},					
+								contentType: 'application/json; charset=utf-8',
+								success: function(json_txt){
+										if(json_txt && json_txt.length) {
+											var obj = $.parseJSON(json_txt);
+											$(event.target).autocomplete( "option", "source",  obj);
+										}
+								},
+								error: function(e){console.log('error: '+e);}
+							});
+							return true;
+						}
+					})
+				)
+				.append($('<input type="hidden">').addClass('identifier').attr('id', 'alim-'+new_id+'-id').val(food_id))
+				.append($('<label/>').attr('for', 'quantity'))
+				.append($('<input>').attr('id', 'alim-'+new_id+'-qte').addClass('quantity').val(new_quantity)
+					.on('change', function() {
+						// on quantity change : modify the nutrients list
+						$(this).parent().find('div.details').trigger('refresh');
+					})
+				)
+				.append($('<button typ="button" />').append($('<label/>').attr('for', 'remove')).on('click', function() {
+						$(this).parent().remove();
+					})
+				)
+				.append($('<div/>').addClass('show_nutr')
+					.append($('<a/>').addClass('display_link').append($('<label/>').attr('for', 'display_nutr'))
+						.on('click', function() {
+							var $this = $(this);
+							var $parent = $this.parent().parent();
+							$this.toggle();
+							$this.parent().find('a.hide_link').toggle();
+							$details = $parent.find('div.details')
+							$details.toggle();
+						})
+					)
+					.append($('<a/>').addClass('hide_link').append($('<label/>').attr('for', 'hide_nutr')).css({'display': 'none'})
+						.on('click', function() {
+							var $this = $(this);
+							var $parent = $this.parent().parent();
+							$this.toggle();
+							$this.parent().find('a.display_link').toggle();
+							$parent.find('div.details').toggle();
+						})
+					)
+				)
+				.append($('<div/>').addClass('details').css({'display':'none'}).bind('refresh', function() {
+					var $this = $(this);
+					var $parent = $this.parent();
+					var food_quantity = $parent.find('input.quantity').val();
+					$parent.find('input.identifier').each(function(i, elem) {
+						var food_id = $(elem).val();
+						if(typeof food_id == 'undefined' || !food_id.length) return;
+						var $details = $parent.find('div.details');										
+						// first, we try to use the cache
+						if(typeof nutrients_cache[food_id] == 'object') {
+							res = create_result_table(nutrients_categories, nutrients_cache[food_id], food_quantity);
+							// associate result table with the jQuery object
+							$parent.data('result_table', res);
+							// re-generate the food item details treeview
+							treeView(res, $details, food_quantity);
+							// result tab needs a refresh
+							result_refresh = true;							
+						}
+						// if nutrients for this food item are not yet cached, then we ask the server
+						else {
 							$.ajax({
 								type: 'GET',
 								url: '?get=dietwatch_nutrients',
-								async: false,
+								async: true,
 								dataType: 'json',
 								data: {	
 									food_id: food_id
 								},					
 								contentType: 'application/json; charset=utf-8',
 								success: function(json_data){
-										if(typeof json_data == 'object') {
-											$details = $parent.find('div.details');										
-											res = create_result_table(nutrients_categories, json_data, food_quantity);
-											$parent.data('result_table', res);
-											treeView(res, $details, food_quantity);
-										}
+									nutrients_cache[food_id] = {};
+									$.extend(true, nutrients_cache[food_id], json_data);
+									res = create_result_table(nutrients_categories, nutrients_cache[food_id], food_quantity);
+									// associate result table with the jQuery object
+									$parent.data('result_table', res);
+									// re-generate the food item details treeview
+									treeView(res, $details, food_quantity);
+									// result tab needs a refresh
+									result_refresh = true;									
 								},
 								error: function(e){console.log(e);}
 							});							
-						});
-					}))
-				.appendTo($('#list'));
-				
-				$new_item.find('label').each(function(i, elem) {
-					$elem = $(elem);
-					$elem.html(UI_terms[config.Lang][$elem.attr('for')]);				
-				});
-				
-				$('#'+'alim-'+new_id).focus();
-			});
-
-			// translate UI terms
-			$('label').each(function(i, elem) {
+						}
+					});
+				}))
+			.appendTo($('#list'));
+			
+			$new_item.find('label').each(function(i, elem) {
 				$elem = $(elem);
 				$elem.html(UI_terms[config.Lang][$elem.attr('for')]);				
 			});
-			
-			// delay the display in order to let the browser load UI styles and images
-			setTimeout(function (){	$('body').css({'visibility': 'visible'});}, 800);
+
+			return new_id;
+		}
+		
+		$('#add').on('click', function() {
+			var new_id = add_item();
+			$('#'+'alim-'+new_id).focus();
+		});
+
+		// translate UI terms
+		$('label').each(function(i, elem) {
+			$elem = $(elem);
+			$elem.html(UI_terms[config.Lang][$elem.attr('for')]);				
+		});
+		
+		// display body content (now that the browser has loaded UI styles and images)
+			$('body').css({'visibility': 'visible'});
 	});	
 })(jQuery);

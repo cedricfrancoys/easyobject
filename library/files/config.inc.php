@@ -126,8 +126,10 @@
 
 
 /**
-* Users and permissions
+* Users, groups and permissions
 */
+
+	// permissions that can be granted to a user or a group
 	define('R_CREATE',	1);
 	define('R_READ',	2);
 	define('R_WRITE',	4);
@@ -147,10 +149,17 @@
 	// built-in default ACL
 	// if no ACL is defined (which is the case by default) for an object nor for its class, any user will be granted the permissions set below
 	// by default, we allow anyone to see any content (you may change it if necessary)
-	define('DEFAULT_RIGHTS', R_READ);
+	// note: in order to allow a user to fully create objects, he must be granted R_CREATE and R_WRITE permissions
+	//define('DEFAULT_RIGHTS', R_READ);
 
 	// tip : to set several rights at once, you may use the OR binary operator
-	//define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE);
+	define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE);
+	
+	// level of authorization control
+	// By default, the control is done at the class level. It means that a user will be granted the same rights for every objects of a given class.
+	// However, sometimes we must take the object id under account (for instance, if pages of a web site can have their own permissions)
+	define('CONTROL_LEVEL', 'class');	// allowed values are 'class' or ' object'
+	
 
 /**
 * Logging

@@ -9,14 +9,13 @@ set_silent(true);
 check_params(array('food_id'));
 $params = get_params(array('food_id'=>null));
 
-$result = '';
+$result= array();
 
 if(isset($params['food_id'])) {
 	$ids = search("dietwatch\\value", array(array(array('NDB_No', '=', $params['food_id']))));	
 	$list = &browse("dietwatch\\value", $ids, array('Nutr_No', 'Nutr_Val', 'Units'));
-	foreach($list as $id => $object_fields) $result .= '"'.$object_fields['Nutr_No'].'":["'.$object_fields['Nutr_Val'].'","'.$object_fields['Units'].'"],';
-	$result = rtrim($result, ',');
+	foreach($list as $id => $object_fields) $result[$object_fields['Nutr_No']] = array($object_fields['Nutr_Val'],$object_fields['Units']);
 }
 
 header('Content-type: text/html; charset=UTF-8');
-echo '{'.$result.'}';
+echo json_encode($result);

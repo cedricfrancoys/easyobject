@@ -131,12 +131,10 @@ class HtmlWrapper {
 		$html = "<!DOCTYPE HTML>\n<html>\n<head>\n";
 		foreach($this->metas as $name => $content) $html .= "<meta name=\"{$name}\" content=\"$content\" />\n";
 		$html .= "<meta charset=\"{$this->charset}\" />\n";
-		foreach($this->js_files as $file) $html .= "<script language=\"javascript\" type=\"text/javascript\" src=\"$file\"></script>\n";
 		foreach($this->css_files as $file) $html .= "<link rel=\"stylesheet\" href=\"$file\" type=\"text/css\" />\n";
-		if(!empty($this->script))
-			$html .= '<script language="javascript" type="text/javascript">'.$this->script."</script>\n";
-		if(!empty($this->style))
-			$html .= '<style type="text/css">'.$this->style."</style>\n";
+		foreach($this->js_files as $file) $html .= "<script language=\"javascript\" type=\"text/javascript\" src=\"$file\"></script>\n";
+		if(!empty($this->style)) $html .= '<style type="text/css">'.$this->style."</style>\n";
+		if(!empty($this->script)) $html .= '<script language="javascript" type="text/javascript">'.$this->script."</script>\n";
 		$html .= "</head>\n".$this->htmlBody."\n</html>\n";
         $html .= "\n";
 		return $html;
