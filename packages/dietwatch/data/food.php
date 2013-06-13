@@ -7,12 +7,15 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 set_silent(true);
 
 check_params(array('content'));
-$params = get_params(array('content'=>null,'lang'=>'en'));
+$params = get_params(array('content'=>null,'lang'=>'en','groups'=>array()));
 
 $result = array();
 
 if(isset($params['content'])) {
-	$ids = search("dietwatch\\food", array(array(array('Long_Desc', 'ilike', "%{$params['content']}%"))), 'Long_Desc', 'asc', 0, '', $params['lang']);
+	if(!empty($params['groups'])) 
+		$ids = search("dietwatch\\food", array(array(array('Long_Desc', 'ilike', "%{$params['content']}%"), array('FdGrp_Cd', 'in', $params['groups']))), 'Long_Desc', 'asc', 0, '', $params['lang']);
+	else
+		$ids = search("dietwatch\\food", array(array(array('Long_Desc', 'ilike', "%{$params['content']}%"))), 'Long_Desc', 'asc', 0, '', $params['lang']);	
 	$list = &browse("dietwatch\\food", $ids, array('Long_Desc'), $params['lang']);
 	foreach($list as $id => $object_fields) { 
 		$result[] = array('label' => preg_replace('/'.$params["content"].'/iu', '<b>'.$params["content"].'</b>', $object_fields['Long_Desc']), 'value' => $id);

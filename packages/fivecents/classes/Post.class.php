@@ -6,7 +6,7 @@ namespace fivecents {
 
 		public static function getColumns() {
 			return array(
-				'title'				=> array('type' => 'string', 'onchange' => 'alternet\Association::onchange_parent_id'),
+				'title'				=> array('type' => 'string'),
 				'content'			=> array('type' => 'text'),
 				'author' 			=> array('type' => 'function', 'result_type' => 'string', 'store' => true, 'function' => 'fivecents\Post::callable_getAuthor'),
 				'url_resolver_id' 	=> array('type' => 'many2one', 'foreign_object' => 'core\UrlResolver'),

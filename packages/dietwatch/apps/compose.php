@@ -42,8 +42,9 @@ $html->addJSFile('packages/dietwatch/html/js/config.js');
 $html->addJSFile('packages/dietwatch/html/js/diet.js');
 $html->addCSSFile('packages/dietwatch/html/css/style.css');
 $html->addCSSFile('html/css/jquery/base/jquery.ui.all.css');
-$html->addStyle("body {visibility: hidden;}");
+$html->addStyle("#main {visibility: hidden;}");
 $html->add('
+	<div id="loader"><div class="layer"></div><div class="loading">Loading, please wait...</div></div>
 	<div id="main" class="ui-tabs">
 		 <ul>
 			 <li><a href="#compose"><label for="compose">Composition</label></a></li>
