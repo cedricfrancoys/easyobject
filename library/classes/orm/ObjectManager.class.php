@@ -278,6 +278,8 @@ class ObjectManager {
 	*/
 	private function loadObjectFields($user_id, $object_class, $ids, $object_fields, $lang) {
 		try {
+			if(is_null($object_fields)) throw new Exception("missing object_fields attribute for method loadObjectFields", INVALID_PARAM);
+
 			// array to store the values of the loaded fields, for each object
 			$values_array = array();
 			// get the name of the DB table associated to the object
@@ -706,12 +708,13 @@ class ObjectManager {
 		try {
 			$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 			$columns = $object->getColumns();
+			// if a new instance has been created, assign $object_id to the actual object identifier
 			if($object_id == 0) $object_id = $object->getId();
 
 			$fields_values = array();
 			$onchange_fields = array();
 
-        // first pass : update values
+	        // first pass : update values
 			foreach($object_fields as $field => $value) {
 				// 1) check if the given value match one of the object's fields
 				if(!isset($columns[$field])) continue;
@@ -749,7 +752,7 @@ class ObjectManager {
 			// update object (mark fields as modified)
 			$object->setValues($user_id, $fields_values, $lang);
 
-		// second pass : handle onchange events, if any (must be called afer modifications otherwise object values might be outdated)
+			// second pass : handle onchange events, if any (must be called afer modifications otherwise object values might be outdated)
 			// before handling onchange events, we store fields having the onchange attribute set (we need to do so because o2m and m2m fields can be only partially loaded)
 			if(count($onchange_fields)) {
 				// force a storage of the modified values to DB
@@ -949,6 +952,10 @@ class ObjectManager {
 				// note : an sql query will be generated for:
 				//  - every simple field (even the ones already loaded!)
 				//  - complex fields not yet loaded
+
+				// if no fields have been defined, then we will return every simple fields of the object
+				$object = &$this->getObjectStaticInstance($object_class);
+	 			if(empty($fields)) $fields = $object->getFieldsNames($this->simple_types);
 // todo : we could maybe improve this by removing fully loaded objects from the ids list
 				$this->loadObjectFields($user_id, $object_class, $ids, $fields, $lang);
 			}
@@ -1241,17 +1248,15 @@ class ObjectManager {
 			// keep only values which key is matching one of the object's fields
 			$values = array_intersect_key($values, $object->getColumns());
 			foreach($ids as $object_id) {
-				if($object_id == 0) {
-					$result[] = $object_id;
-					// log R_CREATE
-					$action = R_CREATE;
-				}
-				// log R_WRITE
+				if($object_id == 0) $action = R_CREATE;
 				else $action = R_WRITE;
 				// checking for permissions
 				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, $action)) throw new Exception("user '$user_id' does not have permission to write object '$object_id' of class '$object_class'", NOT_ALLOWED);
 				$id = $this->setFields($user_id, $object_class, $object_id, $values, $lang);
-				$this->setLog($user_id, $action, $object_class, $object_id, array_keys($values), $lang);
+				// log the current action
+				$this->setLog($user_id, $action, $object_class, $id, array_keys($values), $lang);
+				// add object identifier to the result array
+				$result[] = $id;
 			}
 		}
 		catch(Exception $e) {

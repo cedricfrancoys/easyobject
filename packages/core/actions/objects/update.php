@@ -54,9 +54,9 @@ else {
 		$result = INVALID_PARAM;
 	}
 	else {
-
 // note : keep in mind that if we are requesting a new object
-// and if that object has one field whose name is in the $_REQUEST, we don't prevent from setting values (which would result in the creation AND modification, so object would no longer be a draft)
+// and if that object has one field whose name is in the $_REQUEST 
+// then we don't prevent from setting values (which would result in the creation AND modification, so object would no longer be a draft)
 		// values are valid : update object and get json result
 		$result = update($params['object_class'], $params['ids'], $_REQUEST, $params['lang']);
 		// look for deprecated draft
