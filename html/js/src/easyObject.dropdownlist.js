@@ -69,7 +69,7 @@
 			},
 			layout: function($list, conf) {		
 				$list
-				.append($('<select/>').attr('id', 'list_select').css({'width': '85%', 'vertical-align': 'top', 'margin-right': '3px'}))
+				.append($('<select/>').addClass('list_select').css({'width': '85%', 'vertical-align': 'top', 'margin-right': '3px'}))
 				.append(
 					$('<button type="button"/>').button({icons:{primary:conf.edit.icon}, text: false}).attr('title', conf.edit.text).css({'margin': '1px', 'padding': '3px 0px 3px 0px', 'width': '4%'})
 					.click(function() {
@@ -90,11 +90,10 @@
 				);
 			},
 			feed: function($list, conf) {
-				var self = this;
-				// get list and empty it
-				$select = $('#list_select', $list).empty();
-// todo : check if conf contains values or url				
-				self.browse(conf, function(json) {
+// todo : check if conf contains values or url
+				this.browse(conf, function(json) {
+					// get list and empty it
+					$select = $('.list_select', $list).empty();				
 					$.each(json.rows, function(i, row) {
 						var value = '';
 						$.each(row.cell, function(i, cell) {
@@ -106,7 +105,7 @@
 				});				
 			},
 			selection: function($list) {
-				return $('#list_select', $list).val();			
+				return $('.list_select', $list).val();			
 			}
 		};
 

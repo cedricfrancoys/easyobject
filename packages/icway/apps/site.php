@@ -9,6 +9,8 @@ set_silent(true);
 check_params(array('page_id'));
 $params = get_params(array('page_id'=>1));
 
+
+// todo : param 'lang'
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'tips_ids'));
 
 	
@@ -30,7 +32,8 @@ $get_html = function ($attributes) {
 			$ids = search('icway\Section', array(array(array('parent_id', '=', '1'))), 'index', 'desc', 0, 10);
 			$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
 			foreach($sections_values as $section_values) {
-				$html .= "<li><a href=\"index.php?show=icway_site&page_id={$section_values['page_id']}\">{$section_values['title']}</a></li>";
+				$title = mb_strtoupper($section_values['title'], 'UTF-8');
+				$html .= "<li><a href=\"index.php?show=icway_site&page_id={$section_values['page_id']}\">$title</a></li>";
 			}
 			$html .= "</ul>";			
 			break;

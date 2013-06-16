@@ -46,7 +46,7 @@
 			},
 			layout: function($list, conf) {		
 				$list
-				.append($('<input/>').attr('id', 'choice_input').css({'width': '94%', 'vertical-align': 'top', 'margin-right': '3px'}))
+				.append($('<input/>').addClass('choice_input').css({'width': '94%', 'vertical-align': 'top', 'margin-right': '3px'}))
 				.append(
 					$('<button/>').button({icons:{primary:conf.choose.icon}, text: false}).attr('title', conf.choose.text).css({'margin': '1px', 'padding': '3px 0px 3px 0px', 'width': '4%'})
 					.click(function() {
@@ -55,10 +55,8 @@
 				);
 			},
 			feed: function($choice, conf) {
-				var self = this;
-				// get list and empty it
-				$input = $('#choice_input', $choice).empty();
-				self.browse(conf, function(json) {
+				this.browse(conf, function(json) {
+					$input = $('.choice_input', $choice);					
 					$.each(json.rows, function(i, row) {
 						var value = '';
 						$.each(row.cell, function(i, cell) {
@@ -72,7 +70,7 @@
 				});				
 			},
 			selection: function($choice) {
-				return $('#choice_input', $choice).data('val');			
+				return $('.choice_input', $choice).data('val');			
 			}
 		};
 

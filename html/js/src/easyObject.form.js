@@ -450,7 +450,7 @@
 						// add onSubmit callback to the form, if any
 						if(attr_onsubmit != undefined) {
 							$form.data('conf').onSubmitCallbacks.add(function() {
-								// we don't use $.globalEval because we need an access to the current context
+								// we don't use $.globalEval because we need access to the current context
 								eval(attr_onsubmit);
 							});
 						}
