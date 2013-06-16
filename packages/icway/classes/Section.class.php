@@ -6,7 +6,7 @@ namespace icway {
 
 		public static function getColumns() {
 			return array(
-				'index'			=> array('type' => 'integer'),
+				'sequence'		=> array('type' => 'integer'),
 				'page_id'		=> array('type' => 'many2one', 'foreign_object' => 'icway\Page'),
 				'parent_id'		=> array('type' => 'many2one', 'foreign_object' => 'icway\Section'),				
 				'sections_ids'	=> array('type' => 'one2many', 'foreign_object' => 'icway\Section', 'foreign_field' => 'parent_id'),

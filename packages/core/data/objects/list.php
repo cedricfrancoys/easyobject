@@ -20,7 +20,7 @@
 */
 
 /*
-* file: data/core/objects/list.php
+* file: packages/core/data/objects/list.php
 *
 * Search and browse matching objects.
 *

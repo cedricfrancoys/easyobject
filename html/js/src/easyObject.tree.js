@@ -65,7 +65,7 @@
 			layout: function($tree, conf) {
 				var self = this;
 				// create list
-				$list = $('<ul/>').attr('id', 'tree_list').addClass('ui-selectable')
+				$list = $('<ul/>').addClass('tree_list').addClass('ui-selectable')
 					.click(function(event) {
 						if($(event.target).is('span')) {
 							$this = $(event.target);
@@ -203,18 +203,18 @@
 			feed: function($tree, conf) {
 				var self = this;
 				// get body, empty it and display the loader
-				$list = $('#tree_list', $tree).empty().append($('<div/>').addClass('loader').append('loading...'));
+				$list = $('.tree_list', $tree).empty().append($('<div/>').addClass('loader').append('loading...'));
 				self.browse(conf, function(json) {
 					// empty the body again (to make the loader disappear)
-					$list.empty();
+					$list = $('.tree_list', $tree).empty();
 					$.each(json.rows, function(i, row) {
 						$list.append(
 							$('<li/>')
 								.attr('id', row.id)
 								// sequence field is added in the feed method and is thus the last field
-								.attr('seq', row.cell[conf.fields.length])
-								
+								.attr('seq', row.cell[conf.fields.length-1])						
 								// to improve							
+								// for now, we consider that the first column is the id and the second one holds some data that allow user to identify the object
 								.append($('<span/>').text(row.cell[1]))
 								
 								.bind('folding', function(event, callback) {

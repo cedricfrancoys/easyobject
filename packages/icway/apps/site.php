@@ -29,7 +29,7 @@ $get_html = function ($attributes) {
 			break;
 		case 'top_menu':
 			$html .= "<ul>";	
-			$ids = search('icway\Section', array(array(array('parent_id', '=', '1'))), 'index', 'desc', 0, 10);
+			$ids = search('icway\Section', array(array(array('parent_id', '=', '1'))), 'sequence', 'desc', 0, 10);
 			$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
 			foreach($sections_values as $section_values) {
 				$title = mb_strtoupper($section_values['title'], 'UTF-8');
@@ -43,17 +43,48 @@ $get_html = function ($attributes) {
 		case 'content':
 			$html = $values[$params['page_id']]['content'];
 			break;
-		case 'left_columns':
-			$current_page_id = $params['page_id'];
-			// find sectiuon of current page (should be only one!)
-			$sections_values = &browse('icway\Section', array($params['page_id']), array('parent_id'));				
+		case 'localizator':
+			$path = array();
+			// recurse to the root section
+			$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));	
+			$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'));
+			while(true) {
+				$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'));
+				foreach($sections_values as $section_id => $section_values) {
+					array_unshift($path, array($section_values['page_id'] => $section_values['title']));
+					$sections_ids = array($section_values['parent_id']);
+					if($section_values['parent_id'] == 0) break 2;					
+ 				}
+ 			} 			
+			$html = '<ul>';
+			for($i = 0, $j = count($path); $i < $j; $i++) {
+				foreach($path[$i] as $page_id => $page_title) {
+					$html .= '<li><a href="?show=icway_site&page_id='.$page_id.'">'.$page_title.'</a></li>';
+				}
+			}
+			$html .= '</ul>';					
+			break;
+		case 'left_column':
+			// find level-2 section of current page 
+			$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));			
+			$selected_id = null;			
+			while(true) {
+				$sections_values = &browse('icway\Section', $sections_ids, array('parent_id'));
+				foreach($sections_values as $section_id => $section_values) {
+					if($section_values['parent_id'] == 0) break 2;
+					$selected_id = $section_id;
+					$sections_ids = array($section_values['parent_id']);
+ 				}
+ 			} 			
+			// no match found
+			if(is_null($selected_id)) break;
+			$sections_values = &browse('icway\Section', array($selected_id), array('title', 'sections_ids'));				
 			foreach($sections_values as $section_id => $section_values) {
-				$parent_values = &browse('icway\Section', array($section_values['parent_id']), array('sections_ids', 'title'));				
-				$html = '<h1>'.$parent_values[$section_values['parent_id']]['title'].'</h1>';
+				$html = '<h1>'.$section_values['title'].'</h1>';
 				$html .= '<ul>';
-				$subsections_values = &browse('icway\Section', $parent_values[$section_values['parent_id']]['sections_ids'], array('page_id', 'title'));
+				$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'));
 				foreach($subsections_values as $subsection_values) {
-					if($subsection_id == $params['page_id']) $html .= '<li class="current">';
+					if($subsection_values['page_id'] == $params['page_id']) $html .= '<li class="current">';
 					else $html .= '<li>';
 					$html .= '<a href="?show=icway_site&page_id='.$subsection_values['page_id'].'">'.$subsection_values['title'].'</a>';
 					$html .= '</li>';

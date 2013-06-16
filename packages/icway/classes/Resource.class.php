@@ -1,0 +1,1 @@
+<?phpnamespace icway {	class Resource extends \core\Object {		public static function getColumns() {			return array(				'title'				=> array('type' => 'string', 'multilang' => true),				'type'				=> array('type' => 'string'),								'content'			=> array('type' => 'binary')			);		}	}}
