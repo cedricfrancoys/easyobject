@@ -3,7 +3,7 @@
 <head>
 	<title>ICway</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8">
-	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/site.css" />	
+	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/site.css" />
 	<script type="text/javascript">
 		window.___gcfg = {
 			lang: 'fr', 
@@ -11,32 +11,33 @@
 		};
 	
 		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'https://apis.google.com/js/plusone.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+			var gplus = document.createElement('script'), fb = document.createElement('script'), tweet = document.createElement('script');
+			fb.type = 'text/javascript';fb.async = true;
+			fb.src = 'http://connect.facebook.net/fr_FR/all.js#xfbml=1';
+			gplus.type = 'text/javascript';gplus.async = true;
+			gplus.src = 'https://apis.google.com/js/plusone.js';
+			tweet.type = 'text/javascript';tweet.async = true;	
+			tweet.src = 'http://platform.twitter.com/widgets.js';		
+			var dom_script = document.getElementsByTagName('script')[0];
+			dom_script.parentNode.insertBefore(fb, dom_script);			
+			dom_script.parentNode.insertBefore(gplus, dom_script);			
+			dom_script.parentNode.insertBefore(tweet, dom_script);
+				
+			var cx = '004967614553816060821:aqmxxfj88ue';
+			var gcse = document.createElement('script');
+			gcse.type = 'text/javascript';gcse.async = true;
+			gcse.src = 'http://www.google.com/cse/cse.js?cx=' + cx;
+			dom_script.parentNode.insertBefore(gcse, dom_script);
 		})();
-
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'http://connect.facebook.net/fr_FR/all.js#xfbml=1';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		})();
-
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'http://platform.twitter.com/widgets.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		})();
-	</script>
+	</script>	
 	<!--[if lte IE 8]>
 	  <style type="text/css">
-	  #loc-bg { 
+	  #loc-bg {
 		filter:progid:DXImageTransform.Microsoft.Shadow(color='#505050', Direction=180, Strength=17), Alpha(Opacity=30);		
 	  } 
 	  </style>
 	<![endif]-->	
 </head>
-
 <body>
 	<div id="header">
 		<div id="loc-bg"></div>			
@@ -50,9 +51,11 @@
 					<a href="#"><div>EN</div><label>| show this page in english</label></a>
 				</div>			
 				<div id="search">
-					<form action="" method="get">
+					<form action="index.php" method="get">
 						<input class="search-query" type="text" placeholder="Rechercher" title="Rechercher" name="q">
 						<input class="search-submit" type="image" value="" src="packages/icway/html/css/img/search.png">
+						<input type="hidden" name="show" value="icway_site">
+						<input type="hidden" name="page_id" value="17">						
 					</form>
 				</div>				
 			</div>			
@@ -63,31 +66,29 @@
 				<var id="top_menu"></var>
 			</div>					
 			<div id="localizator">
-				<var id="localizator"></var>			
+				<var id="localizator"></var>				
 			</div>
 		</div>			
 	</div>
+
 	<div id="page">
 		<div id="main-column">
 			<div id="left-column">
-				<var id="left_column"></var>			
+				<var id="left_column"></var>
 			</div>
 			<div id="article-content">
 				<var id="content"></var>
 			</div>
 		</div>					
-		<div id="sidebar">
-			<var id="tips"></var>
-		</div>							
 	</div>
 	<div id="bottom">
 		<div id="bottom-bg"></div>
 		<div id="bottom-inner">				
 			<div class="box">							
-				<h1><label id="share_page">Partager cette page »</label></h1>
+				<h1><var id="share_page" translate="yes"></var> »</label></h1>
 				<ul>
 					<li>
-						<div class="fb-like" data-href="http://developers.facebook.com/docs/reference/plugins/like" data-send="false" data-layout="button_count" data-width="300" data-show-faces="true"></div>
+						<div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false"></div>
 					</li>
 					<li>
 						<div class="g-plusone" data-size="medium"></div>
@@ -95,10 +96,10 @@
 					<li>
 						<a href="https://twitter.com/share" class="twitter-share-button" data-lang="fr"></a>
 					</li>
-				</ul>				
+				</ul>
 			</div>	
 			<div class="box">
-				<h1><label id="recents_articles">Articles récents »</label></h1>
+				<h1><var id="recent_articles" translate="yes"></var> »</h1>
 				<ul>
 					<li><a href="#">Un chauffe-eau solaire pour 200 euros</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
 					<li><a href="#">Un petit bâtiment en palettes recyclées</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>					
@@ -106,7 +107,7 @@
 				</ul>
 			</div>			
 			<div class="box">				
-				<h1><label id="latest_docs">Derniers documents »</label></h1>
+				<h1><var id="latest_documents" translate="yes"></var> »</h1>
 				<ul>
 					<li><a href="#">Auto-construction d'un cellier en palettes de récupération</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;125ko</span></li>
 					<li><a href="#">L'action responsable et son paradoxe</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;254ko</span></li>					
@@ -116,9 +117,8 @@
 		</div>
 	</div>		
 	<div id="footer">
-		<a href="#">À propos de ICway</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#">Plan du site</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#">Nous contacter</a><br />
-		<span style="font-size: 0.9em";>Le contenu de ce site est sous licence <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/be/">Creative Commons BY-SA-NC</a> pour pouvoir l'utiliser et le diffuser librement !</span>
-	</div>		
-
+		<a href="#"><var id="about" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#"><var id="sitemap" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#"><var id="contact" translate="yes"></var></a><br />
+		<span style="font-size: 0.9em";><var id="licence" translate="yes"></var></span>
+	</div>
 </body>
 </html>

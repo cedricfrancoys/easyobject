@@ -320,6 +320,7 @@ class ObjectManager {
 									$path_objects_ids = array();
 									// fetch all ids for every parent object (whose ids are stored in $path_prev_ids)
 									foreach($path_prev_ids as $path_object_id) {
+// todo : could we not load at once  related fields of all specified objects?
 										$path_values = $this->getFields($user_id, $path_object_class, $path_object_id, array($path_field), $lang);
 										// type of returned values may vary (integer or array) depending on the type of the field (i.e. many2many, one2many or many2one)
 										if(!is_array($path_values[$path_field])) $path_values[$path_field] = array($path_values[$path_field]);
@@ -724,7 +725,8 @@ class ObjectManager {
 				switch($columns[$field]['type']) {
 					case 'text':
 						load_class('utils/HtmlCleaner');
-						$fields_values[$field] = str_replace('&amp;', '&', HtmlCleaner::clean($value));
+						// standard cleaning: remove non-standard tags and 'class' attributes
+						$fields_values[$field] = str_replace('&amp;', '&', HtmlCleaner::clean($value, null, array('class')));
 						break;
 					case 'date':
 						load_class('utils/DateFormatter');

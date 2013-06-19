@@ -15,19 +15,23 @@ load_class('utils/Tag');
 class HTMLCleaner {
 	private $html;
 	private $forbidden_tags;
+	private $forbidden_attributes;
 
 	private $tagsTable;
 
-	static function clean(&$html) {
-		$htmlCleaner = new HTMLCleaner($html);
+	static function clean(&$html, $forbidden_tags=null, $forbidden_attributes=null) {
+		$htmlCleaner = new HTMLCleaner($html, $forbidden_tags, $forbidden_attributes);
 		$result = &$htmlCleaner->getResult();
 		return $result;
 	}
 
-	public function HTMLCleaner(&$html) {
+	public function HTMLCleaner(&$html, $forbidden_tags=null, $forbidden_attributes=null) {
 		$this->html = &$html;
 		// note : order in the array is important
-		$this->forbidden_tags = array('style','meta','link','xml','!--','o');
+		if(is_array($forbidden_tags)) $this->forbidden_tags = $forbidden_tags;
+		else $this->forbidden_tags = array('style','meta','link','xml','!--','o');
+		if(is_array($forbidden_attributes)) $this->forbidden_attributes = $forbidden_attributes;
+		else $this->forbidden_attributes = array('class','style');
 	}
 
 	private function &getResult() {
@@ -43,15 +47,11 @@ class HTMLCleaner {
 		// initialize the result string
 		$result = '';
 		while ($xmlIterator->hasNext()) {
-			if(!($newTag = &$xmlIterator->next())) {
-				continue;
-			}
-			if($evaluate){
-				$result .= substr($xmlIterator->getXML(), $offset, $newTag->getOffset()-$offset);
-			}
+			if(!($newTag = &$xmlIterator->next())) continue;
+			if($evaluate) $result .= substr($xmlIterator->getXML(), $offset, $newTag->getOffset()-$offset);
 			// obtain the new offset (the position following the last read tag)
 			$offset = $xmlIterator->getOffset();
-			$result .= $newTag->evaluate($this->forbidden_tags, array('class','style'));
+			$result .= $newTag->evaluate($this->forbidden_tags, $this->forbidden_attributes);
 		}
 		// add the chars between the last tag and the end of the string
 		$result .= substr($xmlIterator->getXML(), $xmlIterator->getOffset());

@@ -1,16 +1,16 @@
 <?php
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
+load_class('orm/I18n');
 include('parser.inc.php');
 
 // force silent mode
 set_silent(true);
 
 check_params(array('page_id'));
-$params = get_params(array('page_id'=>1));
+$params = get_params(array('page_id'=>1, 'lang'=>'fr'));
 
-
-// todo : param 'lang'
+$i18n = I18n::getInstance();
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'tips_ids'));
 
 	
@@ -21,7 +21,7 @@ $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 
 * @param array $attributes
 */
 $get_html = function ($attributes) {
-	global $params, $values;
+	global $params, $values, $i18n;
 	$html = '';
 	switch($attributes['id']) {
 		case 'page_id':
@@ -30,6 +30,7 @@ $get_html = function ($attributes) {
 		case 'top_menu':
 			$html .= "<ul>";	
 			$ids = search('icway\Section', array(array(array('parent_id', '=', '1'))), 'sequence', 'desc', 0, 10);
+			if(!count($ids)) break;
 			$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
 			foreach($sections_values as $section_values) {
 				$title = mb_strtoupper($section_values['title'], 'UTF-8');
@@ -47,8 +48,7 @@ $get_html = function ($attributes) {
 			$path = array();
 			// recurse to the root section
 			$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));	
-			$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'));
-			while(true) {
+			while(count($sections_ids)) {
 				$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'));
 				foreach($sections_values as $section_id => $section_values) {
 					array_unshift($path, array($section_values['page_id'] => $section_values['title']));
@@ -68,7 +68,7 @@ $get_html = function ($attributes) {
 			// find level-2 section of current page 
 			$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));			
 			$selected_id = null;			
-			while(true) {
+			while(count($sections_ids)) {
 				$sections_values = &browse('icway\Section', $sections_ids, array('parent_id'));
 				foreach($sections_values as $section_id => $section_values) {
 					if($section_values['parent_id'] == 0) break 2;
@@ -77,7 +77,7 @@ $get_html = function ($attributes) {
  				}
  			} 			
 			// no match found
-			if(is_null($selected_id)) break;
+			if(is_null($selected_id)) $selected_id = 1;
 			$sections_values = &browse('icway\Section', array($selected_id), array('title', 'sections_ids'));				
 			foreach($sections_values as $section_id => $section_values) {
 				$html = '<h1>'.$section_values['title'].'</h1>';
@@ -96,6 +96,16 @@ $get_html = function ($attributes) {
 			$tips_values = &browse('icway\Tip', $values[$params['page_id']]['tips_ids'], array('content'));
 			foreach($tips_values as $tip_values) {
 				$html .= "<div>{$tip_values['content']}</div>";
+			}
+			break;
+		default:
+			if(isset($attributes['translate']) && in_array($attributes['translate'], array('on', 'yes', 'true'))) {
+				$html = $i18n->getClassTranslationValue($params['lang'], array(
+													'object_class'	=> 'icway\Page',
+													'object_part'	=> 'view',
+													'object_field'	=> $attributes['id'],
+													'field_attr'	=> 'label')
+												);
 			}
 			break;
 	}

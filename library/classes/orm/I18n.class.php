@@ -230,7 +230,7 @@ class I18n {
     *
     * 	Path syntax: object_class => (class name), object_part => ('model' | 'view'), object_field => (field name), field_attr => ('label' | 'help' | 'sequence')
     *
-    * @param string $code
+    * @param string $code iso639 language identifier
     * @param array $path
     */
 	public function getClassTranslationValue($code, $path=array()) {
@@ -243,8 +243,7 @@ class I18n {
 		if(!isset($this->translations[$package][$code])) {
 			$this->translations[$package][$code] = array();
          	$json_data = file_get_contents("packages/{$package}/i18n/{$code}/{$object_name}.json", FILE_TEXT);
-			$php_data = json_decode($json_data, true);
-			$this->translations[$package][$code][$object_class] = $php_data;
+			$this->translations[$package][$code][$object_class] = json_decode($json_data, true);
 		}
 		// check if the the term to be translated is present in the json file
 		if (!isset($this->translations[$package][$code][$object_class]) ||

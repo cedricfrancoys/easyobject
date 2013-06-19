@@ -34,5 +34,5 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.removePlugins = 'elementspath,tabletools,contextmenu';
 	config.disableNativeSpellChecker = false;
-	
+	config.allowedContent = true;
 };

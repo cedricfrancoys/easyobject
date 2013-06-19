@@ -200,8 +200,15 @@ class FClib {
 	public static function load_class($class_path, $class_name='') {
 		$result = false;
 		if(strpos($class_path, 'Zend_') === 0) {
-			require_once 'Zend/Loader.php';
-			$result = Zend_Loader::loadClass($class_path);
+			// Zend framework 1
+			 require_once 'Zend/Loader.php';
+			 $result = Zend_Loader::loadClass($class_path);
+			// Zend framework 2
+			/*
+			require_once 'Zend/Loader/StandardAutoloader.php';
+			$loader = new Zend\Loader\StandardAutoloader(array('autoregister_zf' => true));
+			$result = $loader->autoload($class_path);
+			*/
 		}
 		else {
 			if($class_name == '') $class_name = FClib::get_class_name($class_path);

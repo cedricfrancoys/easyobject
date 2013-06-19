@@ -1,0 +1,13 @@
+{
+	"model": {
+	},
+	"view": {
+		"share_page":{"label":"Share this page"},	
+		"recent_articles":{"label":"Recent articles"},			
+		"latest_documents":{"label":"Latest documents"},				
+		"about":{"label":"About ICway"},
+		"sitemap":{"label":"Sitemap"},
+		"contact":{"label":"Contact us"},
+		"licence":{"label":"The content of this website is released under the <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/\">Creative Commons BY-SA-NC</a> licence in order to allow people to use it and distribute it freely!"}
+	}
+}

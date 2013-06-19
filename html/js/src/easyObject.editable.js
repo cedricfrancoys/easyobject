@@ -86,13 +86,14 @@
 										.attr({id: conf.name, name: conf.name })
 										.html(conf.value)
 										.appendTo($this);
+// todo : build the ckeditor configuration object based on the current conf (customized toolbar, ...)
 							CKEDITOR.replace($textarea[0], {
-									filebrowserImageBrowseUrl : 'picasaBrowser.php',
+									filebrowserImageBrowseUrl: '?show=utils_picasa',									
 									height: 250,
 									toolbar: [
 										['Maximize'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],
 										'/',
-										['Source'],['Format'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Link','Image','Table','SpecialChar']	
+										['Source'],['Format'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Anchor','Link','Image','Table','SpecialChar']	
 									],
 									enterMode: CKEDITOR.ENTER_BR,
 									// change detection : we use the instanceReady event to catch the instance of the editor being created
