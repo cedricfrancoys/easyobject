@@ -43,7 +43,7 @@ class ObjectManager {
 	private $objectsArray;
 	private $dbConnection;
 
-	public $simple_types	= array('boolean', 'integer', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one');
+	public $simple_types	= array('boolean', 'integer', 'float', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one');
 	public $complex_types	= array('one2many', 'many2many', 'related', 'function');
 
 
@@ -736,11 +736,13 @@ class ObjectManager {
 						$fields_values[$field] = $dateFormatter->getDate(DATE_SQL);
 						break;
 					case 'binary':
+						// note : this won't work in client-server mode (since in that case $_FILES array is only available on client-side)
 						if(isset($_FILES[$field]) && isset($_FILES[$field]['tmp_name'])) {
 							if(isset($_FILES[$field]['error']) && $_FILES[$field]['error'] == 2 || isset($_FILES[$field]['size']) && $_FILES[$field]['size'] > UPLOAD_MAX_FILE_SIZE)
-								throw new Exception("file exceed maximum allowed size (".floor(UPLOAD_MAX_FILE_SIZE/1024)." ko)");
+								throw new Exception("file exceed maximum allowed size (".floor(UPLOAD_MAX_FILE_SIZE/1024)." ko)", NOT_ALLOWED);
 							$fields_values[$field] = file_get_contents($_FILES[$field]['tmp_name'], FILE_BINARY, null, -1, UPLOAD_MAX_FILE_SIZE);
 						}
+						else throw new Exception("binary data not received or cannot be retrieved", UNKNOWN_ERROR);
 						break;
 					case 'one2many':
 					case 'many2many':
@@ -1241,7 +1243,6 @@ class ObjectManager {
 		try {
 			$result = array();
 			$object = &$this->getObjectStaticInstance($object_class);
-
 			if(empty($ids) || (!empty($ids) && !is_array($ids))) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
 			if(!is_null($values) && !is_array($values)) throw new Exception("argument is not an array of fields values", INVALID_PARAM);
 			if(is_null($values)) $values = array();

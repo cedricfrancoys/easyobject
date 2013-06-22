@@ -236,14 +236,22 @@
 						// first page button
 						.append($('<span/>').button({icons:{primary:'ui-icon-seek-start'}}).attr('title', 'first')
 							.click(function() {
-								conf.page = 1;
-								self.feed($grid, conf);
+								var first = 1;
+								if(conf.page != first) {
+									$('#grid_table_body', $grid).empty();
+									conf.page = first;
+									self.feed($grid, conf);
+								}
 							}))
 						// previous page button
 						.append($('<span/>').button({icons:{primary:'ui-icon-seek-prev'}}).attr('title', 'prev')
 							.click(function() {
-								conf.page = Math.max(parseInt(conf.page)-1, 1);
-								self.feed($grid, conf);
+								var previous = Math.max(parseInt(conf.page)-1, 1);
+								if(conf.page != previous) {
+									$('#grid_table_body', $grid).empty();								
+									conf.page = previous;
+									self.feed($grid, conf);
+								}
 							}))						
 						// separator
 						.append($('<span/>').addClass('separator').text(' | '))
@@ -268,24 +276,32 @@
 						// next page button
 						.append($('<span/>').button({icons:{primary:'ui-icon-seek-next'}}).attr('title', 'next')
 							.click(function() {
-								conf.page = Math.min(parseInt(conf.page)+1, conf.total);
-								self.feed($grid, conf);
+								var next = Math.min(parseInt(conf.page)+1, conf.total);
+								if(conf.page != next) {
+									$('#grid_table_body', $grid).empty();								
+									conf.page = next;
+									self.feed($grid, conf);
+								}
 							}))						
 						// last page button
 						.append($('<span/>').button({icons:{primary:'ui-icon-seek-end'}}).attr('title', 'last')
 							.click(function() {
-								conf.page = conf.total;
-								self.feed($grid, conf);
+								var last = conf.total
+								if(conf.page != last) {
+									$('#grid_table_body', $grid).empty();								
+									conf.page = last;
+									self.feed($grid, conf);
+								}
 							}))
 					);
 			},
 			feed: function($grid, conf) {
 				var self = this;
 				// get body, empty it and display the loader
-				$tbody = $('#grid_table_body', $grid).empty().append($('<tr/>').append($('<th/>').append($('<div/>').addClass('loader').append('loading...'))));
+				$tbody = $('#grid_table_body', $grid);
+				if($tbody.children().length == 0) $tbody.append($('<tr/>').append($('<th/>').append($('<div/>').addClass('loader').append('loading...'))));
 							
 				self.browse(conf, function(json) {
-					// empty the body again (to make the loader disappear)
 					$tbody.empty();
 					$('#grid_pager', $grid).remove();
 					$.each(json.rows, function(i, row) {

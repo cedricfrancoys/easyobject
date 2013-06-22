@@ -32,7 +32,7 @@
 			type: 'string', //boolean, integer, string, password, short_text, text, date, time, datetime, timestamp, selection, binary, one2many, many2one, many2many
 			readonly: false,
 			required: false,
-			onchange: function() {}
+			onchange: function() {console.log($(this).val());}
 		}
 
 		if(typeof(arg) == 'object') {
@@ -136,7 +136,7 @@
 										);
 							break;
 						case 'timestamp':
-	//todo										
+//todo										
 							break;
 						case 'selection': 
 							$select =	$('<select />')
@@ -151,6 +151,7 @@
 							});
 							break;
 						case 'binary':
+// todo : we could beautify this just a little bit						
 							$this.data('widget', $('<input type="file" />')
 												.attr({id: conf.name, name: conf.name})
 												.on('change', conf.onchange)
@@ -224,6 +225,7 @@
 				})($(this).empty(), $.extend(true, default_conf, arg));
 			});				
 		}
+		// setter or getter
 		else {
 			return (function ($this, property_name, value) {
 				switch(property_name) {

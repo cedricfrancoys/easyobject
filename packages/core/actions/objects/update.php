@@ -61,7 +61,7 @@ else {
 		$result = update($params['object_class'], $params['ids'], $_REQUEST, $params['lang']);
 		// look for deprecated draft
 		$ids = search('core\version', array(array(array('object_class', '=', $params['object_class']), array('object_id', '=', $params['ids']), array('state', '=', 'draft'))));
-		// if update went well, remove any pending draft (if any)
+		// if update went well, remove (permanently) pending draft, if any
 		if(is_array($result) && !empty($ids)) remove('core\version', $ids, true);
 	}
 }

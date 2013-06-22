@@ -21,7 +21,7 @@
 
 /**
 * Dispatcher's role is to set up the context and handle the client calls
-* note : we use the functions defined in easyobject.api.php to call easyObject's manager methods so we don't have to deal with the mode (either "standalone" or "client-server" )
+* note : we use the functions defined in easyobject.api.php to call object manager methods so we don't have to deal with the mode (either "standalone" or "client-server" )
 *
 * @version $Id: index.php 2012-06-01 $
 * @package	easyObject
@@ -65,6 +65,8 @@ define('SESSION_LANG', $params['lang']);
 // from now on, we let the script decide whether or not to output error messages if any
 set_silent(false);
 
+// add keys from $_FILES to the superglobal $_REQUEST array (we do this in order to let the manager know when binary fields are present)
+$_REQUEST = array_merge($_REQUEST, array_fill_keys(array_keys($_FILES), ''));
 
 /**
 * Dispatching : include the requested script
