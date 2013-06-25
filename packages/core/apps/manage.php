@@ -39,7 +39,10 @@ $html->addCSSFile('html/css/jquery/base/jquery.ui.easyobject.css');
 
 $html->addJSFile('html/js/jquery-1.7.1.min.js');
 $html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
+// todo : include these in the loader
 $html->addJSFile('html/js/ckeditor/ckeditor.js');
+$html->addJSFile('html/js/ace/src-min/ace.js');
+
 
 //$html->addJSFile('html/js/easyObject.min.js');
 $html->addJSFile('html/js/easyObject.loader.js');
@@ -55,7 +58,6 @@ $js_packages = function () {
 };
 
 $html->addScript("
-
 $(document).ready(function() {
 	// vars
 	var packages = {$js_packages()};
