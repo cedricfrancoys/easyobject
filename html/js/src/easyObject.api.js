@@ -1,6 +1,7 @@
-// todo : feedback sur les erreurs (browse, update return 8 : not allowed & incorrect output [si set_silent n'est pas appelé])
-// views are mandatory (stop if not found)
-// translation files are optional
+// todo : 
+// - feedback on errors (browse, update return 8 : not allowed & incorrect output [if set_silent not invoked])
+// - views are mandatory (stop if not found)
+// - translation files are optional (don't retry if not found)
 
 
 (function($) {
@@ -122,10 +123,10 @@ var easyObject = {
 					lang: lang
 				};
 
-				if(typeof order != undefined)	values.order = order;
-				if(typeof sort != undefined)	values.sort = sort;
-				if(typeof start != undefined)	values.start = start;
-				if(typeof limit != undefined)	values.limit = limit;				
+				if(typeof order != 'undefined')	values.order = order;
+				if(typeof sort  != 'undefined')	values.sort = sort;
+				if(typeof start != 'undefined')	values.start = start;
+				if(typeof limit != 'undefined')	values.limit = limit;				
 				
 				$.ajax({
 					type: 'GET',

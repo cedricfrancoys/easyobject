@@ -147,7 +147,7 @@
 			},
 
 			/**
-			* Inserts edition widgets inside 'var' tags
+			* Inserts edition widgets into 'var' tags
 			* and populate fields with their current values
 			*/
 			populate: function($form, conf) {
@@ -178,6 +178,12 @@
 						var attr_domain = $item.attr('domain');
 						var attr_widget = $item.attr('widget');	
 
+						// remove attributes that might cause undesired effects
+						$item.removeAttr('onsubmit');
+						$item.removeAttr('onchange');
+						$item.removeAttr('id');
+						
+						
 						var config = {
 							name: field,
 							parent_class: conf.class_name,
@@ -198,6 +204,9 @@
 						// set the proper type of the widget					
 						if(config.type == 'related' || config.type == 'function') config.type = schemaObj[field]['result_type'];
 						if(attr_type == 'password') config.type = 'password';
+
+// todo: to validate (this is still experimental)						
+						if(attr_widget != undefined) config.type = attr_widget;
 
 						// set additional config params for special fields
 						switch(config.type) {						
@@ -302,9 +311,6 @@
 
 								}
 								else {
-									// dropdown list, grid, ...
-									if(typeof attr_widget != 'undefined') config.type = attr_widget;
-
 									// obtain listiew for target object and generate grid config (col_model & url)
 									$.extend(config, easyObject.get_grid_config({
 											class_name: class_name,
@@ -474,11 +480,8 @@
 							});
 						}
 
-						// remove attributes that might cause undesired effects
-						$item.removeAttr('onsubmit');
-						$item.removeAttr('onchange');
-						$item.removeAttr('id');
 					}
+					
 				});
 
 				// insert some hidden controls : predefined fields not present in the specified view

@@ -13,11 +13,13 @@
 // require jquery-1.7.1.js (or later), ckeditor.js, jquery-ui.timepicker.js, easyObject.grid.js, easyObject.dropdownlist.js, easyObject.choice.js
  
 (function($){
+
 	/** 
 	 * We use jQuery valHooks on textareas to modify the behaviour of the $.val method (that is used by $.serialize) in order to:
 	 *  - use wysiwyg editor value when one is attached to the textarea
 	 *  - preserve carriage returns
 	 */
+	// note : this code has no effect when using the standard submission process (only useful with ajax submission)
 	$.valHooks.textarea = {
 		get: function( elem ) {
 			if(typeof $(elem).data('value') == 'function') return $(elem).data('value')();
@@ -86,9 +88,10 @@
 										.attr({id: conf.name, name: conf.name })
 										.html(conf.value)
 										.appendTo($this);
-// todo : build the ckeditor configuration object based on the current conf (customized toolbar, ...)
+// todo : build the ckeditor configuration object based on the current conf (customized toolbar, browsers url, ...)
 							CKEDITOR.replace($textarea[0], {
-									filebrowserImageBrowseUrl: '?show=utils_picasa',									
+									filebrowserImageBrowseUrl: '?show=utils_publicPicasaBrowser',									
+									linkbrowserInternalUrl: '?show=utils_test',									
 									height: 250,
 									toolbar: [
 										['Maximize'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],
@@ -103,11 +106,40 @@
 										}
 									}
 							});
+/*
 							// this is the method that will be called by $.valHooks
 							$textarea.data('value', function() {
 								return CKEDITOR.instances[conf.name].getData();
 							});
+*/							
 							break;
+						case 'code':
+							$textarea = $('<textarea />')
+										.css('display', 'none')										
+										.attr({name: conf.name})
+										.html(conf.value)
+										.appendTo($this);
+							$div = $('<div />')
+										.attr({id: conf.name })
+										.html(conf.value)
+										.css('height', '250')										
+										.appendTo($this);
+						
+							var editor = ace.edit(conf.name);
+							editor.getSession().setMode("ace/mode/javascript");						
+
+							// synchronize editor and textarea
+							editor.getSession().on('change', function(){ 
+								$textarea.val(editor.getSession().getValue()); 
+							});							
+/*							
+							// this is the method that will be called by $.valHooks
+							$textarea.data('value', function() {
+								var editor = ace.edit(conf.name);
+								return editor.getSession().getValue();
+							});
+*/							
+							break;							
 						case 'date':
 							$this.data('widget', $('<input />')
 												.attr({id: conf.name, name: conf.name})
