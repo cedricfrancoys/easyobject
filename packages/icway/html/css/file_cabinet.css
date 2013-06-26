@@ -1,0 +1,50 @@
+.file_cabinet {
+	width: 740px;
+}
+.file_cabinet .header {
+	width: auto;
+	height: 25px;
+	font: 700 12px "trebuchet ms";
+	line-height: 25px;	
+	color: #444444;
+	padding-left: 10px;
+	background: none repeat scroll 0 0 #CCCCCC;	
+}
+.file_cabinet .row {
+	display: table;
+	font: 400 0.85em "trebuchet ms";
+	color: #444444;	
+	width: auto;
+	margin-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: solid 1px #efefef;
+}
+.file_cabinet .row .name,  .file_cabinet .row .desc, .file_cabinet .row .type, .file_cabinet .row .size, .file_cabinet .row .modif{
+	display: table-cell;
+	padding: 0 10px;
+}
+
+.file_cabinet .row .name {
+	width: 35%;
+}
+.file_cabinet .row .desc {
+	width: 30%;
+}
+.file_cabinet .row .type {
+	width: 7%;
+}
+.file_cabinet .row .size {
+	width: 10%;
+}
+.file_cabinet .row .modif {
+	width: 18%;
+}
+
+.file_cabinet .row .name a:link {
+    color: #005596;
+	text-decoration: underline;
+}
+.file_cabinet .row .name a:hover {
+    color: #0095c6;
+	text-decoration: underline;
+}

@@ -274,6 +274,11 @@ body {
 	font-size: 1.1em;
 	padding: 13px 0 0px;
 }
+#article-content a:link, #article-content a:visited  {
+	color: #4C8EFC;
+	text-decoration: underline;
+}
+
 #bottom {
 	box-shadow: 0 0 20px rgba(0,0,0,.9);-moz-box-shadow:0 0 20px rgba(0,0,0,.9);-webkit-box-shadow:0 0 20px rgba(0,0,0,.9);			
 	clear: both;
@@ -312,12 +317,12 @@ body {
 	margin-right: 10px;
 	margin-left: 20px;
 	-moz-border-radius-: 8px; -webkit-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px;
-	max-height: 300px;
+	min-height: 200px;
 	max-height: 300px;	
 	overflow : hidden;
 }
 #bottom-inner h1 {
-	color: #1B59C2;
+	color: #3B79E2;
 	font: 600 1.2em "molengo","ff-nuvo-web-pro",anivers,Arial;
 	border-bottom: solid 1px #000;
 	padding-bottom: 10px;
@@ -336,7 +341,7 @@ body {
 #bottom-inner ul li a:hover{
 	color: #000;
 }
-#bottom-inner ul li span {
+#bottom-inner ul li span.details {
 	color: #808080;
 	font-size: 0.7em;
 }		

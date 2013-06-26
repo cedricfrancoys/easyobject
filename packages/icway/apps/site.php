@@ -10,9 +10,134 @@ set_silent(true);
 check_params(array('page_id'));
 $params = get_params(array('page_id'=>1, 'lang'=>'fr'));
 
-$i18n = I18n::getInstance();
-$values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'tips_ids'));
 
+$values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'));
+
+/**
+* This array holds the methods to use for rendering the page 
+* (i.e. translate the 'var' tags from the template)
+*/
+$renderer = array(
+	'page_id'		=>	function () use ($params) {
+							return $params['page_id'];	
+						},
+	'title'			=>	function () use ($params, $values) {
+							return $values[$params['page_id']]['title'];
+						},
+	'content'		=>	function () use ($params, $values) {
+							return $values[$params['page_id']]['content'];
+						},					
+	'script'		=>	function () use ($params, $values) {
+							return $values[$params['page_id']]['script'];
+						},										
+	'tips'			=>	function () use ($params, $values) {
+							$html = '';
+							$tips_values = &browse('icway\Tip', $values[$params['page_id']]['tips_ids'], array('content'));
+							foreach($tips_values as $tip_values) {
+								$html .= "<div>{$tip_values['content']}</div>";
+							}
+							return $html;
+						},
+	'top_menu'		=>	function () {
+							$html = "<ul>";	
+							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'))), 'sequence', 'desc', 0, 10);
+							if(!count($ids)) break;
+							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
+							foreach($sections_values as $section_values) {
+								$title = mb_strtoupper($section_values['title'], 'UTF-8');
+								$html .= "<li><a href=\"index.php?show=icway_site&page_id={$section_values['page_id']}\">$title</a></li>";
+							}
+							$html .= "</ul>";			
+							return $html;	
+						},
+	'localizator'	=>	function () use ($params){
+							$path = array();
+							// recurse to the root section
+							$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));	
+							while(count($sections_ids)) {
+								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'));
+								foreach($sections_values as $section_id => $section_values) {
+									array_unshift($path, array($section_values['page_id'] => $section_values['title']));
+									$sections_ids = array($section_values['parent_id']);
+									if($section_values['parent_id'] == 0) break 2;					
+								}
+							} 			
+							$html = '<ul>';
+							for($i = 0, $j = count($path); $i < $j; $i++) {
+								foreach($path[$i] as $page_id => $page_title) {
+									$html .= '<li><a href="?show=icway_site&page_id='.$page_id.'">'.$page_title.'</a></li>';
+								}
+							}
+							$html .= '</ul>';					
+							return $html;
+						},
+	'left_column'	=>	function () use ($params){
+							// find level-2 section of current page 
+							$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));			
+							$selected_id = null;			
+							while(count($sections_ids)) {
+								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id'));
+								foreach($sections_values as $section_id => $section_values) {
+									if($section_values['parent_id'] == 0) break 2;
+									$selected_id = $section_id;
+									$sections_ids = array($section_values['parent_id']);
+								}
+							} 			
+							// no match found
+							if(is_null($selected_id)) $selected_id = 1;
+							$sections_values = &browse('icway\Section', array($selected_id), array('title', 'sections_ids'));				
+							foreach($sections_values as $section_id => $section_values) {
+								$html = '<h1>'.$section_values['title'].'</h1>';
+								$html .= '<ul>';
+								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'));
+								foreach($subsections_values as $subsection_values) {
+									if($subsection_values['page_id'] == $params['page_id']) $html .= '<li class="current">';
+									else $html .= '<li>';
+									$html .= '<a href="?show=icway_site&page_id='.$subsection_values['page_id'].'">'.$subsection_values['title'].'</a>';
+									$html .= '</li>';
+								}
+								$html .= '</ul>';					
+							}
+							return $html;
+						}
+);
+
+
+
+
+// For special pages (i.e. pages that require a dynamic content), 
+// we replace renderer entries with other methods
+switch($params['page_id']) {
+	case 7:
+		// page 'resources'
+		$renderer['content'] = function() {
+			$html = '<h1>'.'Ressources'.'</h1>';
+			$html .= '<div class="file_cabinet">';
+		
+			$resources_ids = search('icway\Resource', null, 'category_id');
+			$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type', 'category_name'));							
+			$category = '@@@##=';	// in the hope that this category name does not actually exist!
+			foreach($resources_values as $resource_values) {
+				if($resource_values['category_name'] != $category) {
+					$html .= '<div class="header">'.$resource_values['category_name'].'</div>';
+					$category = $resource_values['category_name'];
+				}
+				$html .= '<div class="row">';
+				$html .= '  <div class="name">';
+				$html .= '    '.$resource_values['title'].'<br />';
+				$html .= '    <span style="word-spacing: 5px;"><a href="?get=icway_resource&mode=view&res_id='.$resource_values['id'].'" target="_blank">Afficher</a>&nbsp;<a href="?get=icway_resource&mode=download&res_id='.$resource_values['id'].'">Télécharger</a></span>';
+				$html .= '  </div>';
+				$html .= '  <div class="desc">'.$resource_values['description'].'</div>';
+				$html .= '  <div class="type">'.$resource_values['type'].'</div>';	
+				$html .= '  <div class="size">'.floor($resource_values['size']/1000).' Ko</div>';	
+				$html .= '  <div class="modif">'.$resource_values['modified'].'</div>';				
+				$html .= '</div>';
+			}
+			$html .= '</div>';			
+			return $html;
+		};
+		break;
+}
 	
 /**
 * Returns html part specified by $attributes (from a 'var' tag) and associated with current post id
@@ -20,86 +145,13 @@ $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 
 *
 * @param array $attributes
 */
-$get_html = function ($attributes) {
-	global $params, $values, $i18n;
-	$html = '';
-	switch($attributes['id']) {
-		case 'page_id':
-			$html = $params['page_id'];
-			break;
-		case 'top_menu':
-			$html .= "<ul>";	
-			$ids = search('icway\Section', array(array(array('parent_id', '=', '1'))), 'sequence', 'desc', 0, 10);
-			if(!count($ids)) break;
-			$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
-			foreach($sections_values as $section_values) {
-				$title = mb_strtoupper($section_values['title'], 'UTF-8');
-				$html .= "<li><a href=\"index.php?show=icway_site&page_id={$section_values['page_id']}\">$title</a></li>";
-			}
-			$html .= "</ul>";			
-			break;
-		case 'title':
-			$html = $values[$params['page_id']]['title'];
-			break;
-		case 'content':
-			$html = $values[$params['page_id']]['content'];
-			break;
-		case 'localizator':
-			$path = array();
-			// recurse to the root section
-			$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));	
-			while(count($sections_ids)) {
-				$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'));
-				foreach($sections_values as $section_id => $section_values) {
-					array_unshift($path, array($section_values['page_id'] => $section_values['title']));
-					$sections_ids = array($section_values['parent_id']);
-					if($section_values['parent_id'] == 0) break 2;					
- 				}
- 			} 			
-			$html = '<ul>';
-			for($i = 0, $j = count($path); $i < $j; $i++) {
-				foreach($path[$i] as $page_id => $page_title) {
-					$html .= '<li><a href="?show=icway_site&page_id='.$page_id.'">'.$page_title.'</a></li>';
-				}
-			}
-			$html .= '</ul>';					
-			break;
-		case 'left_column':
-			// find level-2 section of current page 
-			$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));			
-			$selected_id = null;			
-			while(count($sections_ids)) {
-				$sections_values = &browse('icway\Section', $sections_ids, array('parent_id'));
-				foreach($sections_values as $section_id => $section_values) {
-					if($section_values['parent_id'] == 0) break 2;
-					$selected_id = $section_id;
-					$sections_ids = array($section_values['parent_id']);
- 				}
- 			} 			
-			// no match found
-			if(is_null($selected_id)) $selected_id = 1;
-			$sections_values = &browse('icway\Section', array($selected_id), array('title', 'sections_ids'));				
-			foreach($sections_values as $section_id => $section_values) {
-				$html = '<h1>'.$section_values['title'].'</h1>';
-				$html .= '<ul>';
-				$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'));
-				foreach($subsections_values as $subsection_values) {
-					if($subsection_values['page_id'] == $params['page_id']) $html .= '<li class="current">';
-					else $html .= '<li>';
-					$html .= '<a href="?show=icway_site&page_id='.$subsection_values['page_id'].'">'.$subsection_values['title'].'</a>';
-					$html .= '</li>';
-				}
-				$html .= '</ul>';					
-			}
-			break;			
-		case 'tips':
-			$tips_values = &browse('icway\Tip', $values[$params['page_id']]['tips_ids'], array('content'));
-			foreach($tips_values as $tip_values) {
-				$html .= "<div>{$tip_values['content']}</div>";
-			}
-			break;
-		default:
-			if(isset($attributes['translate']) && in_array($attributes['translate'], array('on', 'yes', 'true'))) {
+$get_html = function ($attributes) use ($renderer, $params) {
+
+		if(isset($renderer[$attributes['id']])) return $renderer[$attributes['id']]();
+		else {
+			$html = '';
+			if(isset($attributes['translate']) && in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) {
+				$i18n = I18n::getInstance();			
 				$html = $i18n->getClassTranslationValue($params['lang'], array(
 													'object_class'	=> 'icway\Page',
 													'object_part'	=> 'view',
@@ -107,9 +159,8 @@ $get_html = function ($attributes) {
 													'field_attr'	=> 'label')
 												);
 			}
-			break;
-	}
-	return $html;
+			return $html;
+		}
 };
 
 // output html

@@ -4,39 +4,50 @@
 	<title>ICway</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8">
 	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/site.css" />
-	<script type="text/javascript">
-		window.___gcfg = {
-			lang: 'fr', 
-			parsetags: 'onload'
-		};
-	
-		(function() {
-			var gplus = document.createElement('script'), fb = document.createElement('script'), tweet = document.createElement('script');
-			fb.type = 'text/javascript';fb.async = true;
-			fb.src = 'http://connect.facebook.net/fr_FR/all.js#xfbml=1';
-			gplus.type = 'text/javascript';gplus.async = true;
-			gplus.src = 'https://apis.google.com/js/plusone.js';
-			tweet.type = 'text/javascript';tweet.async = true;	
-			tweet.src = 'http://platform.twitter.com/widgets.js';		
-			var dom_script = document.getElementsByTagName('script')[0];
-			dom_script.parentNode.insertBefore(fb, dom_script);			
-			dom_script.parentNode.insertBefore(gplus, dom_script);			
-			dom_script.parentNode.insertBefore(tweet, dom_script);
-				
-			var cx = '004967614553816060821:aqmxxfj88ue';
-			var gcse = document.createElement('script');
-			gcse.type = 'text/javascript';gcse.async = true;
-			gcse.src = 'http://www.google.com/cse/cse.js?cx=' + cx;
-			dom_script.parentNode.insertBefore(gcse, dom_script);
-		})();
-	</script>	
+	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/file_cabinet.css" />	
+	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/social-likes.css" />	
+
 	<!--[if lte IE 8]>
 	  <style type="text/css">
 	  #loc-bg {
 		filter:progid:DXImageTransform.Microsoft.Shadow(color='#505050', Direction=180, Strength=17), Alpha(Opacity=30);		
 	  } 
 	  </style>
-	<![endif]-->	
+	<![endif]-->
+	
+	<script language="javascript" type="text/javascript" src="html/js/jquery-1.7.1.min.js"></script>
+	<script src="packages/icway/html/js/social-likes.min.js"></script>	
+	
+	<script type="text/javascript">
+		/*
+		$(document).ready(function() {
+			var dom_script = document.getElementsByTagName('script')[0];		
+
+			window.___gcfg = {
+				lang: 'fr', 
+				parsetags: 'onload'
+			};
+
+			window.fbAsyncInit = function() {
+				FB.init({appId: '146481425547132', status: true, cookie: true, xfbml: true});
+			};
+		
+			// social likes
+			var gplus = document.createElement('script'), fb = document.createElement('script'), tweet = document.createElement('script');
+			fb.type = 'text/javascript';fb.id = 'facebook-jssdk';fb.async = true;fb.src = 'http://connect.facebook.net/fr_FR/all.js';			
+			gplus.type = 'text/javascript';gplus.async = true;gplus.src = 'https://apis.google.com/js/plusone.js';
+			tweet.type = 'text/javascript';tweet.async = true;tweet.src = 'http://platform.twitter.com/widgets.js';		
+
+			dom_script.parentNode.insertBefore(fb, dom_script);			
+			dom_script.parentNode.insertBefore(gplus, dom_script);			
+			dom_script.parentNode.insertBefore(tweet, dom_script);
+		});
+	*/		
+	</script>	
+
+	<script type="text/javascript">
+		<var id="script"></var>
+	</script>	
 </head>
 <body>
 	<div id="header">
@@ -82,36 +93,43 @@
 		</div>					
 	</div>
 	<div id="bottom">
+	
 		<div id="bottom-bg"></div>
 		<div id="bottom-inner">				
 			<div class="box">							
 				<h1><var id="share_page" translate="yes"></var> »</h1>
-				<ul>
+				<ul class="social-likes social-likes_vertical" counters="no" style="margin-bottom: 15px;">			
+					<li class="facebook" style="margin-bottom: 10px;">Facebook</li>
+					<li class="plusone" style="margin-bottom: 10px;">Google+</li>	
+					<li class="twitter" style="margin-bottom: 10px;">Twitter</li>
+<!--
 					<li>
+						<div id="fb-root"></div>	
 						<div class="fb-like" data-send="false" data-layout="button_count" data-show-faces="false"></div>
 					</li>
 					<li>
 						<div class="g-plusone" data-size="medium"></div>
 					</li>					
 					<li>
-						<a href="https://twitter.com/share" class="twitter-share-button" data-lang="fr"></a>
+						<a class="twitter-share-button" data-lang="fr"></a>
 					</li>
+-->					
 				</ul>
 			</div>	
 			<div class="box">
 				<h1><var id="recent_articles" translate="yes"></var> »</h1>
 				<ul>
-					<li><a href="#">Un chauffe-eau solaire pour 200 euros</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
-					<li><a href="#">Un petit bâtiment en palettes recyclées</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>					
-					<li><a href="#">L'autonomie énergétique pour 2500 euros</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
+					<li><a href="#">Un chauffe-eau solaire pour 200 euros</a><span class="details">&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
+					<li><a href="#">Un petit bâtiment en palettes recyclées</a><span class="details">&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>					
+					<li><a href="#">L'autonomie énergétique pour 2500 euros</a><span class="details">&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
 				</ul>
 			</div>			
 			<div class="box">				
 				<h1><var id="latest_documents" translate="yes"></var> »</h1>
 				<ul>
-					<li><a href="#">Auto-construction d'un cellier en palettes de récupération</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;125ko</span></li>
-					<li><a href="#">L'action responsable et son paradoxe</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;254ko</span></li>					
-					<li><a href="#">Utilisation d'une TLB ou toilette à litière biomaîtrisée</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;350ko</span></li>
+					<li><a href="#">Auto-construction d'un cellier en palettes de récupération</a><span class="details">&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;125ko</span></li>
+					<li><a href="#">L'action responsable et son paradoxe</a><span class="details">&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;254ko</span></li>					
+					<li><a href="#">Utilisation d'une TLB ou toilette à litière biomaîtrisée</a><span class="details">&nbsp;&nbsp;|&nbsp;&nbsp;pdf&nbsp;&nbsp;|&nbsp;&nbsp;350ko</span></li>
 				</ul>				
 			</div>	
 		</div>
