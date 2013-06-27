@@ -146,6 +146,9 @@ switch($params['page_id']) {
 			return $html;
 		};
 		break;
+	case '14':
+		// page sitemap
+		break;		
 }
 	
 /**

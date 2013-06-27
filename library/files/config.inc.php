@@ -193,4 +193,5 @@
 */
 
 	// draft validity in days
-	define('DRAFT_VALIDITY', 10);
+	// define('DRAFT_VALIDITY', 10);
+	define('DRAFT_VALIDITY', 0);	
