@@ -20,24 +20,26 @@
 	border-bottom: solid 1px #efefef;
 }
 .file_cabinet .row .name,  .file_cabinet .row .desc, .file_cabinet .row .type, .file_cabinet .row .size, .file_cabinet .row .modif{
+	text-align: left;
 	display: table-cell;
 	padding: 0 10px;
 }
 
 .file_cabinet .row .name {
-	width: 35%;
-}
-.file_cabinet .row .desc {
 	width: 30%;
 }
+.file_cabinet .row .desc {
+	text-align: justify;
+	width: 35%;
+}
 .file_cabinet .row .type {
-	width: 7%;
+	width: 10%;
 }
 .file_cabinet .row .size {
 	width: 10%;
 }
 .file_cabinet .row .modif {
-	width: 18%;
+	width: 15%;
 }
 
 .file_cabinet .row .name a:link {

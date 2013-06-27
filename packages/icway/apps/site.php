@@ -2,7 +2,10 @@
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 load_class('orm/I18n');
+load_class('utils/DateFormatter');
+
 include('parser.inc.php');
+
 
 // force silent mode
 set_silent(true);
@@ -113,25 +116,31 @@ switch($params['page_id']) {
 		$renderer['content'] = function() {
 			$html = '<h1>'.'Ressources'.'</h1>';
 			$html .= '<div class="file_cabinet">';
-		
-			$resources_ids = search('icway\Resource', null, 'category_id');
-			$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type', 'category_name'));							
-			$category = '@@@##=';	// in the hope that this category name does not actually exist!
-			foreach($resources_values as $resource_values) {
-				if($resource_values['category_name'] != $category) {
-					$html .= '<div class="header">'.$resource_values['category_name'].'</div>';
-					$category = $resource_values['category_name'];
-				}
-				$html .= '<div class="row">';
-				$html .= '  <div class="name">';
-				$html .= '    '.$resource_values['title'].'<br />';
-				$html .= '    <span style="word-spacing: 5px;"><a href="?get=icway_resource&mode=view&res_id='.$resource_values['id'].'" target="_blank">Afficher</a>&nbsp;<a href="?get=icway_resource&mode=download&res_id='.$resource_values['id'].'">Télécharger</a></span>';
-				$html .= '  </div>';
-				$html .= '  <div class="desc">'.$resource_values['description'].'</div>';
-				$html .= '  <div class="type">'.$resource_values['type'].'</div>';	
-				$html .= '  <div class="size">'.floor($resource_values['size']/1000).' Ko</div>';	
-				$html .= '  <div class="modif">'.$resource_values['modified'].'</div>';				
-				$html .= '</div>';
+
+			$categories_ids = search('icway\Category');
+			$categories_values = &browse('icway\Category', $categories_ids, array('name'));
+ 
+			foreach($categories_ids as $category_id) {
+				// sort resources by title (inside the current category)
+				$resources_ids = search('icway\Resource', array(array(array('category_id','=',$category_id))), 'title');				
+				$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'));
+				$html .= '<div class="header">'.$categories_values[$category_id]['name'].'</div>';				
+				foreach($resources_values as $resource_values) {
+					$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);											
+					// we use Google doc viewer for other stuff than images 
+					if($resource_values['type'] == 'application/pdf') $view_url = 'http://docs.google.com/viewer?url='.urlencode('http://'.$_SERVER["SERVER_NAME"].$_SERVER['PHP_SELF'].'?get=icway_resource&mode=download&res_id='.$resource_values['id']);
+					else $view_url = '?get=icway_resource&mode=view&res_id='.$resource_values['id'];
+					$html .= '<div class="row">';
+					$html .= '  <div class="name">';
+					$html .= '    '.$resource_values['title'].'<br />';
+					$html .= '    <span style="word-spacing: 5px;"><a href="'.$view_url.'" target="_blank">Afficher</a>&nbsp;<a href="?get=icway_resource&mode=download&res_id='.$resource_values['id'].'">Télécharger</a></span>';
+					$html .= '  </div>';
+					$html .= '  <div class="desc">'.$resource_values['description'].'</div>';
+					$html .= '  <div class="type">'.$resource_values['type'].'</div>';	
+					$html .= '  <div class="size">'.floor($resource_values['size']/1000).' Ko</div>';	
+					$html .= '  <div class="modif">'.$dateFormatter->getDate(DATE_LITTLE_ENDIAN).'</div>';				
+					$html .= '</div>';
+				}			
 			}
 			$html .= '</div>';			
 			return $html;

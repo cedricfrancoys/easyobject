@@ -460,7 +460,15 @@
 								eval(attr_onsubmit);
 							});
 						}
-
+					
+						// empty binary fields would result in erasing already existing data!
+						if(schemaObj[field]['type'] == 'binary') {
+							$form.data('conf').onSubmitCallbacks.add(function() {
+								if($item.data('widget').val().length == 0) $item.remove();
+							});							
+						}
+						
+						
 						// setting content validation by adding onSubmit callback to the form
 // todo : also check compatibilty (to prevent unnecessary server-side checks) for each field depending on its type (regexps)
 // html = html.replace(/(<label[^>]*>[^<]*<\/label>)/gi, '<td class="label">$1</td>');
@@ -645,10 +653,8 @@
 					// - check fields validity
 					// - execute user defined functions (set in views, using 'onSubmit' attribute) that could modify some data
 					conf.onSubmitResult = true;
-					conf.onSubmitCallbacks.fire();
-
-					// something went wrong : stop the form submission
-					if(!conf.onSubmitResult) return false;
+					conf.onSubmitCallbacks.fire();					
+					if(!conf.onSubmitResult) return false; // something went wrong : stop the form submission
 
 					// 2) POST the form data
 					// we use an iframe to be able to post multipart/form-data content (that ajax does not allow)

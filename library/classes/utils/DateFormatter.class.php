@@ -48,8 +48,12 @@ class DateFormatter {
 	private static $days_order	= array('iso' => array('1','2','3','4','5','6','0'), 'us' => array('0','1','2','3','4','5','6'));
 
 
-	public function __construct() {
+	public function __construct($date='', $format=self::UNIX) {
+		// instanciate the inner DateTime object
 		$this->dateTime = new DateTime();
+		// by default, set to current date with UNIX format
+		if(empty($date)) $date = date($format);		
+		$this->setDate($date, $format);
 	}
 
 	public function getTimestamp() {

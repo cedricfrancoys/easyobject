@@ -129,6 +129,7 @@
 							editor.getSession().setMode("ace/mode/javascript");						
 
 							// synchronize editor and textarea
+// todo : dirty and slow! improve this							
 							editor.getSession().on('change', function(){ 
 								$textarea.val(editor.getSession().getValue()); 
 							});							

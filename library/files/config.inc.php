@@ -59,7 +59,8 @@
 */
 	// maximum authorized size for file upload (in octet)
 	// 256ko by default
-	define('UPLOAD_MAX_FILE_SIZE', 256000);
+	// define('UPLOAD_MAX_FILE_SIZE', 256000);
+	define('UPLOAD_MAX_FILE_SIZE', 1000000);
 
 /**
 * Debugging
@@ -73,9 +74,8 @@
 	define('DEBUG_ORM',	4);
 	//define('DEBUG_',	8);
 
-	//define('DEBUG_MODE', 0);
-	//define('DEBUG_MODE', DEBUG_PHP);
-	define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
+	define('DEBUG_MODE', 0);
+	// define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
 
     $SILENT_MODE = false;
 
