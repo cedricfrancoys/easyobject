@@ -10,7 +10,6 @@ include('parser.inc.php');
 // force silent mode
 set_silent(true);
 
-check_params(array('page_id'));
 $params = get_params(array('page_id'=>1, 'lang'=>'fr'));
 
 
@@ -132,7 +131,7 @@ switch($params['page_id']) {
 					else $view_url = '?get=icway_resource&mode=view&res_id='.$resource_values['id'];
 					$html .= '<div class="row">';
 					$html .= '  <div class="name">';
-					$html .= '    '.$resource_values['title'].'<br />';
+					$html .= '    <a name="'.$resource_values['id'].'">'.$resource_values['title'].'</a><br />';
 					$html .= '    <span style="word-spacing: 5px;"><a href="'.$view_url.'" target="_blank">Afficher</a>&nbsp;<a href="?get=icway_resource&mode=download&res_id='.$resource_values['id'].'">Télécharger</a></span>';
 					$html .= '  </div>';
 					$html .= '  <div class="desc">'.$resource_values['description'].'</div>';

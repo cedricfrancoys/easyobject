@@ -155,7 +155,10 @@
 
 				var fields = easyObject.get_fields(conf.class_name, conf.view_name);
 				// obtain object fields values
-				var object_values = (easyObject.browse(conf.class_name, [conf.object_id], fields, conf.lang))[conf.object_id];
+				//var object_values = (easyObject.browse(conf.class_name, [conf.object_id], fields, conf.lang))[conf.object_id];
+				// we only need values of simple fields
+				var object_values = (easyObject.browse(conf.class_name, [conf.object_id], null, conf.lang))[conf.object_id];
+				
 				// set pedefined values if any
 				if(typeof conf.predefined == 'object') $.extend(object_values, conf.predefined);
 

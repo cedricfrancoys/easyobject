@@ -399,6 +399,7 @@ var UI_terms = {
 		});
 		
 		// display body content (now that the browser has loaded UI styles and images)
+		$('#loader').hide();
 		$('#main').css({'visibility': 'visible'});
 	});	
 })(jQuery);

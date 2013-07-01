@@ -41,12 +41,3 @@
 .file_cabinet .row .modif {
 	width: 15%;
 }
-
-.file_cabinet .row .name a:link {
-    color: #005596;
-	text-decoration: underline;
-}
-.file_cabinet .row .name a:hover {
-    color: #0095c6;
-	text-decoration: underline;
-}

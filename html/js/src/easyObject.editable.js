@@ -91,7 +91,8 @@
 // todo : build the ckeditor configuration object based on the current conf (customized toolbar, browsers url, ...)
 							CKEDITOR.replace($textarea[0], {
 									filebrowserImageBrowseUrl: '?show=utils_publicPicasaBrowser',									
-									linkbrowserInternalUrl: '?show=utils_test',									
+// temporary									
+									linkbrowserInternalUrl: '?show=icway_pagesBrowser',									
 									height: 250,
 									toolbar: [
 										['Maximize'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],

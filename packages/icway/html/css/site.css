@@ -322,11 +322,12 @@ body {
 	overflow : hidden;
 }
 #bottom-inner h1 {
-	color: #3B79E2;
-	font: 600 1.2em "molengo","ff-nuvo-web-pro",anivers,Arial;
+	color: #1B59C2;
+	font: 600 1.2em Arial,Helvetica;
 	border-bottom: solid 1px #000;
 	padding-bottom: 10px;
-	text-shadow: 1px 1px 1px rgba(0,0,0,1);			
+	letter-spacing: 1px;
+	text-shadow: 1px 1px 2px rgba(0,0,0,0.5);			
 }		
 #bottom-inner ul {
 	list-style: none outside none;

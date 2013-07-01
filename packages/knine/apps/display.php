@@ -46,16 +46,16 @@ $html = new HtmlWrapper();
 $html->addCSSFile('packages/knine/html/css/article.css');
 $html->addJSFile('html/js/jquery-1.7.1.min.js');
 $html->addJSFile('html/js/src/easyobject.api.js');
+$html->addJSFile('packages/knine/html/js/knine.js');
 
 $i18n = I18n::getInstance();
 
 $lang_details = $i18n->getClassTranslationValue('fr', array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'more', 'field_attr' => 'label'));
 $lang_summary = $i18n->getClassTranslationValue('fr', array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'less', 'field_attr' => 'label'));
 
-
 $html->add($content = new HtmlBlock('content', 'div'));
 $content->add($outer = new HtmlBlock('outer_frame', 'div'));
-$outer->add($frame = new HtmlBlock('frame', 'div'));
+$outer->add($frame = new HtmlBlock('frame', 'div', null, array('class'=>'loaded')));
 
 /**
 * Returns the html code corresponding to the specified article at the specified level of detail
@@ -73,12 +73,11 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 	$values = browse('knine\Article', array($article_id), array('created', 'creator', 'title', 'is_root', 'children_ids', 'summary', 'content'));
 	$article = $values[$article_id];
 
-	if(strlen($level)) $article['title'] =  $level.'.&nbsp;'.$article['title'];
+	if(strlen($level)) $article['title'] = $level.'.&nbsp;'.$article['title'];
 
 	$values = browse('knine\User', array($article['creator']), array('firstname', 'lastname'));
 	$creator_name	= $values[$article['creator']]['firstname'].' '.$values[$article['creator']]['lastname'];
 
-	$edit_link = '';
 	$class_name = 'title';
 	$title_details = '';
 
@@ -92,19 +91,19 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 
 	if($depth >= $max_depth) {
 		$html .= '<div class="article" id="'.$article_id.'">';
-		$html .= '	<div class="level"></div>';
-		$html .= '	<div class="'.$class_name.'">'.$article['title'].$title_details.'&nbsp&nbsp;'.$edit_link.'</div>';
+		$html .= '	<div class="level">'.$level.'</div>';
+		$html .= '	<div class="'.$class_name.'">'.$article['title'].$title_details.'</div>';
 		$html .= '	<div class="summary">'.$article['summary'].'</div>';
-		$html .= '	<div class="content control_hidden"></div>';
-		$html .= '  <div class="display_button"><a class="display_link" href="javascript:void(null);">'.$lang_details.'</a></div>';
+		$html .= '	<div class="content" style="display: none;"></div>';
+		$html .= '  <div class="display_button"><a class="summary_link" style="display: none;" href="javascript:void(null);">'.$lang_summary.'</a><a class="details_link" href="javascript:void(null);">'.$lang_details.'</a></div>';
 		$html .= '</div>';
 	}
 	else {
-		$html .= '<div class="article loaded" id="'.$article_id.'">';
-		$html .= '	<div class="level"></div>';
-		$html .= '	<div class="'.$class_name.'">'.$article['title'].$title_details.'&nbsp&nbsp;'.$edit_link.'</div>';
-		$html .= '	<div class="summary control_hidden">'.$article['summary'].'</div>';
-		$html .= '	<div class="content">';
+		$html .= '<div class="article" id="'.$article_id.'">';
+		$html .= '	<div class="level">'.$level.'</div>';
+		$html .= '	<div class="'.$class_name.'">'.$article['title'].$title_details.'</div>';
+		$html .= '	<div class="summary" style="display: none;">'.$article['summary'].'</div>';
+		$html .= '	<div class="content loaded">';
 		if(count($article['children_ids']) > 0) {
 			$i = 1;
 			foreach($article['children_ids'] as $sub_article_id) {
@@ -118,73 +117,26 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 			$html .= $article['content'];
 		}
 		$html .= '	</div>';
-		$html .= '  <div class="display_button"><a class="collapse_link" href="javascript:void(null);">'.$lang_summary.'</a></div>';
+		$html .= '  <div class="display_button"><a class="summary_link" href="javascript:void(null);">'.$lang_summary.'</a><a class="details_link" style="display: none;" href="javascript:void(null);">'.$lang_details.'</a></div>';
 		$html .= '</div>';
 	}
 	return $html;
 }
 
-// content could be dynamically loaded (i.e. in JS) but then it would not be ideal for search engines content indexers
+// We display the content of the specified article (at specified level).
+// This could be done fully dynamic client-side (JS) but then content would not be indexed by search engines
 $frame->add(get_article_html($params['article_id'], '', 0, $params['level']));
 
 
 $html->addScript("
-var LANG_ARTICLE_SUMMARY = '{$lang_summary}', LANG_ARTICLE_DETAIL = '{$lang_details}';
-
 $(document).ready(function() {
-	$('a.display_link').toggle(expand_click, collapse_click);
-	$('a.collapse_link').toggle(collapse_click, expand_click);
+	$('#frame').knine({
+		article_id: {$params['article_id']},
+		depth: {$params['level']},
+		lang_summary: '{$lang_summary}', 
+		lang_details: '{$lang_details}'
+	});
 });
-
-function expand_click(eventObject) {
-	var elem_article = $(this).parent().parent();
-	var parent_article_id = elem_article.attr('id');
-	var parent_article_content = elem_article.find('div.content');
-	var parent_article_summary = elem_article.find('div.summary');
-	var parent_level = elem_article.find('div.level').text();
-
-	if(!elem_article.hasClass('loaded')) {
-		ids = search('knine\\\\Article', [[['parent_id', '=', parent_article_id]]], 'id', 'asc', 0, 30, 'en');
-		items = browse('knine\\\\Article', ids, ['content', 'summary'], 'en');
-		var counter = 1;
-		if(items.length == 0) {
-			// get the content
-			values = browse('knine\\\\Article', [parent_article_id], ['content', 'summary'], 'en');
-			parent_article_content[0].innerHTML = values[parent_article_id]['content'];
-		}
-		else {
-			$.each(items, function(i,item){
-				var level = parent_level + counter + '.';
-				var sub_article_level = $('<div/>').addClass('level').text(level);
-				var sub_article_title = $('<div/>').addClass('title').text(level + ' ' + item.title).append('&nbsp;&nbsp;');
-				var sub_article_summary = $('<div/>').addClass('summary').html(item.summary);
-				var sub_article_content = $('<div/>').addClass('content').addClass('control_hidden');
-				var sub_article_display_button = $('<div/>').addClass('display_button').append($('<a/>').attr('href','javascript:void(null);').addClass('display_link').text(LANG_ARTICLE_DETAIL).toggle(expand_click, collapse_click));
-				var sub_article = $('<div/>')
-									.addClass('article')
-									.attr('id', item.id)
-									.append(sub_article_level)
-									.append(sub_article_title)
-									.append(sub_article_summary)
-									.append(sub_article_content)
-									.append(sub_article_display_button);
-				parent_article_content.append(sub_article);
-				++counter;
-			});
-		}
-		elem_article.addClass('loaded');
-	}
-	parent_article_summary.toggleClass('control_hidden');
-	parent_article_content.toggleClass('control_hidden');
-	$(this).text(LANG_ARTICLE_SUMMARY);
-}
-
-function collapse_click(eventObject) {
-	$(this).parent().parent().find('div.summary').toggleClass('control_hidden');
-	$(this).parent().parent().find('div.content').toggleClass('control_hidden');
-	$(this).text(LANG_ARTICLE_DETAIL);
-}
-
 ");
 
 print($html);

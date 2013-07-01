@@ -152,22 +152,27 @@ class HtmlWrapper {
 	 */
 	function addMeta($name, $content) {
 		$this->metas[$name] = $content;
+		return $this;		
 	}
 
 	function addJSFile($file) {
 		$this->js_files[] = $file;
+		return $this;	
 	}
 
 	function addCSSFile($file) {
 		$this->css_files[] = $file;
+		return $this;
 	}
 
 	function addScript($script) {
 		$this->script .= $script;
+		return $this;
 	}
 
 	function addStyle($style) {
 		$this->style .= $style;
+		return $this;	
 	}
 
 	function add($html) {
@@ -176,6 +181,7 @@ class HtmlWrapper {
 			else $this->htmlBody = new HtmlBlock(0, 'body');
 		}
 		$this->htmlBody->add($html);
+		return $this;
 	}
 
 	/**

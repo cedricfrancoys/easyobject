@@ -97,10 +97,9 @@ var easyObject = {
 					url: 'index.php?get=core_objects_browse',
 					async: false,
 					dataType: 'json',
-// todo : rather set fields param to null in calls that require it and leave this to whatever the user asks for
-					// we don't want to request complex fields, so we don't use the fields parameter					
+					// note: if we don't want to request complex fields, remember to set fields parameter to null
 					data: {
-//						fields: fields,
+						fields: fields,
 						object_class: class_name,
 						ids: ids,
 						lang: lang
