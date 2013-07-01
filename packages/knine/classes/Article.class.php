@@ -43,7 +43,12 @@ namespace knine {
 					'is_root'	=> function() { return true; }
 			);
 		}
+		
+		public static function getOrder() {
+			return array('sequence');
+		}
 
+		
 		public static function callable_getRootId($om, $uid, $oid, $lang) {
 			while(true) {
 				$root_id = $oid;

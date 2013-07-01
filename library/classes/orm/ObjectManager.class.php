@@ -947,34 +947,51 @@ class ObjectManager {
 			if(!empty($ids) && !is_array($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
 			if(!empty($fields) && !is_array($fields)) throw new Exception("argument is not an array of objects fields : '$fields'", INVALID_PARAM);
 			if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, 'id', 'asc', 0, '', $lang);
-
+			
+			$object = &$this->getObjectStaticInstance($object_class);
+			
 			// if the script is running in standalone mode
 			if(OPERATION_MODE == 'standalone') {
 				// first we request all fields of all objects at once to generate a bulk query
 				// in order to minimize the numlber of SQL queries
-				// (if some multilang field are required they'll be loaded all at once from the core_translation)
+				// (if some multilang field are required they'll be loaded all at once from core_translation)
 				// note : an sql query will be generated for:
 				//  - every simple field (even the ones already loaded!)
 				//  - complex fields not yet loaded
 
 				// if no fields have been defined, then we will return every simple fields of the object
-				$object = &$this->getObjectStaticInstance($object_class);
+
 	 			if(empty($fields)) $fields = $object->getFieldsNames($this->simple_types);
-// todo : we could maybe improve this by removing fully loaded objects from the ids list
+// todo : we could maybe improve this by removing objects already fully loaded from the ids list
 				$this->loadObjectFields($user_id, $object_class, $ids, $fields, $lang);
 			}
 
+			// add order fields if necessary
+			if(method_exists($object, 'getOrder')) {
+				$order = $object->getOrder();
+				$fields = array_unique(array_merge($fields, $order));
+			}
+			
 			foreach($ids as $object_id) {
 				if($object_id == 0) {
 					// we cannot use getFields here, since it would result in the creation of a new object (which is a behaviour reserved to the 'update' method)
 					// so in order to get the default values we use the "static instance"
-					$object = &$this->getObjectStaticInstance($object_class);
 					$result[$object_id] = $object->getValues($fields, $lang);
 				}
 				else {
 					if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_READ)) throw new Exception("user '$user_id' does not have permission to read object '$object_id' of class '$object_class'", NOT_ALLOWED);
 					$result[$object_id] = $this->getFields($user_id, $object_class, $object_id, $fields, $lang);
 					$this->setLog($user_id, R_READ, $object_class, $object_id, $fields, $lang);
+				}
+			}
+// todo : validate this code
+			// This allows us to sort records when browsing (based on fields returned by optional method 'getOrder')
+			if(isset($order)) {
+				foreach($order as $ofield) {
+					uasort($result, function ($a, $b) {
+						if ($a[$ofield] == $b[$ofield]) return 0;
+						return ($a[$ofield] < $b[$ofield]) ? -1 : 1;
+					}); 
 				}
 			}
 		}
@@ -1007,6 +1024,7 @@ class ObjectManager {
 	* @return mixed (integer or array)
 	*/
 	public function search($user_id, $object_class, $domain=null, $order='id', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG) {
+// todo : if no order field is specifield, use fields returned by optional method 'getOrder', if any	
 		try {
 			if(!IdentificationManager::hasRight($user_id, $object_class, 0, R_READ)) throw new Exception("user($user_id) does not have permission to read objects of class ($object_class)", NOT_ALLOWED);
 			if(empty($order)) throw new Exception("sort field cannot be empty", INVALID_PARAM);
