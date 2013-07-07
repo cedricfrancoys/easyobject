@@ -278,7 +278,13 @@ body {
 	color: #4C8EFC;
 	text-decoration: underline;
 }
-
+#article-content blockquote {
+	border: 0;
+    border-left: solid 3px #CCCCCC;
+    padding-left: 20px;
+    font-family: Georgia,Times,"Times New Roman",serif;
+    font-style: italic;
+}
 #bottom {
 	box-shadow: 0 0 20px rgba(0,0,0,.9);-moz-box-shadow:0 0 20px rgba(0,0,0,.9);-webkit-box-shadow:0 0 20px rgba(0,0,0,.9);			
 	clear: both;
@@ -362,4 +368,47 @@ body {
 #footer a:hover {
 	color: #4c8efc;
 	text-decoration: underline;
+}
+
+.picasagallery_header {
+	display: block;	
+	cursor: pointer;
+	color: #4C8EFC;
+}
+
+.picasagallery_header:hover{
+	text-decoration: underline;
+}
+
+.picasagallery_title {
+	display: block;
+	font-size: 10pt;
+	margin-bottom: 5px;
+}
+
+.picasagallery_album {
+    float: left;
+	width: 160px;
+	margin-right: 20px;
+    font-size: 10pt;
+    text-align: center;
+	cursor: pointer;	
+}
+
+.picasagallery_thumbnail {
+    float: left;
+	width: 180px;
+	margin-bottom: 15px;
+}
+
+.picasagallery_album  img, .picasagallery_thumbnail img {
+	-moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, .75);
+	-webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, .75);
+	-goog-ms-box-shadow: 2px 2px 4px rgba(0, 0, 0, .75);
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, .75);
+	filter:progid:DXImageTransform.Microsoft.Shadow(color='#000000', Direction=120, Strength=5);	
+}
+
+.picasagallery_album  p{
+	word-wrap: break-word;
 }

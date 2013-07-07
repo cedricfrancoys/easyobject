@@ -42,7 +42,7 @@ $renderer = array(
 						},
 	'top_menu'		=>	function () {
 							$html = "<ul>";	
-							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'))), 'sequence', 'desc', 0, 10);
+							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('top_menu', '=', '1'))), 'sequence', 'desc');
 							if(!count($ids)) break;
 							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
 							foreach($sections_values as $section_values) {

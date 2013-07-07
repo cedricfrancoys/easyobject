@@ -57,6 +57,7 @@ td.field {
 	padding-top: 5px;
 	width: 95%;
 	vertical-align: top;
+	text-align: left;
 }
 fieldset {
 	border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; -webkit-border-radius: 5px;

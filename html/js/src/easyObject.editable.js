@@ -42,11 +42,13 @@
 				return (function ($this, conf) {
 					switch(conf.type) {
 						case 'boolean':
+// todo : align checkbox left
 							$this.data('widget', $('<input type="checkbox"/>')
-												.attr({id: conf.name, name: conf.name, checked: (conf.value)?'checked':''})
-												.val((conf.value)?1:0)
+												.attr({id: conf.name, name: conf.name})
+												.prop('checked', (parseInt(conf.value) > 0))
+												.val((parseInt(conf.value) > 0)?1:0)
 												.on('change', function () {
-																this.value = (int)(this.checked);
+																this.value = +(this.checked);
 																conf.onchange();
 															})
 												.appendTo($this)
