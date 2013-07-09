@@ -103,7 +103,7 @@
 								.click(function() {
 									// find the UL parent of selected item
 									var $selected = conf.selection;
-									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent());
+									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent()) {}
 									// swap selected item with previous item (if it is not the first of the list)
 									if($ul.children().first().attr('id') != $selected.attr('id')) {
 										$selected.prev().before($selected.detach());
@@ -125,7 +125,7 @@
 								.click(function() {
 									// find the UL parent of selected item
 									var $selected = conf.selection;
-									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent());
+									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent()){}
 									// swap selected item with next item (if it is not the last of the list)
 									if($ul.children().last().attr('id') != $selected.attr('id')) {
 										$selected.next().after($selected.detach());
@@ -146,7 +146,7 @@
 								$('<button type="button"/>').button({icons:{primary:'ui-icon-arrowthick-1-e'}, text: false}).css({'display': 'block', 'margin': '4px', 'padding': '3px 0px 3px 0px'})
 								.click(function() {
 									var $selected = conf.selection;
-									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent());
+									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent()){}
 									// if there is at leat one item before the selected one
 									if($ul.children().first().attr('id') != $selected.attr('id')) {
 										$previous = $selected.prev();
@@ -176,7 +176,7 @@
 								.click(function() {
 									// find the UL parent of selected item
 									var $selected = conf.selection;
-									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent());
+									for($ul = $selected; !$ul.is('ul'); $ul = $ul.parent()){}
 									$li = $ul.parent();
 									// if we can go left
 									if($li.is('li')) {

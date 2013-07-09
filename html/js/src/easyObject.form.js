@@ -574,7 +574,7 @@
 								$(this).simpletip({
 									content: langObj['model'][field]['help'].replace(/\n/g,'<br />'),
 									showEffect: 'none',
-									hideEffect: 'none',
+									hideEffect: 'none'
 								});
 							}
 						}
@@ -586,7 +586,7 @@
 								$(this).simpletip({
 									content: schemaObj[field]['help'].replace(/\n/g,'<br />'),
 									showEffect: 'none',
-									hideEffect: 'none',
+									hideEffect: 'none'
 								});							
 							}
 						}

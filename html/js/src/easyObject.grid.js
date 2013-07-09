@@ -84,16 +84,21 @@
 				var $tbody = $('<tbody/>').attr('id', 'grid_table_body');
 
 				// instanciate header row and the first column which contains the 'select-all' checkbox
-				var $hrow = $('<tr/>').append($('<th/>').append($('<div/>').append(
-					$('<input type="checkbox" />').addClass('checkbox')
-					.click(function() {
-						var checked = this.checked;
-						$("input:checkbox", $tbody).each(function(i, elem) {
-							if(checked) elem.checked = true;
-							else elem.checked = false;
-						});
-					})
-					)));
+				var $hrow = $('<tr/>')
+				.append($('<th/>')
+					.append($('<div/>')
+						.append(
+							$('<input type="checkbox" />').addClass('checkbox')
+							.click(function() {
+								var checked = this.checked;
+								$("input:checkbox", $tbody).each(function(i, elem) {
+									if(checked) elem.checked = true;
+									else elem.checked = false;
+								});
+							})
+						)
+					)
+				);
 				
 				// create other columns, based on the col_model given in the configuration
 				$.each(conf.col_model, function(i, col) {
@@ -350,7 +355,7 @@
 								$(this).simpletip({
 									content: langObj['model'][field]['help'].replace('\n','<br />'),
 									showEffect: 'none',
-									hideEffect: 'none',
+									hideEffect: 'none'
 								});
 							}
 						}
