@@ -37,7 +37,7 @@ set_silent(true);
 // we'll need to format some dates
 load_class('utils/DateFormatter');
 // our blog is in french
-setlocale(LC_ALL, 'fr_FR', 'fr', 'FRA');
+setlocale(LC_ALL, 'fr_FR', 'fr_FR.UTF-8');
 
 check_params(array('post_id'));
 $params = get_params(array('post_id'=>null));
@@ -71,7 +71,8 @@ $get_html = function ($attributes) {
 			$content = $post_values[$params['post_id']]['content'];
 			$dateFormatter = new DateFormatter();
 			$dateFormatter->setDate($post_values[$params['post_id']]['created'], DATE_TIME_SQL);
-			$date = ucfirst(strftime("%A %d %B %Y", $dateFormatter->getTimestamp()));
+			// $date = ucfirst(strftime("%A %d %B %Y", $dateFormatter->getTimestamp()));
+			$date = ucfirst(strftime("%A %d %B", $dateFormatter->getTimestamp()));			
 			$html = "
 				<h2 class=\"title\">$title</h2>
 				<div class=\"meta\"><p>$date</p></div>

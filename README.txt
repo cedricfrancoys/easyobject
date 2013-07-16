@@ -2,7 +2,7 @@ easyObject 1.0
 ==============
 
 Copyright (c) 2012 Cedric Francoys  
-http://www.cedricfrancoys.be/easyobject - See LICENSE.txt for license information.
+http://easyobject.cedricfrancoys.be - See LICENSE.txt for license information.
 
 easyObject is a simple though robust tool, easy to get started with and which goal 
 is to allow to ensure common tasks of most modern web applications very easily.
@@ -13,7 +13,7 @@ handling and persistence of objects by associating classes to the tables of a da
 ## Documentation
 
 A complete documentation is available online at the following address:
-http://www.cedricfrancoys.be/easyobject/#help
+http://easyobject.cedricfrancoys.be/#help
 
 
 ## Installation
@@ -25,7 +25,7 @@ http://www.cedricfrancoys.be/easyobject/#help
 		- MySQL 5.1+ 
 
  1. **Download** the latest version from the easyObject website:
-    http://www.cedricfrancoys.be/easyobject/#download
+    http://easyobject.cedricfrancoys.be/#download
     
  2. **Extract** the downloaded archive to the root directory of your website.
 
