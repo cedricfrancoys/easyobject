@@ -42,7 +42,7 @@ $renderer = array(
 						},
 	'top_menu'		=>	function () {
 							$html = "<ul>";	
-							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('top_menu', '=', '1'))), 'sequence', 'desc');
+							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('in_menu', '=', '1'))), 'sequence', 'desc');
 							if(!count($ids)) break;
 							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
 							foreach($sections_values as $section_values) {
@@ -101,6 +101,23 @@ $renderer = array(
 								$html .= '</ul>';					
 							}
 							return $html;
+						},						
+	'latest_docs'	=>	function () {
+							$html = "<ul>";
+							// sort resources by title (inside the current category)
+							$resources_ids = search('icway\Resource', array(array(array())), 'modified', 'desc', 0, 3);
+							$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'));
+							foreach($resources_values as $resource_values) {
+								$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);											
+								// we use Google doc viewer for other stuff than images 
+								list($mode, $type) = explode('/', $resource_values['type']);
+								$html .= '<li>';
+								$html .= '  <a href="">'.$resource_values['title'].'</a>';								
+								$html .= '  <span class="details">&nbsp;&nbsp'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko</span>';	
+								$html .= '</li>';		
+							}
+							$html .= "</ul>";							
+							return $html;
 						}
 );
 
@@ -129,6 +146,7 @@ switch($params['page_id']) {
 					// we use Google doc viewer for other stuff than images 
 					if($resource_values['type'] == 'application/pdf') $view_url = 'http://docs.google.com/viewer?url='.urlencode('http://'.$_SERVER["SERVER_NAME"].$_SERVER['PHP_SELF'].'?get=icway_resource&mode=download&res_id='.$resource_values['id']);
 					else $view_url = '?get=icway_resource&mode=view&res_id='.$resource_values['id'];
+					
 					$html .= '<div class="row">';
 					$html .= '  <div class="name">';
 					$html .= '    <a name="'.$resource_values['id'].'">'.$resource_values['title'].'</a><br />';

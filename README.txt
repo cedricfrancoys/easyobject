@@ -36,9 +36,9 @@ http://easyobject.cedricfrancoys.be/#help
 		In most cases, you'll just have to modify the lines regarding the database access:
 
 		define('DB_HOST',		'localhost');   // the full qualified domain name (ex.: www.example.com)
-		define('DB_PORT',		'3306');		// this is the default port for MySQL 
+		define('DB_PORT',		'3306');	// this is the default port for MySQL 
 		define('DB_USER',		'root');        // this should be changed for security reasons
-		define('DB_PASSWORD',	'');			// this should be changed for security reasons
+		define('DB_PASSWORD',		'');		// this should be changed for security reasons
 		define('DB_NAME', 		'easyobject');	// specify the name of the DB that you have created or you plan to use		
 	
  2. Test your installation

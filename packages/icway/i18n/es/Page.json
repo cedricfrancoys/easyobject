@@ -4,8 +4,8 @@
 	},
 	"view": {
 		"share_page":{"label":"Partager cette page"},	
-		"recent_articles":{"label":"Articles récents"},			
-		"latest_documents":{"label":"Derniers documents"},				
+		"recent_articles_title":{"label":"Articles récents"},			
+		"latest_docs_title":{"label":"Derniers documents"},				
 		"about":{"label":"À propos de ICway"},
 		"sitemap":{"label":"Plan du site"},
 		"contact":{"label":"Nous contacter"},

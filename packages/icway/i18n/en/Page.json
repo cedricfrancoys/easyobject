@@ -3,8 +3,8 @@
 	},
 	"view": {
 		"share_page":{"label":"Share this page"},	
-		"recent_articles":{"label":"Recent articles"},			
-		"latest_documents":{"label":"Latest documents"},				
+		"recent_articles_title":{"label":"Recent articles"},			
+		"latest_docs_title":{"label":"Latest documents"},				
 		"about":{"label":"About ICway"},
 		"sitemap":{"label":"Sitemap"},
 		"contact":{"label":"Contact us"},
