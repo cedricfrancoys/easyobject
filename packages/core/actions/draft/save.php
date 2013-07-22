@@ -51,9 +51,9 @@ $object_fields_array = array();
 foreach($object->getColumns() as $field => $def) if(isset($values[$field])) $object_fields_array[$field] = $values[$field];
 
 // remove (permanently) previous draft if any
-remove('core\version', search('core\version', array(array(array('object_class', '=', $object_class), array('object_id', '=', $object_id), array('state', '=', 'draft')))), true);
+remove('core\Version', search('core\Version', array(array(array('object_class', '=', $object_class), array('object_id', '=', $object_id), array('state', '=', 'draft')))), true);
 // create a new draft with given values
-$result = update('core\version', array(0), array('created'			=> date("Y-m-d H:i:s"),
+$result = update('core\Version', array(0), array('created'			=> date("Y-m-d H:i:s"),
 												'creator'			=> user_id(),
 												'object_class'		=> $object_class,
 												'object_id'			=> $object_id,

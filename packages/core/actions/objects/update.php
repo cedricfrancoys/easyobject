@@ -55,14 +55,14 @@ else {
 	}
 	else {
 // note : keep in mind that if we are requesting a new object
-// and if that object has one field whose name is in the $_REQUEST 
+// and if that object has one field whose name is in the $_REQUEST
 // then we don't prevent from setting values (which would result in the creation AND modification, so object would no longer be a draft)
 		// values are valid : update object and get json result
 		$result = update($params['object_class'], $params['ids'], $_REQUEST, $params['lang']);
 		// look for deprecated draft
-		$ids = search('core\version', array(array(array('object_class', '=', $params['object_class']), array('object_id', '=', $params['ids']), array('state', '=', 'draft'))));
+		$ids = search('core\Version', array(array(array('object_class', '=', $params['object_class']), array('object_id', '=', $params['ids']), array('state', '=', 'draft'))));
 		// if update went well, remove (permanently) pending draft, if any
-		if(is_array($result) && !empty($ids)) remove('core\version', $ids, true);
+		if(is_array($result) && !empty($ids)) remove('core\Version', $ids, true);
 	}
 }
 

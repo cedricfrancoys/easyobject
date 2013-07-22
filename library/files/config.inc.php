@@ -195,3 +195,12 @@
 	// draft validity in days
 	// define('DRAFT_VALIDITY', 10);
 	define('DRAFT_VALIDITY', 0);	
+
+
+/**
+* Email sending
+*/
+	define('SMTP_HOST', 'smtp.gmail.com');
+	define('SMTP_ACCOUNT_USERNAME', 'username');
+	define('SMTP_ACCOUNT_PASSWORD', 'mypassword');
+	define('SMTP_ACCOUNT_EMAIL', 'username@example.com');

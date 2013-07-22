@@ -40,12 +40,12 @@ check_params(array('object_class', 'id'));
 $params = get_params(array('object_class'=>null, 'id'=>null));
 
 // look for a draft of the specified object
-$ids = search('core\version', array(array(array('object_class', '=', $params['object_class']), array('object_id', '=', $params['id']), array('state', '=', 'draft'))), 'id', 'asc', 0, 1);
+$ids = search('core\Version', array(array(array('object_class', '=', $params['object_class']), array('object_id', '=', $params['id']), array('state', '=', 'draft'))), 'id', 'asc', 0, 1);
 
 if(count($ids)) {
-	$values = &browse('core\version', $ids, array('serialized_value'));
+	$values = &browse('core\Version', $ids, array('serialized_value'));
 	// set the object with the values of its draft
 	update($params['object_class'], array($params['id']), unserialize(base64_decode($values[$ids[0]]['serialized_value'])));
 	// we no longer need the draft, so remove it (permanently)
-	remove('core\version', $ids, true);
+	remove('core\Version', $ids, true);
 }

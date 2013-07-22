@@ -359,6 +359,7 @@ class ObjectManager {
 							case 'one2many':
 								if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'", INVALID_PARAM);
 								// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
+// todo : what if the foreign object has been soft-deleted ?								
 			                    $values_array[$object_id][$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'in', $object_id))));
 								break;
 							case 'many2many':
