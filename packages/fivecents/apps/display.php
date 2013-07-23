@@ -43,7 +43,7 @@ check_params(array('post_id'));
 $params = get_params(array('post_id'=>null));
 
 $post_values = &browse('fivecents\Post', array($params['post_id']), array('id', 'created', 'title', 'content', 'comments_ids', 'related_posts_ids'));
-	
+
 /**
 * Returns html part specified by $attributes (from a 'var' tag) and associated with current post id
 * (here come the calls to easyObject API)
@@ -72,12 +72,12 @@ $get_html = function ($attributes) {
 			$dateFormatter = new DateFormatter();
 			$dateFormatter->setDate($post_values[$params['post_id']]['created'], DATE_TIME_SQL);
 			// $date = ucfirst(strftime("%A %d %B %Y", $dateFormatter->getTimestamp()));
-			$date = ucfirst(strftime("%A %d %B", $dateFormatter->getTimestamp()));			
+			$date = ucfirst(strftime("%A %d %B", $dateFormatter->getTimestamp()));
 			$html = "
 				<h2 class=\"title\">$title</h2>
 				<div class=\"meta\"><p>$date</p></div>
 				<div class=\"entry\">$content</div>
-			";			
+			";
 			break;
 		case 'related_posts':
 			$related_posts_values = &browse('fivecents\Post', $post_values[$params['post_id']]['related_posts_ids'], array('id', 'title'));
