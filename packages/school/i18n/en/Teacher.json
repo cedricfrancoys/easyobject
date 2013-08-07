@@ -1,0 +1,8 @@
+{
+	"model": {
+		"firstname":{"label":"Firstname","help":"Firstname of the teacher"},
+		"lastname":{"label":"Lastname","help":"Lastname of the teacher"}
+	},
+	"view": {
+	}
+}
