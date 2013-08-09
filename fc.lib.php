@@ -133,12 +133,14 @@ class FClib {
 	* Gets the complete URL (uniform resource locator)
 	*
 	* @static
+	* @param	boolean $server_port	display server port (if different from 80)
+	* @param	boolean	$query_string	display query_string (parameters ?...&...&...)
 	* @return	string
 	*/
-	public static function get_url() {
+	public static function get_url($server_port=true, $query_string=true) {
 		$url = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
-		if($_SERVER['SERVER_PORT'] != '80')  $url .= ':'.$_SERVER['SERVER_PORT'];
-		if(strlen($_SERVER['QUERY_STRING'])) $url .= '?'.$_SERVER['QUERY_STRING'];
+		if($server_port && $_SERVER['SERVER_PORT'] != '80')  $url .= ':'.$_SERVER['SERVER_PORT'];
+		if($query_string && strlen($_SERVER['QUERY_STRING'])) $url .= '?'.$_SERVER['QUERY_STRING'];
 		return $url;
 	}
 

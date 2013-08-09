@@ -20,22 +20,29 @@
 */
 
 /*
-* file: apps/core/objects/edit.php
+* file: packages/core/apps/objects/edit.php
 *
 * Displays an edition form matching the specified view and class.
 *
 */
+
+
+
+// DEPRECATED : use packages/core/apps/objects/view.php instead
+
+
+
 
 // the dispatcher (index.php) is in charge of setting the context and should include the easyObject library
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 load_class('utils/HtmlWrapper');
 
-check_params(array('id', 'class', 'view'));
+check_params(array('id', 'object_class', 'view'));
 // assign values with the received parameters
-$params = get_params(array('class'=>'', 'id'=>0, 'view'=>'', 'lang'=>DEFAULT_LANG, 'ui'=>SESSION_LANG_UI));
+$params = get_params(array('object_class'=>'', 'id'=>0, 'view'=>'', 'lang'=>DEFAULT_LANG, 'ui'=>SESSION_LANG_UI));
 $object_id = $params['id'];
-$object_class = addslashes($params['class']);
+$object_class = addslashes($params['object_class']);
 $object_view = $params['view'];
 
 $html = new HtmlWrapper();

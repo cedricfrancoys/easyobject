@@ -55,30 +55,31 @@ set_silent(true);
 check_params(array('object_class'));
 
 // 1) get parameters values
-$params = get_params(array('object_class'=>null, 'fields'=>null, 'domain'=>null, 'page'=>1, 'rp'=>10, 'sortname'=>'id', 'sortorder'=>'asc', 'records'=>null, 'mode'=>null, 'lang'=>DEFAULT_LANG));
-$object_class = $params['object_class'];
-$page 	= $params['page']; 		// the requested page
-$limit	= $params['rp']; 		// how many rows we want to have into the grid
-$order	= $params['sortname'];	// index column - i.e. user click to sort
-$sort	= $params['sortorder'];	// the direction  - i.e. 'asc' or 'desc'
-$domain = $params['domain'];
-$lang	= $params['lang'];
+$params = get_params(array(
 
-if($params['fields'] && !is_array($params['fields'])) $fields = explode(',', $params['fields']);
-else $fields = $params['fields'];
+							'object_class'		=> null, 
+							'fields'			=> null, 
+							'domain'			=> array(array()), 
+							'page'				=> 1, 
+							'rp'				=> 10,					// number of rows we want to have into the grid
+							'sortname'			=> 'id',				// index column (i.e. user click to sort)
+							'sortorder'			=> 'asc',				// the direction  (i.e. 'asc' or 'desc')
+							'records'			=> null, 
+							'mode'				=> null, 
+							'lang'				=> DEFAULT_LANG
+					));
 
-if(is_null($domain)) $domain = array(array());
+if($params['fields'] && !is_array($params['fields'])) $params['fields'] = explode(',', $params['fields']);
 
-$start = ($page-1) * $limit;
+$start = ($params['page']-1) * $params['rp'];
 if($start < 0) $start = 0;
 
 // 2) check for special option 'mode' (that allows to limit result to deleted objects)
 if($params['mode'] == 'recycle') {
 	// add the (deleted = 1) clause to every condition
-	for($i = 0, $j = count($domain); $i < $j; ++$i)
-		$domain[$i] = array_merge($domain[$i], array(array('deleted', '=', '1')));
+	for($i = 0, $j = count($params['domain']); $i < $j; ++$i)
+		$params['domain'][$i] = array_merge($params['domain'][$i], array(array('deleted', '=', '1')));
 }
-
 
 // 3) search and browse
 if(empty($params['records'])) {
@@ -91,29 +92,28 @@ if(empty($params['records'])) {
 		$om = &ObjectManager::getInstance();
 		// get an instance of the DBMS manipulator
 		$db = &DBConnection::getInstance();
-		$ids = search($object_class, $domain, $order, $sort, $start, $limit, $lang);
+		$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], $start, $params['rp'], $params['lang']);
 		// use the getAffectedRows method to get the total number of reords
 		$count_ids = $db->getAffectedRows();
-		$list = &browse($object_class, $ids, $fields, $lang);
+		$list = &browse($params['object_class'], $ids, $params['fields'], $params['lang']);
 	}
 	else {
-		$ids = search($object_class, $domain, $order, $sort, 0, '', $lang);
-		$list = &browse($object_class, array_slice($ids, $start , $limit, true), $fields, $lang);
+		$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], 0, '', $params['lang']);
+		$list = &browse($params['object_class'], array_slice($ids, $start , $params['rp'], true), $params['fields'], $params['lang']);
 		$count_ids = count($ids);
 	}
 }
 else {
 	// This is a faster way to do the search but it requires the number of total results
-	$ids = search($object_class, $domain, $order, $sort, $start, $limit, $lang);
-	$list = &browse($object_class, $ids, $fields, $lang);
+	$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], $start, $params['rp'], $params['lang']);
+	$list = &browse($params['object_class'], $ids, $params['fields'], $params['lang']);
 	$count_ids = $params['records'];
 }
 
-
 // 4) generate json result
 $html = '{'."\n";
-$html .= '	"page": "'.$page.'",'."\n";
-$html .= '	"total": "'.ceil($count_ids/$limit).'",'."\n";
+$html .= '	"page": "'.$params['page'].'",'."\n";
+$html .= '	"total": "'.ceil($count_ids/$params['rp']).'",'."\n";
 $html .= '	"records": "'.$count_ids.'",'."\n";
 $html .= '	"rows": ['."\n";
 
