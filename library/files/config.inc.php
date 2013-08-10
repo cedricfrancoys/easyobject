@@ -74,8 +74,8 @@
 	define('DEBUG_ORM',	4);
 	//define('DEBUG_',	8);
 
-	// define('DEBUG_MODE', 0);
-	define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
+	define('DEBUG_MODE', 0);
+	// define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
 
     $SILENT_MODE = false;
 

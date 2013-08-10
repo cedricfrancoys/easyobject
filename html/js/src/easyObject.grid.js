@@ -263,6 +263,7 @@
 						// current page among total number of result pages
 						.append($('<span/>').append('Page ' + conf.page + ' of '+ conf.total))
 						/*
+						// this is for letting the user choose the page he wants to go to
 						.append($('<span/>').append('Page ')
 							.append($('<input type="text"/>').css('width', '26px').val(conf.page)
 								.change(function() {
@@ -300,6 +301,27 @@
 							}))
 					);
 			},
+			footer: function($grid, conf) {
+				var self = this;
+				var url = 'index.php?' + $.param({
+					show: 'core_objects_view',
+					output: 'pdf',
+					view: 'list.default',
+					object_class: conf.class_name,
+					domain: conf.domain,
+					rp: conf.rp,
+					page: conf.page,
+					sortname: conf.sortname,
+					sortorder: conf.sortorder,
+					fields: conf.fields
+				});
+
+				// create extra widgets at the bottom of the grid
+				return $('<div/>').attr('id', 'grid_footer').addClass('bottom')
+					.append($('<div/>').css('margin-left',  '7px')
+						.append($('<a/>').attr('href', url).attr('target', '_blank').append('Export'))
+					);
+			},
 			feed: function($grid, conf) {
 				var self = this;
 				// get body, empty it and display the loader
@@ -309,6 +331,7 @@
 				self.browse(conf, function(json) {
 					$tbody.empty();
 					$('#grid_pager', $grid).remove();
+					$('#grid_footer', $grid).remove();					
 					$.each(json.rows, function(i, row) {
 						$row = $('<tr/>').attr('id', row.id).append($('<td/>').append($('<div/>').append(
 								$('<input type="checkbox" />')
@@ -324,8 +347,10 @@
 					conf.page = Math.max(1, json.page);
 					conf.records = json.records;
 					conf.total = Math.max(1, json.total);
-					$grid.prepend(self.pager($grid, conf));					
+					// add pager at the top and bottom of the grid
+					$grid.prepend(self.pager($grid, conf));
 					$grid.append(self.pager($grid, conf));
+					$grid.append(self.footer($grid, conf));	
 				});
 
 			},

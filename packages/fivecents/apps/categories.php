@@ -66,12 +66,15 @@ $get_html = function ($attributes) {
 			break;
 		case 'recent_posts':
 			$ids = search('fivecents\Post', array(array(array())), 'created', 'desc', 0, 5);
-			$recent_values = &browse('fivecents\Post', $ids, array('id', 'title'));
-			foreach($recent_values as $values) {
-				$title = $values['title'];
-				$id = $values['id'];
-				$html .= "<li><a href=\"index.php?show=fivecents_display&post_id={$id}\">$title</a></li>";
-			}
+			$posts_values = &browse('fivecents\Post', $ids, array('id', 'title', 'url_resolver_id'));
+			foreach($posts_values as $id => $post) {
+				if($post['url_resolver_id'] > 0) {
+					$url_values = &browse('core\UrlResolver', array($post['url_resolver_id']), array('human_readable_url'));
+					$human_url = ltrim($url_values[$post['url_resolver_id']]['human_readable_url'], '/');
+					$html .= "<li><a href=\"$human_url\">".$post['title']."</a></li>";
+				}
+				else $html .= "<li><a href=\"index.php?show=fivecents_display&post_id={$id}\">".$post['title']."</a></li>";
+			}			
 			break;
 	}
 	return $html;
