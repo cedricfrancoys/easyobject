@@ -39,8 +39,8 @@ load_class('utils/DateFormatter');
 // our blog is in french
 setlocale(LC_ALL, 'fr_FR', 'fr_FR.UTF-8');
 
-check_params(array('post_id'));
-$params = get_params(array('post_id'=>null));
+// check_params(array('post_id'));
+$params = get_params(array('post_id'=>1));
 
 $post_values = &browse('fivecents\Post', array($params['post_id']), array('id', 'created', 'title', 'content', 'comments_ids', 'related_posts_ids'));
 
@@ -83,7 +83,7 @@ $get_html = function ($attributes) {
 			";
 			break;
 		case 'related_posts':
-			$posts_values = &browse('fivecents\Post', $post_values[$params['post_id']]['related_posts_ids'], array('id', 'title'));
+			$posts_values = &browse('fivecents\Post', $post_values[$params['post_id']]['related_posts_ids'], array('id', 'title', 'url_resolver_id'));
 			foreach($posts_values as $id => $post) {
 				if($post['url_resolver_id'] > 0) {
 					$url_values = &browse('core\UrlResolver', array($post['url_resolver_id']), array('human_readable_url'));
