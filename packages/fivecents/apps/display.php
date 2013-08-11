@@ -34,7 +34,7 @@ include('common.inc.php');
 // force silent mode
 set_silent(true);
 
-// we'll need to format some dates
+// we'll need to format some dates (for posts and comments)
 load_class('utils/DateFormatter');
 // our blog is in french
 setlocale(LC_ALL, 'fr_FR', 'fr_FR.UTF-8');
@@ -54,6 +54,24 @@ $get_html = function ($attributes) {
 	global $params, $post_values;
 	$html = '';
 	switch($attributes['id']) {
+		case 'social_meta':
+			load_class('utils/HtmlToText');
+			$htmlText = new HtmlToText($post_values[$params['post_id']]['content']);
+			$description = substr($htmlText->get_text(), 0, 300).'...';
+			$html = '
+			<meta property="og:locale" content="fr_FR"/>
+			<meta property="og:type" content="article"/>
+			<meta property="og:title" content="'.$post_values[$params['post_id']]['title'].'"/>
+			<meta property="og:description" content="'.$description.'"/>
+			<meta property="og:url" content="'.FClib::get_url().'"/>
+			<meta property="og:site_name" content="fivecents.org"/>
+			<meta property="article:author" content="http://www.facebook.com/cedric.francoys"/>
+			<meta name="twitter:card" content="summary"/>
+			<meta name="twitter:site" content="@cedricfrancoys"/>
+			<meta name="twitter:domain" content="fivecents.org"/>
+			<meta name="twitter:creator" content="@cedricfrancoys"/>
+			';
+			break;
 		case 'post_id':
 			$html = $params['post_id'];
 			break;

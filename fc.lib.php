@@ -134,13 +134,13 @@ class FClib {
 	*
 	* @static
 	* @param	boolean $server_port	display server port (if different from 80)
-	* @param	boolean	$query_string	display query_string (parameters ?...&...&...)
+	* @param	boolean	$query_string	display query_string (i.e.: script.php?...&...&...)
 	* @return	string
 	*/
 	public static function get_url($server_port=true, $query_string=true) {
-		$url = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+		$url = 'http://'.$_SERVER['SERVER_NAME'];
 		if($server_port && $_SERVER['SERVER_PORT'] != '80')  $url .= ':'.$_SERVER['SERVER_PORT'];
-		if($query_string && strlen($_SERVER['QUERY_STRING'])) $url .= '?'.$_SERVER['QUERY_STRING'];
+		if($query_string && strlen($_SERVER['REQUEST_URI'])) $url .= $_SERVER['REQUEST_URI'];
 		return $url;
 	}
 

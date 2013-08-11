@@ -7,7 +7,9 @@
 <link media="all" rel="stylesheet" type="text/css" href="packages/fivecents/html/css/style.css" />
 <link media="all" rel="stylesheet" type="text/css" href="packages/fivecents/html/css/social-likes.css" />
 <script type="text/javascript" src="html/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="packages/icway/html/js/social-likes.min.js"></script>	
+<script type="text/javascript" src="packages/fivecents/html/js/social-likes.min.js"></script>	
+<script type="text/javascript"><var id="scripts"></var></script>
+<var id="social_meta"></var>
 </head>
 <body>
 	<div id="header">
@@ -17,9 +19,9 @@
 		</div>
 		<div id="header-icons">
 				<ul class="social-likes social-likes_vertical" style="margin-right: 20px;" counters="no">			
-					<li class="facebook" style="margin-bottom: 10px;">Facebook</li>
-					<li class="plusone" style="margin-bottom: 10px;">Google+</li>	
-					<li class="twitter" style="margin-bottom: 10px;">Twitter</li>
+					<li class="facebook" title="Partager via Facebook" style="margin-bottom: 10px;">Facebook</li>
+					<li class="plusone" title="Partager via Google+" style="margin-bottom: 10px;">Google+</li>	
+					<li class="twitter" title="Partager via Twitter" data-related="cedricfrancoys:fivecents.org" style="margin-bottom: 10px;">Twitter</li>
 				</ul>		
 		</div>
 		<div id="menu">
@@ -33,7 +35,7 @@
 						<a href="a_propos">à propos</a>
 					</li>
 					<li class="page_item">
-						<a href="#">contact</a>
+						<a href="mailto:cedricfrancoys@gmail.com?Subject=A%20propos%20de%20fivecents.org">contact</a>
 					</li>
 				</ul>
 				<div class="spacer" style="clear: both;"></div>
@@ -51,7 +53,7 @@
 							<span><a style="cursor: pointer;" href="javascript:void(0)" onclick="$('#add_comment').toggle();$('#author').focus();$(this).toggle();">Ajouter un commentaire</a></span>
 							<div id="add_comment" style="display: none;">
 								<iframe name="submission_frame" style="display: none;"></iframe>								
-								<form target="submission_frame" method="get" action="index.php" onsubmit="setTimeout(function(){window.location = window.location.href;}, 2000);">
+								<form target="submission_frame" method="get" action="index.php" onsubmit="setTimeout(function(){window.location = window.location.href;}, 2000);">								
 									<label for="author">Nom*</label><br/><input type="text" id="author" name="author" /><br/>
 									<label for="email">E-mail</label><br/><input type="text" id="email" name="email" /><br/>
 									<label for="message">Commentaire*</label><textarea id="message" name="content"></textarea>
@@ -96,10 +98,10 @@
 		<span>
 		<a title="easyObject" href="http://easyobject.cedricfrancoys.be/">Powered by easyObject</a>
 		&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-		<a title="Diovo" href="http://www.diovo.com/links/voidy/">Theme by Niyaz</a>
+		Theme by <a title="Diovo" href="http://www.diovo.com/links/voidy/">Niyaz</a>
 		</span>
 		<strong>FiveCents</strong>
-		CC BY-SA-NC Some Rights Reserved
+		<a title="easyObject" href="http://creativecommons.org/licenses/by-nc-sa/2.0/fr/"> CC BY-SA-NC</a> Some Rights Reserved
 		</p>	
 	</div>		
 </body>
