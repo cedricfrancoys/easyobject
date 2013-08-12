@@ -1,0 +1,12 @@
+{
+	"model": {
+		"day_of_week":{"label":"Day","help":"Day of the week"},
+		"start_time":{"label":"Start","help":"Time at which lesson starts"},
+		"end_time":{"label":"End","help":"Time at which lesson ends"},
+		"class_label":{"label":"Class"},
+		"school_name":{"label":"School"},
+		"teacher_name":{"label":"Teacher"}
+	},
+	"view": {
+	}
+}

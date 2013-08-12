@@ -55,13 +55,22 @@
 										);
 							break;
 						case 'integer':
-						case 'string': 
+						case 'float':
+						case 'string': 						
+							var $widget = $('<input type="text"/>')
+												.attr({id: conf.name, name: conf.name})
+												.val(conf.value)
+												.on('change', conf.onchange);
+							if(conf.readonly) $widget.attr("disabled","disabled");
+							$this.data('widget', $widget.appendTo($this));
+							break;
+						case 'percentage':
 							$this.data('widget', $('<input type="text"/>')
 												.attr({id: conf.name, name: conf.name})
 												.val(conf.value)
 												.on('change', conf.onchange)
 												.appendTo($this)
-										);
+										);						
 							break;
 						case 'password':
 							// as password may be changed on submission, we hide the associated input

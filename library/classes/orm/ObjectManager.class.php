@@ -254,6 +254,8 @@ class ObjectManager {
 		$static_instance = &$this->getObjectStaticInstance($object_class);
 		$res = array();
 		foreach($values as $field => $field_value) {
+// todo: check that syntax matches field type (use regexp)
+		
  			if(method_exists($static_instance, 'getConstraints')) {
   				$constraints = $static_instance->getConstraints();
  				if(isset($constraints[$field]) && isset($constraints[$field]['function']) && isset($constraints[$field]['error_message_id'])) {

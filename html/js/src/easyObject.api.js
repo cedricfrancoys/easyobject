@@ -62,7 +62,8 @@ var easyObject = {
 				user_lang: 'en',
 				// content_lang is the language in which multilang fields values are displayed (on demand)
 				content_lang: 'en',
-				auto_save_delay: 5				// auto-save delay in minutes
+				auto_save_delay: 5,				// auto-save delay in minutes
+				dialog_width: 700
 		},
 		/* objects data handlers */
 		schemas: [],
@@ -439,7 +440,7 @@ var easyObject = {
 						content: $('<div/>'),
 						modal: true,
 						title: '',
-						width: 650,
+						width: easyObject.conf.dialog_width,
 						height: 'auto',
 						minHeight: 100,
 						x_offset: 0,
@@ -514,7 +515,7 @@ var easyObject = {
 								$dia = easyObject.UI.dialog({
 										content: $form,
 										title: 'Object edition - ' + conf.class_name, 
-										width: 650, 
+										width: easyObject.conf.dialog_width, 
 										height: 'auto'
 								});
 								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $form.trigger('destroy'); $(this).dialog('destroy');}});	
@@ -528,7 +529,7 @@ var easyObject = {
 						},
 						add: {
 							func: function($grid) {							
-								$dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: 650, height: 'auto'});
+								$dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: easyObject.conf.dialog_width, height: 'auto'});
 								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $(this).dialog('destroy');}});	
 							}
 						}

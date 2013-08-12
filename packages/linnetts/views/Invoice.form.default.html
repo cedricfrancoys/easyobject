@@ -1,0 +1,30 @@
+<form action="core_objects_update">
+	<div>
+		<section name="identification">
+			<div>		
+				<span width="50%">
+					<label for="code"></label><var id="code" required="true"></var>
+					<br />
+					<label for="customer_id"></label><var id="customer_id" required="true"></var>
+				</span>
+				<span width="50%">
+					<label for="date"></label><var id="date" required="true"></var>
+					<br />
+					<label for="price"></label><var id="price" required="true"></var>
+				</span>	
+			</div>
+			<div>	
+				<span width="100%">								
+					<label for="description"></label>
+					<br />
+					<var id="description" widget="short_text"></var>
+				</span>
+			</div>
+		</section>
+		<section name="jobs">
+			<span width="100%">			
+				<var id="jobs_ids" widget="many2many" view="list.default"></var>
+			</span>								
+		</section>
+	</div>
+</form>

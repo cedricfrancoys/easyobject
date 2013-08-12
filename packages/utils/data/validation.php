@@ -69,6 +69,12 @@ $classes_list = get_classes($params['package']);
 
 
 foreach($classes_list as $class) {
+// todo :
+	// get filename containing class
+	// check PHP syntax
+	// check match between namespace and package
+	// check match between classname and filename
+	
 	// get the full class name
 	$class_name = $params['package'].'\\'.$class;
 	// get a static instance of the class
@@ -93,7 +99,8 @@ foreach($classes_list as $class) {
 				$allowed_attributes = array_merge($allowed_attributes, array('multilang'));
 				break;
 			case 'boolean':
-			case 'integer':
+			case 'integer':			
+			case 'float':
 			case 'date':
 			case 'time':
 			case 'datetime':
@@ -141,9 +148,9 @@ foreach($classes_list as $class) {
 
 	}
 
-// todo : 2) check existence of class definition files to which some field may refer to
+// todo : 2) check presence of class definition files to which some field may be related to
 
-    // 3) check if default views are present (form.default.html et list.default.html)
+    // 3) check if default views are present (form.default.html and list.default.html)
     if(!is_file("packages/{$params['package']}/views/$class.form.default.html"))
 		$result[] = "Class $class: missing default form view (/views/$class.form.default.html)";
     if(!is_file("packages/{$params['package']}/views/$class.list.default.html"))

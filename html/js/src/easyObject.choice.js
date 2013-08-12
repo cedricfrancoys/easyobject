@@ -46,9 +46,12 @@
 			},
 			layout: function($list, conf) {		
 				$list
-				.append($('<input/>').addClass('choice_input').css({'width': '94%', 'vertical-align': 'top', 'margin-right': '3px'}))
+				.css({'display': 'table', 'margin': '0 0 0 -2px'})
 				.append(
-					$('<button/>').button({icons:{primary:conf.choose.icon}, text: false}).attr('title', conf.choose.text).css({'margin': '1px', 'padding': '3px 0px 3px 0px', 'width': '4%'})
+					$('<span/>').css({'display': 'table-cell', 'width': '100%', 'padding-right': '4px'}).append($('<input/>').addClass('choice_input').css({'width': '100%'}))
+				)
+				.append(
+					$('<button/>').button({icons:{primary:conf.choose.icon}, text: false}).attr('title', conf.choose.text).css({'display': 'table-cell', 'margin':'0', 'padding': '3px'})
 					.click(function() {
 						if(typeof(conf.choose.func) == 'function') conf.choose.func($list, conf);
 					})

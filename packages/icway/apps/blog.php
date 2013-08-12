@@ -128,9 +128,6 @@ $renderer = array(
 // we replace renderer entries with other methods
 switch($params['page_id']) {
 	case 7:
-		// page 'blog'
-		break;
-	case 7:
 		// page 'resources'
 		$renderer['content'] = function() {
 			$html = '<h1>'.'Ressources'.'</h1>';

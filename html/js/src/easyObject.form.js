@@ -236,7 +236,7 @@
 											$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
 											$dia = easyObject.UI.dialog({
 													content: $list,
-													title: 'Choose item', width: 650, height: 'auto'});
+													title: 'Choose item'});
 											$dia.dialog({
 												buttons: {
 													"Ok": function() {
@@ -287,7 +287,7 @@
 												$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
 												$dia = easyObject.UI.dialog({
 														content: $list,
-														title: 'Add item', width: 650, height: 'auto'});
+														title: 'Add item'});
 												$dia.dialog({
 													buttons: {
 														"Ok": function() {
@@ -346,10 +346,9 @@
 																			object_id: 0, 
 																			lang: conf.lang,
 																			predefined: predefined
-															}),
-															title: 'New object - '+class_name,
-															width: 650,
-															height: 'auto'});
+																	}),
+															title: 'New object - '+class_name
+															});
 
 												$dia.dialog({close: function(event, ui) {
 																// force grid to refresh its content
@@ -367,9 +366,7 @@
 												$subform = easyObject.UI.form({class_name: class_name, object_id: id, view_name: 'form.default'});
 												$dia = easyObject.UI.dialog({
 														content: $subform,
-														title: 'Object edition - '+class_name,
-														width: 650,
-														height: 'auto'
+														title: 'Object edition - '+class_name
 												});
 												$dia.dialog({close: function(event, ui) { $ddlist.trigger('reload'); $subform.trigger('destroy'); $(this).dialog('destroy');}});
 
@@ -399,9 +396,7 @@
 											$subform = easyObject.UI.form({class_name: class_name, object_id: ids[0], view_name: 'form.default'});
 											$dia = easyObject.UI.dialog({
 													content: $subform,
-													title: 'Object edition - '+ class_name,
-													width: 650,
-													height: 'auto'
+													title: 'Object edition - '+ class_name
 											});
 											$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $subform.trigger('destroy'); $(this).dialog('destroy');}});
 										}
@@ -425,7 +420,7 @@
 											$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
 											$dia = easyObject.UI.dialog({
 													content: $list,
-													title: 'Add relation', width: 650, height: 'auto'});
+													title: 'Add relation'});
 											$dia.dialog({
 												buttons: {
 													"Ok": function() {

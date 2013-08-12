@@ -51,6 +51,7 @@ $classes_list = get_classes($params['package']);
 $types_associations = array(
 	'boolean' 		=> 'tinyint(4)',
 	'integer' 		=> 'int(11)',
+	'float' 		=> 'decimal(10,2)',	
 	'string' 		=> 'varchar(255)',
 	'short_text' 	=> 'text',
 	'text' 			=> 'mediumtext',

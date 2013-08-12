@@ -1,0 +1,13 @@
+{
+	"model": {
+		"code":{"label":"Code", "help":"Unique invoice number using format as defined by the financial department"},				
+		"date":{"label":"Date", "help":"Date at which the invoice has been issued"},				
+		"customer_id":{"label":"Customer"},
+		"customer_name":{"label":"Customer"},		
+		"jobs_ids":{"label":"Related jobs"},		
+		"description":{"label":"Description", "help":"This text will appear on the final invoice"},				
+		"price":{"label":"Price", "help":"Invoice amount (excluding VAT)"}
+	},
+	"view": {
+	}
+}
