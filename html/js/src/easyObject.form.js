@@ -124,6 +124,9 @@
 								$result.append($tabs_pane);
 								tabs_already_added = true;
 								break;
+							default:
+								$result.append($(this));
+								break;
 						}
 					});
 					return $result.children();

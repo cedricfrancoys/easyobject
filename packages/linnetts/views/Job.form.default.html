@@ -1,199 +1,525 @@
 <form action="core_objects_update">
-	<div>
-		<section name="Summary">
-			<fieldset title="identification">
-				<span width="50%">
-					<label for="id"></label><var id="id" readonly="true"></var>
-					<br />
-					<label for="customer_id"></label><var id="customer_id" required="true"></var>
-				</span>
-				<span width="50%">
-					<label for="date"></label><var id="date" required="true"></var>
-					<br />
-					<label for="client_ref"></label><var id="client_ref" ></var>
-				</span>
-				<span width="100%">
-					<label for="title"></label>
-					<br />
-					<var id="title" required="true"></var>
-					<br />
-					<label for="brief"></label>
-					<br />
-					<var id="brief"></var>
-				</span>
-			</fieldset>
-		</section>
-		<section name="Timetable">
-			<div>
-				<span width="50%">
-					<label for="date_aw"></label><var id="date_aw"></var>
-					<br />
-					<label for="deadline"></label><var id="deadline"></var>
-				</span>
-				<span width="50%">
-					<label for="date_to_press"></label><var id="date_to_press"></var>
-					<br />
-					<label for="date_to_screen"></label><var id="date_to_screen"></var>
-					<br />
-					<label for="date_to_finishing"></label><var id="date_to_finishing"></var>
-				</span>
-			</div>
-		</section>
-		<section name="Worksheet">
-			<fieldset title="Stock">
-				<span width="100%">
-					<label for="stock"></label><var id="stock"></var>
-				</span>
-				<span width="25%">
-					<label for="stock_cost"></label><var id="stock_cost"></var>
-				</span>
-			</fieldset>
-			<fieldset title="Run">
-				<span width="100%">
-					<label for="run"></label><var id="run"></var>
-				</span>
-				<span width="50%">
-					<label for="sheets_mounted"></label><var id="sheets_mounted"></var>
-				</span>
-				<span width="50%">
-					<label for="mounting_cost"></label><var id="mounting_cost"></var>
-				</span>
-			</fieldset>
-			<fieldset title="Repro">
-				<div>
-					<span width="50%">
-						<label for="nb3_plates"></label><var id="nb3_plates"></var>
-						<br />
-						<label for="nb2_plates"></label><var id="nb2_plates"></var>
-						<br />
-						<label for="nb1_plates"></label><var id="nb1_plates"></var>
-					</span>
-					<span width="50%">
-						<label for="plate_cost"></label><var id="plate_cost"></var>
-					</span>
-				</div>
-				<div>
-					<span width="50%">
-						<label for="mac_hours"></label><var id="mac_hours"></var>
-					</span>
-					<span width="50%">
-						<label for="mac_hours_cost"></label><var id="mac_hours_cost"></var>
-					</span>
-				</div>
-				<div>
-					<span width="25%">
-						<label for="total_repro"></label><var id="total_repro"></var>
-					</span>
-				</div>
-			</fieldset>
-			<fieldset title="Pressroom">
-				<div>
-					<span width="50%">
-						<label for="nb3_cols"></label><var id="nb3_cols"></var>
-						<br />
-						<label for="nb2_cols"></label><var id="nb2_cols"></var>
-						<br />
-						<label for="nb1_cols"></label><var id="nb1_cols"></var>
-					</span>
-					<span width="25%">
-						<label for="cols_cost"></label><var id="cols_cost"></var>
-					</span>
-				</div>
-				<div>
-					<span width="50%">
-						<label for="press_hours"></label><var id="press_hours"></var>
-					</span>
-					<span width="25%">
-						<label for="press_hours_cost"></label><var id="press_hours_cost"></var>
-					</span>
-				</div>
-				<div>
-					<span width="25%">
-						<label for="total_press_cost"></label><var id="total_press_cost"></var>
-					</span>
-				</div>
-			</fieldset>
-			<fieldset title="Finishing">
-				<span width="75%">
-					<label name="steps"></label>
-					<br />
-					<label for="fin_1"></label>
-					<var id="fin_1"></var>
-					<br />
-					<label for="fin_2"></label>
-					<var id="fin_2"></var>
-					<br />
-					<label for="fin_3"></label>
-					<var id="fin_3"></var>
-					<br />
-					<label for="fin_4"></label>
-					<var id="fin_4"></var>
-					<br />
-					<label for="fin_5"></label>
-					<var id="fin_5"></var>
-				</span>
-				<span width="25%">
-					<label name="costs"></label>
-					<br />
-					<var id="fin_1_cost"></var>
-					<br />
-					<var id="fin_2_cost"></var>
-					<br />
-					<var id="fin_3_cost"></var>
-					<br />
-					<var id="fin_4_cost"></var>
-					<br />
-					<var id="fin_5_cost"></var>
-				</span>
-				<span width="25%">
-					<label for="total_fin"></label><var id="total_fin"></var>
-				</span>
-			</fieldset>
-			<fieldset title="Screenprint">
-				<span width="100%">
-					<label for="screens"></label>
-					<br />
-					<var id="screens"></var>
-				</span>
-				<span width="100%">
-					<label for="n_cols"></label><var id="n_cols"></var>
-				</span>
-				<span width="25%">
-					<label for="total_scr_cost"></label><var id="total_scr_cost"></var>
-				</span>
-			</fieldset>
-			<fieldset title="Extra">
-				<span width="100%">
-					<label for="extra_notes"></label>
-					<br />
-					<var id="extra_notes"></var>
-				</span>
-				<span width="25%">
-					<label for="extra_cost"></label><var id="extra_cost"></var>
-				</span>
-			</fieldset>
-		</section>
-		<section name="Invoice">
-			<fieldset title="Delivery">
-				<span width="100%">
-					<label for="delivery"></label>
-					<br />
-					<var id="delivery"></var>
-				</span>
-				<span width="25%">
-					<label for="delivery_cost"></label><var id="delivery_cost"></var>
-				</span>
-			</fieldset>
-			<fieldset title="Price">
-				<span width="75%">
-					&nbsp;left<br />				
-				</span>				
-				<span width="25%">
-					<label for="price"></label><var id="price"></var>
-					<br />
-					<label for="vat"></label><var id="vat" widget="percentage"></var>
-				</span>
-			</fieldset>
-		</section>
-	</div>
+	<table>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td class="label" style="width: 6%; padding-left: 4px;">
+							<label for="id"></label>
+						</td>
+						<td class="field" style="width: 5%;">
+							<var id="id" readonly="true"></var>
+						</td>
+						<td class="label" style="width: 4%; padding-left: 4px; text-align: right;">
+							<label for="date"></label>
+						</td>
+						<td class="field" style="width: 8%;">
+							<var id="date" required="true"></var>
+						</td>
+						<td class="label" style="width: 6%; padding-left: 4px; text-align: right;">
+							<label for="customer_id"></label>
+						</td>
+						<td class="field" style="width: 18%;">
+							<var id="customer_id" required="true"></var>
+						</td>
+						<td class="label" style="width: 10%; padding-left: 4px; text-align: right;">
+							<label for="title"></label>
+						</td>
+						<td class="field" style="width: 25%;">
+							<var id="title" required="true"></var>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td class="label" style="width: 8%; padding-left: 4px;">
+							<label for="date_aw"></label>
+						</td>
+						<td class="field" style="width: 6%;">
+							<var id="date_aw"></var>
+						</td>
+						<td class="label" style="width: 8%; padding-left: 4px; text-align: right;">
+							<label for="date_to_press"></label>
+						</td>
+						<td class="field" style="width: 6%;">
+							<var id="date_to_press"></var>
+						</td>
+						<td class="label" style="width: 8%; padding-left: 4px; text-align: right;">
+							<label for="date_to_screen"></label>
+						</td>
+						<td class="field" style="width: 6%;">
+							<var id="date_to_screen"></var>
+						</td>
+						<td class="label" style="width: 8%; padding-left: 4px; text-align: right;">
+							<label for="date_to_finishing"></label>
+						</td>
+						<td class="field" style="width: 6%;">
+							<var id="date_to_finishing"></var>
+						</td>
+						<td class="label" style="width: 8%; padding-left: 4px; text-align: right;">
+							<label for="deadline"></label>
+						</td>
+						<td class="field" style="width: 6%;">
+							<var id="deadline"></var>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td class="label" style="width: 5%; padding-left: 4px;">
+							<label for="brief"></label>
+						</td>
+						<td class="field" style="width: 95%;">
+							<var id="brief"></var>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td class="label" style="width: 5%; padding-left: 4px;">
+							<label for="stock"></label>
+						</td>
+						<td class="field" style="width: 25%;">
+							<var id="stock"></var>
+						</td>
+						<td class="label" style="width: 8%; padding-left: 4px; text-align: right;">
+							<label for="stock_cost"></label>
+						</td>
+						<td class="field" style="width: 6%;">
+							<var id="stock_cost"></var>
+						</td>
+						<td class="label" style="width: 4%; padding-left: 4px; text-align: right;">
+							<label for="run"></label>
+						</td>
+						<td class="field" style="width: 15%;">
+							<var id="run"></var>
+						</td>
+						<td class="label" style="width: 5%; padding-left: 4px; text-align: right;">
+							<label for="sheets_mounted"></label>
+						</td>
+						<td class="field" style="width: 5%;">
+							<var id="sheets_mounted"></var>
+						</td>
+						<td class="label" style="width: 10%; padding-left: 4px; text-align: right;">
+							<label for="mounting_cost"></label>
+						</td>
+						<td class="field" style="width: 6%;">
+							<var id="mounting_cost"></var>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+
+
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td style="width: 49%;">
+							<table>
+								<tr>								
+									<td>
+										<label name="repro"></label>
+										<fieldset>									
+										<table>
+											<tr>
+												<td class="label" style="width: 30%;">
+													<label for="nb3_plates">
+												</td>
+												<td class="field" style="width: 20%;">
+													<var id="nb3_plates"></var>
+												</td>
+												<td class="label" style="width: 30%; padding-left: 8px;">
+													<label for="plate_cost">
+												</td>
+												<td class="field" style="width: 20%;">
+													<var id="plate_cost"></var>
+												</td>
+											</tr>
+											<tr>
+												<td class="label">
+													<label for="nb2_plates">
+												</td>
+												<td class="field">
+													<var id="nb2_plates"></var>
+												</td>
+												<td></td>
+												<td></td>
+											</tr>
+											<tr>
+												<td class="label">
+													<label for="nb1_plates">
+												</td>
+												<td class="field">
+													<var id="nb1_plates"></var>
+												</td>
+												<td></td>
+												<td></td>
+											</tr>
+											<tr>
+												<td class="label">
+													<label for="mac_hours">
+												</td>
+												<td class="field">
+													<var id="mac_hours"></var>
+												</td>
+												<td class="label" style="padding-left: 8px;">
+													<label for="mac_hours_cost">
+												</td>
+												<td class="field">
+													<var id="mac_hours_cost"></var>
+												</td>															
+											</tr>
+											<tr>
+												<td></td>
+												<td></td>
+												<td class="label" style="padding-left: 8px;">
+													<label for="total_repro">
+												</td>
+												<td class="field">
+													<var id="total_repro"></var>
+												</td>															
+											</tr>
+											
+										</table>
+										</fieldset>										
+									</td>
+								</tr>
+							</table>
+						</td>
+						<td style="width: 2%"></td>
+						<td style="width: 49%">
+							<table>
+								<tr>
+									<td>
+										<label name="pressroom"></label>
+										<fieldset>									
+										<table>
+											<tr>
+												<td class="label" style="width: 30%;">
+													<label for="nb3_cols">
+												</td>
+												<td class="field" style="width: 20%;">
+													<var id="nb3_cols"></var>
+												</td>
+												<td class="label" style="width: 35%; padding-left: 8px;">
+													<label for="cols_cost">
+												</td>
+												<td class="field" style="width: 15%;">
+													<var id="cols_cost"></var>
+												</td>
+											</tr>
+											<tr>
+												<td class="label">
+													<label for="nb2_cols">
+												</td>
+												<td class="field">
+													<var id="nb2_cols"></var>
+												</td>
+												<td></td>
+												<td></td>
+											</tr>
+											<tr>
+												<td class="label">
+													<label for="nb1_cols">
+												</td>
+												<td class="field">
+													<var id="nb1_cols"></var>
+												</td>
+												<td></td>
+												<td></td>
+											</tr>
+											<tr>
+												<td class="label">
+													<label for="press_hours">
+												</td>
+												<td class="field">
+													<var id="press_hours"></var>
+												</td>
+												<td class="label" style="padding-left: 8px;">
+													<label for="press_hours_cost">
+												</td>
+												<td class="field">
+													<var id="press_hours_cost"></var>
+												</td>															
+											</tr>
+											<tr>
+												<td></td>
+												<td></td>
+												<td class="label" style="padding-left: 8px;">
+													<label for="total_press_cost">
+												</td>
+												<td class="field">
+													<var id="total_press_cost"></var>
+												</td>															
+											</tr>
+											
+										</table>
+										</fieldset>																			
+									</td>
+								</tr>
+							</table>						
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+
+
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td style="width: 49%;vertical-align: top;">
+							<table>
+								<tr>								
+									<td>
+										<label name="finishing"></label>
+										<fieldset>									
+										<table>
+											<tr>
+												<td>										
+													<table>
+														<tr>
+															<td class="label" style="width: 4%;">
+																<label for="fin_1"></label>
+															</td>
+															<td class="field" style="width: 20%;">
+																<var id="fin_1"></var>
+															</td>
+															<td class="label" style="width: 7%; text-align: right;">
+																<label for="fin_1_cost"></label>
+															</td>
+															<td class="field" style="width: 4%;">
+																<var id="fin_1_cost"></var>
+															</td>
+														</tr>
+														<tr>
+															<td class="label">
+																<label for="fin_2"></label>
+															</td>
+															<td class="field">
+																<var id="fin_2"></var>
+															</td>
+															<td class="label" style="text-align: right;">
+																<label for="fin_2_cost">
+															</td>
+															<td class="field">
+																<var id="fin_2_cost"></var>
+															</td>											
+														</tr>
+														<tr>
+															<td class="label">
+																<label for="fin_3"></label>
+															</td>
+															<td class="field">
+																<var id="fin_3"></var>
+															</td>
+															<td class="label" style="text-align: right;">
+																<label for="fin_3_cost"></label>
+															</td>
+															<td class="field">
+																<var id="fin_3_cost"></var>
+															</td>											
+														</tr>
+														<tr>
+															<td class="label">
+																<label for="fin_4"></label>
+															</td>
+															<td class="field">
+																<var id="fin_4"></var>
+															</td>
+															<td class="label" style="text-align: right;">
+																<label for="fin_4_cost"></label>
+															</td>
+															<td class="field">
+																<var id="fin_4_cost"></var>
+															</td>											
+														</tr>
+														<tr>
+															<td class="label">
+																<label for="fin_5"></label>
+															</td>
+															<td class="field">
+																<var id="fin_5"></var>
+															</td>
+															<td class="label" style="text-align: right;">
+																<label for="fin_5_cost">
+															</td>
+															<td class="field">
+																<var id="fin_5_cost"></var>
+															</td>											
+														</tr>
+													</table>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<table>
+														<tr>
+															<td class="label" style="text-align: right; width: 8%;">
+																<label for="total_fin"></label>
+															</td>
+															<td class="field" style="width: 4%;">
+																<var id="total_fin"></var>
+															</td>														
+														<tr>	
+													</table>										
+												</td>
+											</tr>
+										</table>																							
+										</fieldset>										
+									</td>
+								</tr>
+							</table>
+						</td>
+						<td style="width: 2%"></td>
+						<td style="width: 49%; vertical-align: top;">
+							<table>
+								<tr>
+									<td>
+										<label name="screenprint"></label>
+										<fieldset>									
+										<table>
+											<tr>
+												<td class="label" style="width: 5%;">
+													<label for="screens"></label>
+												</td>
+												<td class="field" style="width: 20%;">
+													<var id="screens"></var>
+												</td>
+											</tr>
+											<tr>
+												<td class="label">
+													<label for="n_cols"></label>
+												</td>
+												<td class="field">
+													<var id="n_cols"></var>
+												</td>
+											</tr>
+											<tr>
+												<td style="width: 90%"></td>
+												<td style="width: 10%">
+													<table>
+														<tr>
+															<td class="label" style="text-align: right; width: 8%;">
+																<label for="total_scr_cost"></label>
+															</td>
+															<td class="field" style="width: 4%;">
+																<var id="total_scr_cost"></var>
+															</td>														
+														<tr>	
+													</table>
+												</td>
+											</tr>											
+										</table>
+										</fieldset>																			
+									</td>
+								</tr>
+							</table>						
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+
+
+		
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td class="label" style="width: 10%; padding-left: 4px;">
+							<label for="extra_notes"></label>
+						</td>
+						<td class="field" style="width: 90%;">
+							<var id="extra_notes"></var>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="label" style="width: 10%; padding-left: 4px;"></td>
+						<td class="field" style="width: 90%;">
+							<table>
+								<tr>
+									<td style="width: 70%;"></td>
+									<td class="label" style="width: 15%; padding-left: 4px;">
+										<label for="extra_cost"></label>
+									</td>
+									<td class="field" style="width: 15%;">
+										<var id="extra_cost"></var>
+									</td>								
+								</tr>
+							</table>							
+						</td>
+					</tr>
+					<tr>
+						<td class="label" style="width: 10%; padding-left: 4px;">
+							<label for="invoice_text"></label>
+						</td>
+						<td class="field" style="width: 90%;">
+							<var id="invoice_text"></var>
+						</td>
+					</tr>
+					<tr>
+						<td class="label" style="width: 10%; padding-left: 4px;">
+							<label for="delivery"></label>
+						</td>
+						<td class="field" style="width: 90%;">
+							<table>							
+								<tr>						
+									<td class="field" style="width: 25%;">
+										<var id="delivery"></var>
+									</td>						
+									<td style="width: 1%;"></td>						
+									<td style="width: 8%; padding-left: 4px; text-align: right; vertical-align: top;">
+										<label for="delivery_cost"></label>												
+									</td>						
+									<td style="width: 5%; vertical-align: top;">
+										<var id="delivery_cost"></var>						
+									</td>						
+									<td style="width: 25%;">
+										<table>							
+											<tr>						
+												<td style="width: 6%; text-align: right;">
+													<label for="price"></label>						
+												</td>						
+												<td style="width: 5%;">
+													<var id="price"></var>						
+												</td>											
+											</tr>																	
+											<tr>						
+												<td style="width: 6%; text-align: right;">
+													<label for="vat"></label>						
+												</td>						
+												<td style="width: 5%;">
+													<var id="vat"></var>						
+												</td>											
+											</tr>																	
+											
+										</table>																	
+									</td>																				
+								</tr>
+							</table>							
+						</td>						
+					</tr>					
+				</table>
+			</td>
+		</tr>
+
+	</table>
+
 </form>

@@ -46,16 +46,34 @@
 			},
 			layout: function($list, conf) {		
 				$list
-				.css({'display': 'table', 'margin': '0 0 0 -2px'})
-				.append(
-					$('<span/>').css({'display': 'table-cell', 'width': '100%', 'padding-right': '4px'}).append($('<input/>').addClass('choice_input').css({'width': '100%'}))
-				)
-				.append(
-					$('<button/>').button({icons:{primary:conf.choose.icon}, text: false}).attr('title', conf.choose.text).css({'display': 'table-cell', 'margin':'0', 'padding': '3px'})
-					.click(function() {
-						if(typeof(conf.choose.func) == 'function') conf.choose.func($list, conf);
-					})
+				.append(			
+					$('<table/>').css({'width': '100%'})
+					.append($('<tr/>')
+						.append($('<td/>').css({'width': '100%'})
+							.append($('<input/>').addClass('choice_input').css({'width': '98%'}))
+						)
+						.append($('<td/>')
+							.append($('<button/>').button({icons:{primary:conf.choose.icon}, text: false}).attr('title', conf.choose.text).css({'margin-top': '-2px'})
+										.click(function() {
+											if(typeof(conf.choose.func) == 'function') conf.choose.func($list, conf);
+										})
+							)
+						)
+					)
 				);
+/*
+				$list
+				.append(
+					$('<div/>').css({'display': 'table', 'width': '100%'})
+					.append($('<div/>').cass('display': 'table-cell', 'width': '100%', 'padding': '0px 5px').append($('<input/>').addClass('choice_input').css({'width': '100%'})))
+					.append(
+						$('<button/>').button({icons:{primary:conf.choose.icon}, text: false}).attr('title', conf.choose.text).css({'display': 'table-cell', 'margin':'0', 'padding': '3px'})
+						.click(function() {
+							if(typeof(conf.choose.func) == 'function') conf.choose.func($list, conf);
+						})
+					)
+				);
+*/				
 			},
 			feed: function($choice, conf) {
 				this.browse(conf, function(json) {

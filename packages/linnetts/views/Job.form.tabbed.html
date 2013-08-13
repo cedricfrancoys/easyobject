@@ -1,0 +1,199 @@
+<form action="core_objects_update">
+	<div>
+		<section name="Summary">
+			<fieldset title="identification">
+				<span width="50%">
+					<label for="id"></label><var id="id" readonly="true"></var>
+					<br />
+					<label for="customer_id"></label><var id="customer_id" required="true"></var>
+				</span>
+				<span width="50%">
+					<label for="date"></label><var id="date" required="true"></var>
+					<br />
+					<label for="client_ref"></label><var id="client_ref" ></var>
+				</span>
+				<span width="100%">
+					<label for="title"></label>
+					<br />
+					<var id="title" required="true"></var>
+					<br />
+					<label for="brief"></label>
+					<br />
+					<var id="brief"></var>
+				</span>
+			</fieldset>
+		</section>
+		<section name="Timetable">
+			<div>
+				<span width="50%">
+					<label for="date_aw"></label><var id="date_aw"></var>
+					<br />
+					<label for="deadline"></label><var id="deadline"></var>
+				</span>
+				<span width="50%">
+					<label for="date_to_press"></label><var id="date_to_press"></var>
+					<br />
+					<label for="date_to_screen"></label><var id="date_to_screen"></var>
+					<br />
+					<label for="date_to_finishing"></label><var id="date_to_finishing"></var>
+				</span>
+			</div>
+		</section>
+		<section name="Worksheet">
+			<fieldset title="Stock">
+				<span width="100%">
+					<label for="stock"></label><var id="stock"></var>
+				</span>
+				<span width="25%">
+					<label for="stock_cost"></label><var id="stock_cost"></var>
+				</span>
+			</fieldset>
+			<fieldset title="Run">
+				<span width="100%">
+					<label for="run"></label><var id="run"></var>
+				</span>
+				<span width="50%">
+					<label for="sheets_mounted"></label><var id="sheets_mounted"></var>
+				</span>
+				<span width="50%">
+					<label for="mounting_cost"></label><var id="mounting_cost"></var>
+				</span>
+			</fieldset>
+			<fieldset title="Repro">
+				<div>
+					<span width="50%">
+						<label for="nb3_plates"></label><var id="nb3_plates"></var>
+						<br />
+						<label for="nb2_plates"></label><var id="nb2_plates"></var>
+						<br />
+						<label for="nb1_plates"></label><var id="nb1_plates"></var>
+					</span>
+					<span width="50%">
+						<label for="plate_cost"></label><var id="plate_cost"></var>
+					</span>
+				</div>
+				<div>
+					<span width="50%">
+						<label for="mac_hours"></label><var id="mac_hours"></var>
+					</span>
+					<span width="50%">
+						<label for="mac_hours_cost"></label><var id="mac_hours_cost"></var>
+					</span>
+				</div>
+				<div>
+					<span width="25%">
+						<label for="total_repro"></label><var id="total_repro"></var>
+					</span>
+				</div>
+			</fieldset>
+			<fieldset title="Pressroom">
+				<div>
+					<span width="50%">
+						<label for="nb3_cols"></label><var id="nb3_cols"></var>
+						<br />
+						<label for="nb2_cols"></label><var id="nb2_cols"></var>
+						<br />
+						<label for="nb1_cols"></label><var id="nb1_cols"></var>
+					</span>
+					<span width="25%">
+						<label for="cols_cost"></label><var id="cols_cost"></var>
+					</span>
+				</div>
+				<div>
+					<span width="50%">
+						<label for="press_hours"></label><var id="press_hours"></var>
+					</span>
+					<span width="25%">
+						<label for="press_hours_cost"></label><var id="press_hours_cost"></var>
+					</span>
+				</div>
+				<div>
+					<span width="25%">
+						<label for="total_press_cost"></label><var id="total_press_cost"></var>
+					</span>
+				</div>
+			</fieldset>
+			<fieldset title="Finishing">
+				<span width="75%">
+					<label name="steps"></label>
+					<br />
+					<label for="fin_1"></label>
+					<var id="fin_1"></var>
+					<br />
+					<label for="fin_2"></label>
+					<var id="fin_2"></var>
+					<br />
+					<label for="fin_3"></label>
+					<var id="fin_3"></var>
+					<br />
+					<label for="fin_4"></label>
+					<var id="fin_4"></var>
+					<br />
+					<label for="fin_5"></label>
+					<var id="fin_5"></var>
+				</span>
+				<span width="25%">
+					<label name="costs"></label>
+					<br />
+					<var id="fin_1_cost"></var>
+					<br />
+					<var id="fin_2_cost"></var>
+					<br />
+					<var id="fin_3_cost"></var>
+					<br />
+					<var id="fin_4_cost"></var>
+					<br />
+					<var id="fin_5_cost"></var>
+				</span>
+				<span width="25%">
+					<label for="total_fin"></label><var id="total_fin"></var>
+				</span>
+			</fieldset>
+			<fieldset title="Screenprint">
+				<span width="100%">
+					<label for="screens"></label>
+					<br />
+					<var id="screens"></var>
+				</span>
+				<span width="100%">
+					<label for="n_cols"></label><var id="n_cols"></var>
+				</span>
+				<span width="25%">
+					<label for="total_scr_cost"></label><var id="total_scr_cost"></var>
+				</span>
+			</fieldset>
+			<fieldset title="Extra">
+				<span width="100%">
+					<label for="extra_notes"></label>
+					<br />
+					<var id="extra_notes"></var>
+				</span>
+				<span width="25%">
+					<label for="extra_cost"></label><var id="extra_cost"></var>
+				</span>
+			</fieldset>
+		</section>
+		<section name="Invoice">
+			<fieldset title="Delivery">
+				<span width="100%">
+					<label for="delivery"></label>
+					<br />
+					<var id="delivery"></var>
+				</span>
+				<span width="25%">
+					<label for="delivery_cost"></label><var id="delivery_cost"></var>
+				</span>
+			</fieldset>
+			<fieldset title="Price">
+				<span width="75%">
+					&nbsp;left<br />				
+				</span>				
+				<span width="25%">
+					<label for="price"></label><var id="price"></var>
+					<br />
+					<label for="vat"></label><var id="vat" widget="percentage"></var>
+				</span>
+			</fieldset>
+		</section>
+	</div>
+</form>

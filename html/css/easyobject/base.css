@@ -13,6 +13,9 @@ body, form, div, table, tr, td {
 table, tr {
 	width: 100%;
 }
+table {
+	table-layout: fixed;
+}
 /**
 * UI elements
 */
@@ -48,7 +51,6 @@ td.label {
 	padding-top: 5px;
 	padding-right: 5px;	
     text-align: left;
-    white-space: nowrap;
 	width: 5%;
 	line-height: 20px;
 	vertical-align: top;
@@ -80,9 +82,19 @@ var {
 button {
 	margin-top: 4px;
 }
-.field input, .field textarea, .field select {
+.field textarea {
+	height: 180px;
+}
+.field textarea, .field select {
 	width: 99%;
 }
+.field input {
+	min-width: 10px;
+    max-width: 99%;
+	width: 99%;	
+	margin: 0px;
+	padding: 0px;	
+}	
 .selected {
 	font-weight: bold;
 }
@@ -107,4 +119,7 @@ button {
 sup.help {
 	color: blue;
 	cursor: pointer;
+}
+.choice_input {
+	vertical-align: top;
 }
