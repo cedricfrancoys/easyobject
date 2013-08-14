@@ -228,7 +228,13 @@ switch($params['output']) {
 		break;
 	case 'xls':
 // todo : continue	
-		load_class('utils/PHPExcel');
+		$list_data = get_list_data();
+		
+		if(is_array($list_data)) {	
+			load_class('utils/PHPExcel');		
+		}
+
+
 
 /*		
 		// Create a new PHPExcel object
