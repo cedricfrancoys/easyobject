@@ -654,7 +654,7 @@ $pdf->writeHTML($html, true, false, true, false, '');
 
 
 //Close and output PDF document
-$pdf->Output('example_061.pdf', 'I');
+// $pdf->Output('example_061.pdf', 'I');
 
 
-// echo phpinfo();
+ echo phpinfo();

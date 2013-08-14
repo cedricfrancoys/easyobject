@@ -61,16 +61,12 @@
 												.attr({id: conf.name, name: conf.name})
 												.val(conf.value)
 												.on('change', conf.onchange);
-							if(conf.readonly) $widget.attr("disabled","disabled");
+							if(conf.readonly)			$widget.attr("disabled","disabled");
+// todo: these options should be somewhere in the config
+							if(conf.type == 'float')	$widget.inputmask("decimal", { radixPoint: "." , digits: 3, autoGroup: true, groupSeparator: ",", groupSize: 3});
+							if(conf.type == 'integer')	$widget.inputmask("integer",  { allowMinus: true });
+							
 							$this.data('widget', $widget.appendTo($this));
-							break;
-						case 'percentage':
-							$this.data('widget', $('<input type="text"/>')
-												.attr({id: conf.name, name: conf.name})
-												.val(conf.value)
-												.on('change', conf.onchange)
-												.appendTo($this)
-										);						
 							break;
 						case 'password':
 							// as password may be changed on submission, we hide the associated input

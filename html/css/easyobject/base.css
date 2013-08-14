@@ -83,7 +83,7 @@ button {
 	margin-top: 4px;
 }
 .field textarea {
-	height: 180px;
+	height: 100px;
 }
 .field textarea, .field select {
 	width: 99%;

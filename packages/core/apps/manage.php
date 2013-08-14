@@ -59,6 +59,10 @@ $js_packages = function () {
 
 $html->addScript("
 $(document).ready(function() {
+	easyObject.init({
+		dialog_width: 900
+	});
+	
 	// vars
 	var packages = {$js_packages()};
     var selection = $('body');

@@ -204,6 +204,9 @@
 												conf.modified = true;
 												easyObject.log('some change have been made to an object being edited ('+conf.class_name+', '+conf.object_id+')');
 											}
+											if(attr_onchange != undefined) {
+												eval(attr_onchange);
+											}
 										}							
 						};
 

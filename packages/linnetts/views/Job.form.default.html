@@ -4,7 +4,7 @@
 			<td>
 				<table>
 					<tr>
-						<td class="label" style="width: 6%; padding-left: 4px;">
+						<td class="label" style="width: 7%; padding-left: 4px;">
 							<label for="id"></label>
 						</td>
 						<td class="field" style="width: 5%;">
@@ -13,16 +13,22 @@
 						<td class="label" style="width: 4%; padding-left: 4px; text-align: right;">
 							<label for="date"></label>
 						</td>
-						<td class="field" style="width: 8%;">
+						<td class="field" style="width: 9%;">
 							<var id="date" required="true"></var>
 						</td>
-						<td class="label" style="width: 6%; padding-left: 4px; text-align: right;">
+						<td class="label" style="width: 4%; padding-left: 4px; text-align: right;">
 							<label for="customer_id"></label>
 						</td>
 						<td class="field" style="width: 18%;">
 							<var id="customer_id" required="true"></var>
 						</td>
-						<td class="label" style="width: 10%; padding-left: 4px; text-align: right;">
+						<td class="label" style="width: 7%; padding-left: 4px; text-align: right;">
+							<label for="client_ref"></label>
+						</td>
+						<td class="field" style="width: 8%;">
+							<var id="client_ref" ></var>
+						</td>
+						<td class="label" style="width: 5%; padding-left: 4px; text-align: right;">
 							<label for="title"></label>
 						</td>
 						<td class="field" style="width: 25%;">
@@ -89,6 +95,23 @@
 				<table>
 					<tr>
 						<td class="label" style="width: 5%; padding-left: 4px;">
+							<label for="pass_by"></label>
+						</td>
+						<td class="field" style="width: 20%;">
+							<var id="pass_by"></var>
+						</td>
+						<td class="field" style="width: 75%;">
+						</td>						
+					</tr>
+				</table>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td class="label" style="width: 5%; padding-left: 4px;">
 							<label for="stock"></label>
 						</td>
 						<td class="field" style="width: 25%;">
@@ -98,7 +121,7 @@
 							<label for="stock_cost"></label>
 						</td>
 						<td class="field" style="width: 6%;">
-							<var id="stock_cost"></var>
+							<var id="stock_cost" onchange="$('#price', $form).trigger('change')"></var>
 						</td>
 						<td class="label" style="width: 4%; padding-left: 4px; text-align: right;">
 							<label for="run"></label>
@@ -116,7 +139,7 @@
 							<label for="mounting_cost"></label>
 						</td>
 						<td class="field" style="width: 6%;">
-							<var id="mounting_cost"></var>
+							<var id="mounting_cost" onchange="$('#price', $form).trigger('change')"></var>
 						</td>
 					</tr>
 				</table>
@@ -190,7 +213,7 @@
 													<label for="total_repro">
 												</td>
 												<td class="field">
-													<var id="total_repro"></var>
+													<var id="total_repro" onchange="$('#price', $form).trigger('change')"></var>
 												</td>															
 											</tr>
 											
@@ -263,7 +286,7 @@
 													<label for="total_press_cost">
 												</td>
 												<td class="field">
-													<var id="total_press_cost"></var>
+													<var id="total_press_cost" onchange="$('#price', $form).trigger('change')"></var>
 												</td>															
 											</tr>
 											
@@ -374,7 +397,7 @@
 																<label for="total_fin"></label>
 															</td>
 															<td class="field" style="width: 4%;">
-																<var id="total_fin"></var>
+																<var id="total_fin" onchange="$('#price', $form).trigger('change')"></var>
 															</td>														
 														<tr>	
 													</table>										
@@ -419,7 +442,7 @@
 																<label for="total_scr_cost"></label>
 															</td>
 															<td class="field" style="width: 4%;">
-																<var id="total_scr_cost"></var>
+																<var id="total_scr_cost" onchange="$('#price', $form).trigger('change')"></var>
 															</td>														
 														<tr>	
 													</table>
@@ -460,7 +483,7 @@
 										<label for="extra_cost"></label>
 									</td>
 									<td class="field" style="width: 15%;">
-										<var id="extra_cost"></var>
+										<var id="extra_cost" onchange="$('#price', $form).trigger('change')"></var>
 									</td>								
 								</tr>
 							</table>							
@@ -486,7 +509,7 @@
 									</td>						
 									<td style="width: 1%;"></td>						
 									<td style="width: 8%; padding-left: 4px; text-align: right; vertical-align: top;">
-										<label for="delivery_cost"></label>												
+										<label for="delivery_cost" onchange="$('#price', $form).trigger('change')"></label>												
 									</td>						
 									<td style="width: 5%; vertical-align: top;">
 										<var id="delivery_cost"></var>						
@@ -494,18 +517,37 @@
 									<td style="width: 25%;">
 										<table>							
 											<tr>						
-												<td style="width: 6%; text-align: right;">
+												<td class="label" style="width: 30%; text-align: right;">
+													<label for="tariff"></label>						
+												</td>						
+												<td class="field" style="width: 20%;">
+													<var id="tariff"></var>						
+												</td>											
+											</tr>																											
+											<tr>						
+												<td class="label" style="text-align: right;">
 													<label for="price"></label>						
 												</td>						
-												<td style="width: 5%;">
-													<var id="price"></var>						
+												<td class="field">
+													<var id="price" 
+														onchange="
+														$('#price', $form).val(
+															parseFloat($('#stock_cost', $form).val())
+															+parseFloat($('#mounting_cost', $form).val())
+															+parseFloat($('#total_repro', $form).val())
+															+parseFloat($('#total_press_cost', $form).val())
+															+parseFloat($('#total_fin', $form).val())
+															+parseFloat($('#total_scr_cost', $form).val())
+															+parseFloat($('#extra_cost', $form).val())
+															+parseFloat($('#delivery_cost', $form).val())
+														)"></var>						
 												</td>											
 											</tr>																	
 											<tr>						
-												<td style="width: 6%; text-align: right;">
+												<td class="label" style="text-align: right;">
 													<label for="vat"></label>						
 												</td>						
-												<td style="width: 5%;">
+												<td class="field">
 													<var id="vat"></var>						
 												</td>											
 											</tr>																	

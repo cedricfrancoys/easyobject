@@ -18,8 +18,9 @@
 	'html/js/src/easyObject.tree.js',	
 	'html/js/src/easyObject.dropdownlist.js',
 	'html/js/src/easyObject.choice.js',	
+	'html/js/src/jquery.inputmask.bundle.min.js',	
 	'html/js/src/easyObject.editable.js',
-	'html/js/src/easyObject.form.js',
+	'html/js/src/easyObject.form.js',	
 	'html/js/src/easyObject.api.js'	
 	]);
 })(jQuery);

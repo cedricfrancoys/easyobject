@@ -1,9 +1,10 @@
 {
 	"model": {
-		"id":{"label":"Job id","help":"Unique job identifier (automatically generated)"},
-		"title":{"label":"Job title","help":"Complete title of this job"},
-		"client_ref":{"label":"Reference","help":"Reference provided by the customer"},
-		"brief":{"label":"Brief","help":"These are the instruction from the client"},
+		"id":{"label":"Our ref","help":"Unique job identifier (automatically generated)"},
+		"title":{"label":"Title","help":"Complete title of this job"},
+		"client_ref":{"label":"Client ref","help":"Reference provided by the customer"},
+		"brief":{"label":"Brief","help":"These are the instructions from the client"},
+		"pass_by":{"label":"Pass by","help":"Person in charge of the quality check on the work in progress"},		
 		"date":{"label":"Date"},
 		"date_aw":{"label":"Date A/W"},
 		"date_to_press":{"label":"To press"},
