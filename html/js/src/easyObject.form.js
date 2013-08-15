@@ -219,6 +219,10 @@
 
 						// set additional config params for special fields
 						switch(config.type) {						
+							case 'textarea':						
+								// find the related label (if any), and set the label to the top of the cell
+								$("label[for='"+field+"']").parent().css({'vertical-align': 'top'});
+								break;
 							case 'function':
 							case 'related':
 								break;

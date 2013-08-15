@@ -36,7 +36,7 @@ $html = new HtmlWrapper();
 $html->addCSSFile('html/css/easyobject/base.css');
 $html->addCSSFile('html/css/jquery.ui.grid/jquery.ui.grid.css');
 $html->addCSSFile('html/css/jquery/base/jquery.ui.easyobject.css');
-
+$html->addCSSFile('html/css/jquery.ui.daterangepicker.css');
 $html->addJSFile('html/js/jquery-1.7.1.min.js');
 $html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
 // todo : include these in the loader

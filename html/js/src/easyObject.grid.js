@@ -19,32 +19,32 @@
 	 */
 	$.fn.grid = function(arg) { 
 		var default_conf = {
-			data_type: 'json',							// format of the received data (plugin only supports 'json' for now)
-			rp: 20,										// number of results per page
-			rp_choices: [5, 10, 20, 40, 80],			// allowed per-page values 			
-			page: 1,									// default page to display
-			sortname: 'id',								// default field on which perform sort
-			sortorder: 'asc',							// order for sorting
+			data_type: 'json',										// format of the received data (plugin only supports 'json' for now)
+			rp: 20,													// number of results per page
+			rp_choices: [5, 10, 25, 50, 100, 250, 500, 1000],		// allowed per-page values 			
+			page: 1,												// default page to display
+			sortname: 'id',											// default field on which perform sort
+			sortorder: 'asc',										// order for sorting
 			edit: {
-				func: function($grid, selection) {},	// function to call for editing an item
-				text: 'edit',							// alternate text for the edit button
-				icon: 'ui-icon-pencil'					// icon for the edition button
+				func: function($grid, selection) {},				// function to call for editing an item
+				text: 'edit',										// alternate text for the edit button
+				icon: 'ui-icon-pencil'								// icon for the edition button
 			},
 			del: {
-				func: function($grid, selection) {},	// function to call for removing an item
-				text: 'delete',							// alternate text for the delete button
-				icon: 'ui-icon-trash'					// icon for the delete button
+				func: function($grid, selection) {},				// function to call for removing an item
+				text: 'delete',										// alternate text for the delete button
+				icon: 'ui-icon-trash'								// icon for the delete button
 			},
 			add: {
-				func: function($grid, conf) {},			// function to call for adding an item
-				text: 'create new',						// alternate text for the add button
-				icon: 'ui-icon-document'				// icon for the add button
+				func: function($grid, conf) {},						// function to call for adding an item
+				text: 'create new',									// alternate text for the add button
+				icon: 'ui-icon-document'							// icon for the add button
 			},			
-			more: [],									// ids to include to the domain			
-			less: [],									// ids to exclude from the domain
-			domain: [],									// domain (i.e. clauses to limit the results)
-			lang: easyObject.conf.content_lang,			// language in which request the content to server 
-			ui: easyObject.conf.user_lang				// language in which display UI items			
+			more: [],												// ids to include to the domain			
+			less: [],												// ids to exclude from the domain
+			domain: [],												// domain (i.e. clauses to limit the results)
+			lang: easyObject.conf.content_lang,						// language in which request the content to server 
+			ui: easyObject.conf.user_lang							// language in which display UI items			
 		};
 	
 		var methods = {
@@ -85,7 +85,7 @@
 
 				// instanciate header row and the first column which contains the 'select-all' checkbox
 				var $hrow = $('<tr/>')
-				.append($('<th/>')
+				.append($('<th/>').css({'width': '30px'})
 					.append($('<div/>')
 						.append(
 							$('<input type="checkbox" />').addClass('checkbox')
@@ -303,9 +303,8 @@
 			},
 			footer: function($grid, conf) {
 				var self = this;
-				var url = 'index.php?' + $.param({
+				var params = {
 					show: 'core_objects_view',
-					output: 'pdf',
 					view: 'list.default',
 					object_class: conf.class_name,
 					domain: conf.domain,
@@ -314,12 +313,17 @@
 					sortname: conf.sortname,
 					sortorder: conf.sortorder,
 					fields: conf.fields
-				});
+				};
 
 				// create extra widgets at the bottom of the grid
 				return $('<div/>').attr('id', 'grid_footer').addClass('bottom')
 					.append($('<div/>').css('margin-left',  '7px')
-						.append($('<a/>').attr('href', url).attr('target', '_blank').append('Export'))
+						.append($('<span/>').text('Export:'))
+						.append($('<a/>').css({'margin': '0px 5px'}).attr('href', '?index.php&'+$.param($.extend(params, {output: 'pdf'}))).attr('target', '_blank').append('pdf'))
+						.append($('<span/>').text('|'))			
+						.append($('<a/>').css({'margin': '0px 5px'}).attr('href', '?index.php&'+$.param($.extend(params, {output: 'xls'}))).attr('target', '_blank').append('xls'))
+						.append($('<span/>').text('|'))						
+						.append($('<a/>').css({'margin': '0px 5px'}).attr('href', '?index.php&'+$.param($.extend(params, {output: 'csv'}))).attr('target', '_blank').append('csv'))						
 					);
 			},
 			feed: function($grid, conf) {

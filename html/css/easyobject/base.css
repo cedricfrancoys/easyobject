@@ -4,17 +4,20 @@ body {
 	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 75%;	
 }
-
 body, form, div, table, tr, td {
 	margin: 0;
 	padding: 0;
 	border: 0;
 }
+table {
+	table-layout: auto;
+}
 table, tr {
 	width: 100%;
 }
-table {
-	table-layout: fixed;
+table, tr, td {	
+	border-spacing:0;
+    border-collapse:collapse;
 }
 /**
 * UI elements
@@ -41,26 +44,6 @@ div#loading {
 	text-align: right;
 	background: url("images/load.gif") no-repeat transparent;			
 }
-label {
-	text-align: left;
-	font-weight: bold;
-	color: #505050;
-	margin-top: 4px;	
-}
-td.label {
-	padding-top: 5px;
-	padding-right: 5px;	
-    text-align: left;
-	width: 5%;
-	line-height: 20px;
-	vertical-align: top;
-}
-td.field {
-	padding-top: 5px;
-	width: 95%;
-	vertical-align: top;
-	text-align: left;
-}
 fieldset {
 	border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; -webkit-border-radius: 5px;
 	padding-left: 1%;
@@ -76,25 +59,33 @@ legend {
 	padding-left: 2px;	
 	padding-bottom /*\**/: 6px\0px; /* IE8 Fix */
 }
-var {
-	width: auto;
+#edit var, #edit label, #edit textarea, #edit input, #edit select {
+	width: 99%;
+}
+textarea {
+	height: 100px;	
+}
+label {
+	text-align: left;
+	font-weight: bold;
+	color: #505050;
+	margin-top: 4px;	
 }
 button {
 	margin-top: 4px;
 }
-.field textarea {
-	height: 100px;
+#edit td {
+    text-align: left;
 }
-.field textarea, .field select {
-	width: 99%;
+td.label {
+	width: 5%;
+	padding-right: 5px;	
+	padding-bottom: 5px;
 }
-.field input {
-	min-width: 10px;
-    max-width: 99%;
-	width: 99%;	
-	margin: 0px;
-	padding: 0px;	
-}	
+td.field {
+	width: 95%;
+	padding-bottom: 5px;	
+}
 .selected {
 	font-weight: bold;
 }

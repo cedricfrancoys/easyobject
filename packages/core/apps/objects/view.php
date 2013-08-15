@@ -30,28 +30,29 @@
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 // force silent mode (debug output would corrupt json data)
-// set_silent(true);
+set_silent(true);
 
 
 check_params(array('object_class', 'view'));
 
 // assign values with the received parameters
 $params = get_params(array(
-							'object_class'		=> null, 
-							'id'				=> 0, 
+							'object_class'		=> null,
+							'id'				=> 0,
+							'ids'				=> null,							
 							'view'				=> 'form.default',
 							'output'			=> 'html',
-							'fields'			=> null, 
-							'domain'			=> array(array()), 
-							'page'				=> 1, 
-							'rp'				=> 10, 
-							'sortname'			=> 'id', 
-							'sortorder'			=> 'asc', 
-							'records'			=> null, 
+							'fields'			=> null,
+							'domain'			=> array(array()),
+							'page'				=> 1,
+							'rp'				=> 10,
+							'sortname'			=> 'id',
+							'sortorder'			=> 'asc',
+							'records'			=> null,
 							'lang'				=> DEFAULT_LANG,
-							'ui'				=> SESSION_LANG_UI		
+							'ui'				=> SESSION_LANG_UI
 					));
-			
+
 if($params['fields'] && !is_array($params['fields'])) $params['fields'] = explode(',', $params['fields']);
 
 // todo: if fields is null, get simple_fields from schema
@@ -75,7 +76,7 @@ function get_include_contents($filename) {
 */
 function get_list_data() {
 	global $params;
-	
+
 	$result =	array(
 						'fields'	=>	array(),	// fields as defined in view file
 						'rows'		=>	array(),	// fields values following order of view file
@@ -85,7 +86,7 @@ function get_list_data() {
 
 
 	// 1) get fields list from the specified view and their widths
-	// get html from specified view	
+	// get html from specified view
 	$view = get_include_contents('packages/'.strtolower(ObjectManager::getObjectPackageName($params['object_class'])).'/views/'.ucfirst(ObjectManager::getObjectName($params['object_class'])).'.'.$params['view'].'.html');
 	if(empty($view)) return false;
 	// use regular expression to locate all 'li' tags in the view
@@ -103,7 +104,7 @@ function get_list_data() {
 		$tags[] = $tag;
 	}
 	// assign fields and widths
-	foreach($tags as $attributes) {				
+	foreach($tags as $attributes) {
 		$index = array_search($attributes['id'], $params['fields']);
 		// ensure specified field is in the fields list
 		if($index !== false) {
@@ -111,7 +112,7 @@ function get_list_data() {
 			$result['widths'][] = (int) str_replace('%', '', $attributes['width']);
 		}
 	}
-	
+
 	// 2) retrieve data (rows)
 	// retieve and store the fields order (it may differs from the $params['fields'] order)
 	$indexes = array();
@@ -119,7 +120,7 @@ function get_list_data() {
 		$indexes[] = array_search($params['fields'][$i], $result['fields']);
 	}
 	// get JSON data from the core/data/objects/list.php script output
-	$json = json_decode(get_include_contents('packages/core/data/objects/list.php'), true);	
+	$json = json_decode(get_include_contents('packages/core/data/objects/list.php'), true);
 	// check JSON validity
 	if(is_null($json)) return false;
 	// get the right sub dataset
@@ -127,25 +128,25 @@ function get_list_data() {
 		$data = array();
 		for($i = 0, $j = count($row['cell']); $i < $j; ++$i) {
 			$data[$indexes[$i]] = $row['cell'][$i];
-		}		
+		}
 		$result['rows'][] = $data;
 	}
-	
+
 	// 3) retrieve fields labels (if any)
 	// by default, set fieldnames as labels
 	$result['labels'] = $result['fields'];
-	// check if there is a matching i18n file	
-	$json = json_decode(get_include_contents('packages/'.strtolower(ObjectManager::getObjectPackageName($params['object_class'])).'/i18n/'.$params['ui'].'/'.ucfirst(ObjectManager::getObjectName($params['object_class'])).'.json'), true);
+	// check if there is a matching i18n file
+	$json_file = 'packages/'.strtolower(ObjectManager::getObjectPackageName($params['object_class'])).'/i18n/'.$params['ui'].'/'.ucfirst(ObjectManager::getObjectName($params['object_class'])).'.json';
+	file_exists($json_file) or die("No translation file for class: {$params['object_class']}");
+	$json = json_decode(get_include_contents($json_file), true);
 	if(!is_null($json)) {
 		foreach($result['fields'] as $key => $field ) {
 			if(isset($json['model'][$field]) && isset($json['model'][$field]['label'])) $result['labels'][$key] = $json['model'][$field]['label'];
-		}				
+		}
 	}
 
 	return $result;
 }
-
-
 
 
 // output result
@@ -155,7 +156,7 @@ switch($params['output']) {
 *
 */
 	case 'html':
-		load_class('utils/HtmlWrapper');	
+		load_class('utils/HtmlWrapper');
 		$html = new HtmlWrapper();
 		$html->addCSSFile('html/css/easyobject/base.css');
 		$html->addCSSFile('html/css/jquery.ui.grid/jquery.ui.grid.css');
@@ -169,8 +170,8 @@ switch($params['output']) {
 		$html->addJSFile('html/js/easyObject.loader.js');
 
 		list($view, $name) = explode(".", $params['view']);
-		$params['object_class'] = addslashes($params['object_class']);		
-		
+		$params['object_class'] = addslashes($params['object_class']);
+
 		switch($view) {
 			case 'form':
 				!empty($params['id']) or die('no object specified');
@@ -185,7 +186,7 @@ switch($params['output']) {
 								ui: '{$params['ui']}'
 						}));
 					});
-				");			
+				");
 				break;
 			case 'list':
 				$html->addScript("
@@ -197,69 +198,71 @@ switch($params['output']) {
 								ui: '{$params['ui']}'
 						}));
 					});
-				");			
+				");
 				break;
 		}
 
-		print($html);		
-		break;
-	case 'csv':
-		// UTF-8 BOM	
-/*		
-		$csv = chr(239).chr(187).chr(191).$csv;
-		$len = strlen($csv);
-
-		//Begin writing headers
-		header("Pragma: public");
-		header("Expires: 0");
-		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-		header("Cache-Control: public");
-		header("Content-Description: File Transfer");
-		header("Content-Type: application/vnd.ms-excel");
-
-		//Force the download
-		$filename = "";
-		$header = "Content-Disposition: attachment; filename=export.csv;";
-		header($header);
-		header("Content-Transfer-Encoding: binary");
-		header("Content-Length: ".$len);
-		print($csv);	
-*/		
+		print($html);
 		break;
 	case 'xls':
-// todo : continue	
+	case 'csv':
+/**
+*	XLS or CSV output
+*
+*/
 		$list_data = get_list_data();
-		
-		if(is_array($list_data)) {	
-			load_class('utils/PHPExcel');		
+
+		if(is_array($list_data)) {
+			load_class('utils/PHPExcel');
+
+			$xls = new PHPExcel();
+
+			// set cells alignment
+			$xls->getDefaultStyle()->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+			// set columns widths
+			for($i = 0, $j = count($list_data['fields']), $k = 'A';$i < $j; ++$i, ++$k) {
+				$xls->getActiveSheet()->getColumnDimension($k)->setWidth(90 * $list_data['widths'][$i]/100);
+			}
+
+			// set labels (columns headers)
+			$xls->getActiveSheet()->fromArray($list_data['labels'],NULL,'A1');
+			// Loop through the result set
+			$line = 2;
+			foreach($list_data['rows'] as $row) {
+			   $col = 'A';
+			   foreach($row as $cell) {
+				  $xls->getActiveSheet()->setCellValue($col.$line,$cell);
+				  $col++;
+			   }
+			   $line++;
+			}
+
+			switch($params['output']) {
+				case 'csv':
+					// save as a CSV file
+					header('Content-Type: text/csv');
+					header('Content-Disposition: attachment;filename="export.csv"');
+					header('Cache-Control: max-age=0');
+
+					$fileWriter = PHPExcel_IOFactory::createWriter($xls, 'CSV')
+					->setDelimiter(',')
+					->setEnclosure('"')
+					->setLineEnding("\r\n")
+					->setSheetIndex(0)
+					->save('php://output');
+					break;
+				case 'xls':
+					// save as an Excel BIFF (xls) file
+					header('Content-Type: application/vnd.ms-excel');
+					header('Content-Disposition: attachment;filename="export.xls"');
+					header('Cache-Control: max-age=0');
+
+					$fileWriter = PHPExcel_IOFactory::createWriter($xls, 'Excel5')
+					->save('php://output');
+					break;
+			}
 		}
 
-
-
-/*		
-		// Create a new PHPExcel object
-		$objPHPExcel = new PHPExcel();
-		$objPHPExcel->getActiveSheet()->setTitle('List of Cities');
-
-		// Loop through the result set
-		$rowNumber = 1;
-		while ($row = mysql_fetch_row($result)) {
-		   $col = 'A';
-		   foreach($row as $cell) {
-			  $objPHPExcel->getActiveSheet()->setCellValue($col.$rowNumber,$cell);
-			  $col++;
-		   }
-		   $rowNumber++;
-		}
-		// Save as an Excel BIFF (xls) file
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-
-		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="myFile.xls"');
-		header('Cache-Control: max-age=0');
-
-		$objWriter->save('php://output');	
-*/		
 		break;
 	case 'pdf':
 /**
@@ -267,35 +270,35 @@ switch($params['output']) {
 *
 */
 		list($view, $name) = explode(".", $params['view']);
-		
+
 		switch($view) {
 			case 'list':
 				$list_data = get_list_data();
-				
-				if(is_array($list_data)) {			
-					load_class('utils/FPDF');	
+
+				if(is_array($list_data)) {
+					load_class('utils/FPDF');
 					define('FPDF_FONTPATH', 'files/font');
-					
-					class PDF extends FPDF {			
+
+					class PDF extends FPDF {
 						function Footer() {
 							$this->SetY(-15);
 							$this->SetFont('Arial','I',8);
 							$this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
 						}
 					}
-					
+
 					$pdf = new PDF();
 					$pdf->AliasNbPages();
 					$pdf->SetFont('Arial','B',14);
 					$pdf->AddPage();
 					$pdf->SetFillColor(100,150,250);$pdf->SetTextColor(255);$pdf->SetDrawColor(128,0,0);
 					$pdf->SetLineWidth(.3);
-					
+
 					// adjust widths to occupy all available space
 					$page_width = $pdf->w - $pdf->lMargin - $pdf->rMargin;
 					for($i = 0, $j = count($list_data['fields']);$i < $j; ++$i) $list_data['widths'][$i] = $page_width * $list_data['widths'][$i]/100;
 
-					// header of table					
+					// header of table
 					for($i = 0, $j = count($list_data['fields']);$i < $j; ++$i) $pdf->Cell($list_data['widths'][$i],7,$list_data['labels'][$i],1,0,'C',true);
 					$pdf->Ln();
 					// restore colors and font
@@ -309,13 +312,119 @@ switch($params['output']) {
 					}
 					// bottom of table
 					$pdf->Cell(array_sum($list_data['widths']),0,'','T');
-					$pdf->Output('export.pdf', 'I');			
+					$pdf->Output('export.pdf', 'I');
+				}
 				break;
 			case 'form':
-				break;
-		}
-
 			
+				require_once("classes/utils/dompdf/dompdf_config.inc.php");
+
+				function decorate_template($template, $decorator) {
+					$previous_pos = 0;
+					$html = '';
+					// use regular expression to locate all tags in the template
+					preg_match_all("/<([a-z]+)\s*([^>]*)>.*<\/\\1>/iU", $template, $matches, PREG_OFFSET_CAPTURE);					
+					// replace 'var' tags with their associated content
+					for($i = 0, $j = count($matches[2]); $i < $j; ++$i) {
+						// 1) get tag name and attributes
+						$tag = $matches[1][$i][0];
+						$attributes = array();
+						$args = explode(' ', ltrim($matches[2][$i][0]));
+						foreach($args as $arg) {
+							if(!strlen($arg)) continue;
+							list($attribute, $value) = explode('=', $arg);
+							$attributes[$attribute] = str_replace('"', '', $value);
+						}
+						// 2) get content pointed by var tag, replace tag with content and build resulting html
+						$pos = $matches[0][$i][1];
+						$len = strlen($matches[0][$i][0]);
+						$html .= substr($template, $previous_pos, ($pos-$previous_pos)).$decorator(array('name'=>$tag, 'attributes'=>$attributes));
+						$previous_pos = $pos + $len;
+					}
+					// add tailer
+					$html .= substr($template, $previous_pos);
+					return $html;
+				}				
+				
+				$package = ObjectManager::getObjectPackageName($params['object_class']);
+				$class_name = ObjectManager::getObjectName($params['object_class']);
+				
+				$view_file = "packages/{$package}/views/{$class_name}.{$params['view']}.html";
+				file_exists($view_file) or die("No file for view: {$params['view']}");
+				$html = file_get_contents($view_file);
+
+				
+				// check if there is a matching i18n file
+				$json_file = 'packages/'.strtolower(ObjectManager::getObjectPackageName($params['object_class'])).'/i18n/'.$params['ui'].'/'.ucfirst(ObjectManager::getObjectName($params['object_class'])).'.json';
+				file_exists($json_file) or die("No translation file for class: {$params['object_class']}");
+				$labels = json_decode(get_include_contents($json_file), true);			
+				
+				// remove tags: form, button
+				$html = preg_replace(array("'<button[^>]*?>.*?</button>'si", "'<form[^>]*?>'si", "'</form>'si", "'<sup[^>]*?>'si", "'</sup>'si"),array(""),$html);				
+
+				$id = $params['id'];
+				if(isset($params['ids']) && count($params['ids']) > 0) $id = $params['ids'][0];
+				$values = &browse($params['object_class'], array($id));
+
+				$html = decorate_template($html, 
+					function ($tag) use ($id, $values, $labels) {
+						if(in_array($tag['name'], array('label', 'var'))) {
+							switch($tag['name']) {
+								case 'var':
+									if(isset($values[$id][$tag['attributes']['id']])) return $values[$id][$tag['attributes']['id']];	
+									break;
+								case 'label':
+									if(isset($labels['model'][$tag['attributes']['for']])) return $labels['model'][$tag['attributes']['for']]['label'].':';
+									if(isset($labels['view'][$tag['attributes']['name']])) return $labels['view'][$tag['attributes']['name']]['label'].':';
+									break;
+							}							
+						}
+						return '<'.$tag['name'].'></'.$tag['name'].'>';
+					}
+				);				
+
+				$styles = "
+					<style>
+					body {
+						font-family:sans-serif;
+						font-size: 0.7em;
+					}					
+					table {
+						table-layout: fixed;
+					}
+					table, tr {
+						width: 100%;
+					}
+					table, tr, td {	
+						border-spacing:0;
+						border-collapse:collapse;
+					}
+					td.label {
+						width: 5%;
+						padding-right: 5px;	
+						padding-bottom: 5px;
+						text-align: left;
+						font-weight: bold;						
+					}
+					td.field {
+						width: 95%;
+						padding-bottom: 5px;	
+					}
+					textarea, input, select {
+						width: 99%;
+						border: 1px solid #000000;
+					}
+					textarea {
+						height: 100px;	
+					}
+					</style>	
+				";
+				$dompdf = new DOMPDF();
+				$dompdf->load_html($styles.$html);
+				$dompdf->set_paper("letter", "portrait");
+				$dompdf->render();
+				$dompdf->stream("export.pdf", array("Attachment" => false));			
+				break;
 		}
 		break;
 }

@@ -1,4 +1,4 @@
-This tutorial may be found online at: http://easyobject.cedricfrancoys.be/wiki/basic_webapp
+This tutorial may be found online at: http://easyobject.cedricfrancoys.be/wiki/doku.php?id=basic_webapp
 
 
 ====== Learning by example how to create a web application with easyObject ======

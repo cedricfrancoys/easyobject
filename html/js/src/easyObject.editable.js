@@ -63,7 +63,7 @@
 												.on('change', conf.onchange);
 							if(conf.readonly)			$widget.attr("disabled","disabled");
 // todo: these options should be somewhere in the config
-							if(conf.type == 'float')	$widget.inputmask("decimal", { radixPoint: "." , digits: 3, autoGroup: true, groupSeparator: ",", groupSize: 3});
+							if(conf.type == 'float')	$widget.inputmask("decimal", { radixPoint: "." , digits: 2, autoGroup: true, groupSeparator: ",", groupSize: 3});
 							if(conf.type == 'integer')	$widget.inputmask("integer",  { allowMinus: true });
 							
 							$this.data('widget', $widget.appendTo($this));
@@ -153,7 +153,7 @@
 												.attr({id: conf.name, name: conf.name})
 												.val(conf.value)
 												.on('change', conf.onchange)												
-												.datepicker({ dateFormat: 'yy-mm-dd' })
+												.datepicker({ dateFormat: 'yy-mm-dd', yearRange: 'c-70:c+20', changeMonth: true, changeYear: true })
 												.appendTo($this)
 										);
 							break;

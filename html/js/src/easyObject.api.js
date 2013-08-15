@@ -1,4 +1,4 @@
-// todo : 
+// todo :
 // - feedback on errors (browse, update return 8 : not allowed & incorrect output [if set_silent not invoked])
 // - views are mandatory (stop if not found)
 // - translation files are optional (don't retry if not found)
@@ -22,12 +22,12 @@
 	});
 
 	/**
-	* Keyboard handler for console mechanism (dialog shows up on 'ctrl + shift')	
-	* 
+	* Keyboard handler for console mechanism (dialog shows up on 'ctrl + shift')
+	*
 	*/
 	$(document).bind('keydown', function(event) {
 		if(event.ctrlKey && event.shiftKey && event.altKey) {
-// todo : add a menu for common tasks		
+// todo : add a menu for common tasks
 			var user_id = easyObject.user_id();
 			var user_values = (easyObject.browse('core\\User', [user_id], ['firstname', 'lastname'], easyObject.conf.lang))[user_id];
 			var $dia = $('<div/>')
@@ -42,15 +42,15 @@
 				height: 'auto',
 				x_offset: 0,
 				y_offset: 0
-			}).dialog('open');			
+			}).dialog('open');
 		}
 	});
-	
-})(jQuery);	
-	
+
+})(jQuery);
+
 
 /**
-* singleton implementation for easyObject 
+* singleton implementation for easyObject
 *
 */
 var easyObject = {
@@ -69,14 +69,14 @@ var easyObject = {
 		schemas: [],
 		i18n: [],
 		views: [],
-		fields: [],		
+		fields: [],
 		error_codes: {0: "unknown error(s)", 1: "invalid parameter(s) or wrong value(s)", 2: "SQL error(s)", 4: "unknown class or object", 8: "action not allowed : action violates some rule or you don't have permission to execute it"},
 		simple_types: ['boolean', 'integer', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one'],
-	
+
 		init: function(conf) {
 				$.extend(this.conf, conf);
 		},
-		
+
 		/**
 		* ObjectManager methods
 		*/
@@ -126,8 +126,8 @@ var easyObject = {
 				if(typeof order != 'undefined')	values.order = order;
 				if(typeof sort  != 'undefined')	values.sort = sort;
 				if(typeof start != 'undefined')	values.start = start;
-				if(typeof limit != 'undefined')	values.limit = limit;				
-				
+				if(typeof limit != 'undefined')	values.limit = limit;
+
 				$.ajax({
 					type: 'GET',
 					url: 'index.php?get=core_objects_search',
@@ -142,7 +142,7 @@ var easyObject = {
 					}
 				});
 				return result;
-		
+
 		},
 		update: function(class_name, ids, values, lang) {
 			/*
@@ -174,7 +174,7 @@ var easyObject = {
 					}
 				});
 				return result;
-		},		
+		},
 		remove: function(class_name, ids, permanent) {
 				var result = [];
 				$.ajax({
@@ -186,7 +186,7 @@ var easyObject = {
 						object_class: class_name,
 						ids: ids,
 						permanent: Number(new Boolean(permanent))
-					},					
+					},
 					contentType: 'application/json; charset=utf-8',
 					success: function(json_data){
 							if(!json_data) alert("Unable to remove object : check user's permissions");
@@ -197,7 +197,7 @@ var easyObject = {
 				});
 				return result;
 		},
-// todo : undelete (force deleted field to 0)		
+// todo : undelete (force deleted field to 0)
 		restore: function(class_name, id) {
 				var result = [];
 				$.ajax({
@@ -219,7 +219,7 @@ var easyObject = {
 		*/
 		lock: function (key, value) {
 				if(typeof(value) == 'number') value = value.toString();
-				if(typeof(key) == 'number') key = key.toString();	
+				if(typeof(key) == 'number') key = key.toString();
 				if(value.length == 32) {
 					var hex_prev = function (val) {
 						var hex_tab = '0123456789abcdef';
@@ -288,10 +288,10 @@ var easyObject = {
 				}
 				return easyObject.conf.user_lang;
 		},
-			
+
 		/**
 		* schemas methods
-		*/			
+		*/
 		load_schema: function(package_name, class_name) {
 				$.ajax({
 					type: 'GET',
@@ -326,16 +326,16 @@ var easyObject = {
 					async: false,
 					dataType: 'json',
 					contentType: 'application/json; charset=utf-8',
-					success: function(json_data){					
+					success: function(json_data){
 						easyObject.i18n[package_name][object_name] = json_data;
 					},
 					error: function(e){
-					}	
+					}
 				});
 		},
 		get_lang: function(package_name, object_name, lang) {
 				if(typeof(easyObject.i18n[package_name]) == 'undefined' || typeof(easyObject.i18n[package_name][object_name]) == 'undefined') {
-					if(typeof(easyObject.i18n[package_name]) == 'undefined') easyObject.i18n[package_name] = new Array();		
+					if(typeof(easyObject.i18n[package_name]) == 'undefined') easyObject.i18n[package_name] = new Array();
 					this.load_lang(package_name, object_name, lang);
 				}
 				if(typeof(easyObject.i18n[package_name][object_name]) == 'undefined') return null;
@@ -355,7 +355,7 @@ var easyObject = {
 					contentType: 'application/html; charset=utf-8',
 					success: function(json_data){
 							if(typeof(easyObject.views[package_name]) == 'undefined') easyObject.views[package_name] = new Array();
-							if(typeof(easyObject.views[package_name][object_name]) == 'undefined') easyObject.views[package_name][object_name] = new Array();			
+							if(typeof(easyObject.views[package_name][object_name]) == 'undefined') easyObject.views[package_name][object_name] = new Array();
 							easyObject.views[package_name][object_name][view_name] = json_data;
 					},
 					error: function(e){
@@ -364,16 +364,16 @@ var easyObject = {
 		},
 		get_view: function(class_name, view_name) {
 				var package_name = this.getObjectPackageName(class_name);
-				var object_name = this.getObjectName(class_name);	
-				if(typeof(easyObject.views[package_name]) == 'undefined' || 
-				typeof(easyObject.views[package_name][object_name]) == 'undefined' || 
+				var object_name = this.getObjectName(class_name);
+				if(typeof(easyObject.views[package_name]) == 'undefined' ||
+				typeof(easyObject.views[package_name][object_name]) == 'undefined' ||
 				typeof(easyObject.views[package_name][object_name][view_name]) == 'undefined') this.load_view(package_name, object_name, view_name);
 				return easyObject.views[package_name][object_name][view_name];
 		},
 		get_fields: function(class_name, view_name) {
 				var package_name = this.getObjectPackageName(class_name);
-				var object_name = this.getObjectName(class_name);			
-				if(typeof(easyObject.fields[package_name]) == 'undefined') easyObject.fields[package_name] = [];				
+				var object_name = this.getObjectName(class_name);
+				if(typeof(easyObject.fields[package_name]) == 'undefined') easyObject.fields[package_name] = [];
 				if(typeof(easyObject.fields[package_name][object_name]) == 'undefined') easyObject.fields[package_name][object_name] = [];
 				if(typeof(easyObject.fields[package_name][object_name][view_name]) == 'undefined') {
 					easyObject.fields[package_name][object_name][view_name] = [];
@@ -425,12 +425,12 @@ var easyObject = {
 					var name = $(this).attr('id');
 					result.col_model.push({display: name, name: name, width: $(this).attr('width')});
 					result.fields.push(name);
-				});			
+				});
 				if(result.url.length == 0) result.url = 'index.php?get=core_objects_list';
 				return result;
 			})($.extend(default_conf, conf));
 		},
-		
+
 		/**
 		* UI elements
 		*/
@@ -445,7 +445,7 @@ var easyObject = {
 						minHeight: 100,
 						x_offset: 0,
 						y_offset: 0
-					};			
+					};
 					conf = $.extend(default_conf, conf);
 					var $dia = $('<div/>').attr('title', conf.title).appendTo($('body'));
 					var $temp = $('<div/>').css({'position': 'absolute', 'left': '-10000px'}).append(conf.content).appendTo($('body'));
@@ -453,7 +453,7 @@ var easyObject = {
 					var dialog_width = conf.width;
 					var window_height = $(window).height();
 					var window_width = $(window).width();
-					conf.content.detach();				
+					conf.content.detach();
 					$temp.remove();
 					conf.minWidth = conf.width;
 					conf.position = [(window_width-dialog_width)/2+conf.x_offset, (window_height-dialog_height)/3+conf.y_offset];
@@ -465,8 +465,8 @@ var easyObject = {
 						content: $('<div/>').append($('<div/>').css('padding', '10px').text(content)).append($('<div/>').css('text-align', 'right').append($('<button/>').text('Ok').button()
 						.click(function () {
 							$dia.dialog('destroy');
-						}))), 
-						title: 'Alert', 
+						}))),
+						title: 'Alert',
 						height: 400
 					});
 				},
@@ -482,14 +482,14 @@ var easyObject = {
 													if(typeof actions.no_func != undefined) actions.no_func();
 												}))
 							)),
-						title: 'Confirm', 
+						title: 'Confirm',
 						height: 400});
 				},
 				loading: function() {
-					var spinner = $('<img/>').attr('src', 'html/css/jquery/base/images/spinner.gif').css('margin-right', '3px');		
+					var spinner = $('<img/>').attr('src', 'html/css/jquery/base/images/spinner.gif').css('margin-right', '3px');
 					return $('<div/>').attr('id', 'load').text('Loading ...').css('font-size', '16px').css('height','16px').css('line-height','16px').css('text-align','center').prepend(spinner);
 				},
-				form: function(conf) {		
+				form: function(conf) {
 					// the display of some relational fields require the actual existence of the objet before editing it
 					if(typeof conf.object_id == 'undefined' || conf.object_id == 0) {
 						// obtain a new id by creating a new empty object (as no values are specified, the modifier field wont be set)
@@ -500,7 +500,7 @@ var easyObject = {
 																		// for the object id : some methods require an array (ids) and other a single integer (id), so we put both
 																		predefined: {
 																			object_class: conf.class_name,
-																			id: conf.object_id,																			
+																			id: conf.object_id,
 																			ids: [conf.object_id],
 																			lang: conf.lang
 																		}
@@ -514,11 +514,11 @@ var easyObject = {
 								$form = easyObject.UI.form({class_name: conf.class_name, object_id: ids[0], view_name: 'form.default', lang: conf.lang});
 								$dia = easyObject.UI.dialog({
 										content: $form,
-										title: 'Object edition - ' + conf.class_name, 
-										width: easyObject.conf.dialog_width, 
+										title: 'Object edition - ' + conf.class_name,
+										width: easyObject.conf.dialog_width,
 										height: 'auto'
 								});
-								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $form.trigger('destroy'); $(this).dialog('destroy');}});	
+								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $form.trigger('destroy'); $(this).dialog('destroy');}});
 							}
 						},
 						del: {
@@ -528,13 +528,16 @@ var easyObject = {
 							}
 						},
 						add: {
-							func: function($grid) {							
+							func: function($grid) {
 								$dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: easyObject.conf.dialog_width, height: 'auto'});
-								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $(this).dialog('destroy');}});	
+								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $(this).dialog('destroy');}});
 							}
 						}
 					}, conf));
 				},
+				/**
+				* Displays a list of objects with search, pager and export options
+				*/
 				list: function(conf) {
 					// create inputs for critereas (simple_fields only)
 					// (we make it very basic for now)
@@ -543,15 +546,41 @@ var easyObject = {
 					var schemaObj = easyObject.get_schema(conf.class_name);
 					$.each(fields, function(i, field){
 						if($.inArray(schemaObj[field]['type'], easyObject.simple_types) > -1  || (schemaObj[field]['type'] == 'function' && $.inArray(schemaObj[field]['result_type'], easyObject.simple_types) > -1)) {
-							$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css('margin-right', '4px').append(field)).append($('<input type="text"/>').attr('name', field).css('margin-right', '10px'))));
-						}						
-					});					
+							if(schemaObj[field]['type'] == 'date' || schemaObj[field]['type'] == 'datetime') {
+								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'})
+									.append($('<div/>').append($('<label/>').css('margin-right', '4px').append(field))
+										.append($('<input type="text"/>').attr('name', field).css('margin-right', '10px')
+											.daterangepicker({
+												dateFormat: 'yy-mm-dd',
+												presetRanges: [
+													{text: 'Today', dateStart: 'today', dateEnd: 'today' },
+													{text: 'The previous Month', dateStart: function(){ return Date.parse('1 month ago').moveToFirstDayOfMonth();  }, dateEnd: function(){ return Date.parse('1 month ago').moveToLastDayOfMonth();  } }
+												],
+												presets: {
+													allDatesBefore: 'All Dates Before',
+													allDatesAfter: 'All Dates After',
+													dateRange: 'Date Range'
+												},
+												earliestDate: Date.parse('-70years'),
+												latestDate: Date.parse('+20years'),
+												datepickerOptions: {changeMonth: true, changeYear: true, yearRange: 'c-70:c+20'}
+											})
+										)
+									)
+								);
+
+							}
+							else {
+								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css('margin-right', '4px').append(field)).append($('<input type="text"/>').attr('name', field).css('margin-right', '10px'))));
+							}
+						}
+					});
 					// create the grid
 					$grid = easyObject.UI.grid(easyObject.get_grid_config(conf));
 					// remember the original domain
 					var grid_domain_orig = $.extend(true, {}, $grid.data('conf').domain);
-					
-					// create the search button and the associated action when clicking 
+
+					// create the search button and the associated action when clicking
 					$search = $('<div/>').append($('<table/>').append($('<tr/>').append($('<td>').attr('width', '90%').append($search_criterea)).append($('<td>').append($('<button type="button"/>').button()
 						.click(function(){
 							// 1) generate the new domain (array of conditions)
@@ -573,30 +602,40 @@ var easyObject = {
 										case 'integer':
 										case 'many2one':
 										case 'selection':
-										case 'date':
 										case 'time':
-										case 'datetime':
 										case 'timestamp':
+										case 'datetime':										
 											grid_conf.domain[0].push([ field, '=', value]);
 											break;
+										case 'date':
+											// may be a date range (separator: '-')
+											var date_array = value.split(" - ");
+											switch(date_array.length) {
+												case 1:
+													// only one date
+													grid_conf.domain[0].push([ field, '=', value]);
+													break;
+												case 2:
+													// date range
+													grid_conf.domain[0].push([ field, '>=', date_array[0]]);
+													grid_conf.domain[0].push([ field, '<=', date_array[1]]);
+													break;
+											}
+											break;
 										case 'string':
-										case 'short_text':								
+										case 'short_text':
 										case 'text':
-										case 'binary':										
+										case 'binary':
+											// note: remember that binary type may hold field translation
 											grid_conf.domain[0].push([ field, 'like', '%' + value + '%']);
 											break;
-/*											
-										case 'binary':
-											// no filter allowed on this kind of field
-											break;
-*/											
 									}
 								}
 							});
-							// 2) force grid to refresh						
+							// 2) force grid to refresh
 							$grid.trigger('reload');
 						}
-					).css('margin-bottom', '2px').text('search')))));	
+					).css('margin-bottom', '2px').text('search')))));
 					return $('<div/>').append($search).append($grid).data('grid', $grid);
 				}
 		}
@@ -604,7 +643,7 @@ var easyObject = {
 
 /**
 * easyObject standard API functions set
-* 
+*
 */
 
 function user_id() {
@@ -653,7 +692,7 @@ function edit(object_class, object_id, object_view, lang) {
 			object_id: object_id,
 			view_name: object_view,
 			lang: lang,
-			ui: easyObject.conf.user_lang			
+			ui: easyObject.conf.user_lang
 	}));
 }
 
@@ -664,13 +703,13 @@ function logon_dialog() {
 			$('<form/>').attr('id', 'login_form').form({
 				class_name: 'core\\User',
 				view_name: 'form.login',
-				autosave: false,				
+				autosave: false,
 				success_handler: function(json_data) {
 					// if logon was successful get the new user_id
 					if(json_data.result) {
-						easyObject.conf.user_id = 0;					
+						easyObject.conf.user_id = 0;
 						user_id();
-						$('#login_form').parent().dialog('close').dialog('destroy');						
+						$('#login_form').parent().dialog('close').dialog('destroy');
 					}
 				}
 		}),
@@ -685,13 +724,13 @@ function logon_dialog() {
 function popup(object_class, object_id, object_view, lang) {
 	easyObject.UI.dialog({
 			content: easyObject.UI.form({
-				class_name: object_class, 
+				class_name: object_class,
 				object_id: object_id,
 				view_name: object_view,
 				lang: lang
-			}), 
-			title: 'Edit object', 
-			width: 650, 
+			}),
+			title: 'Edit object',
+			width: 650,
 			height: 'auto'
 	});
 }
