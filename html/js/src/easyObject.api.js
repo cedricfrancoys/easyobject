@@ -542,13 +542,25 @@ var easyObject = {
 					// create inputs for critereas (simple_fields only)
 					// (we make it very basic for now)
 					var $search_criterea = $('<div/>').css('width', '100%');
-					var fields = easyObject.get_fields(conf.class_name, conf.view_name);
+					var fields = easyObject.get_fields(conf.class_name, conf.view_name);					
 					var schemaObj = easyObject.get_schema(conf.class_name);
+					var object_name = easyObject.getObjectName(conf.class_name);
+					var package_name = easyObject.getObjectPackageName(conf.class_name);
+					var langObj = easyObject.get_lang(package_name, object_name, easyObject.conf.user_lang);
 					$.each(fields, function(i, field){
-						if($.inArray(schemaObj[field]['type'], easyObject.simple_types) > -1  || (schemaObj[field]['type'] == 'function' && $.inArray(schemaObj[field]['result_type'], easyObject.simple_types) > -1)) {
+						if($.inArray(schemaObj[field]['type'], easyObject.simple_types) > -1  
+							|| ($.inArray(schemaObj[field]['type'], ['function', 'related']) > -1 
+								&& $.inArray(schemaObj[field]['result_type'], easyObject.simple_types) > -1
+								&& schemaObj[field]['store'] == true
+								)
+							) {
+							var field_name = field;
+							if(!$.isEmptyObject(langObj) && typeof(langObj['model'][field]) != 'undefined' && typeof(langObj['model'][field]['label']) != 'undefined') {
+								field_name = langObj['model'][field]['label'];
+							}
 							if(schemaObj[field]['type'] == 'date' || schemaObj[field]['type'] == 'datetime') {
 								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'})
-									.append($('<div/>').append($('<label/>').css('margin-right', '4px').append(field))
+									.append($('<div/>').append($('<label/>').css({'display': 'block', 'float': 'left', 'text-align': 'right', 'width': '80px', 'margin-right': '4px'}).append(field_name))
 										.append($('<input type="text"/>').attr('name', field).css('margin-right', '10px')
 											.daterangepicker({
 												dateFormat: 'yy-mm-dd',
@@ -571,7 +583,7 @@ var easyObject = {
 
 							}
 							else {
-								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css('margin-right', '4px').append(field)).append($('<input type="text"/>').attr('name', field).css('margin-right', '10px'))));
+								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css({'display': 'block', 'float': 'left', 'text-align': 'right', 'width': '80px', 'margin-right': '4px'}).append(field_name)).append($('<input type="text"/>').attr('name', field).css('margin-right', '10px'))));
 							}
 						}
 					});

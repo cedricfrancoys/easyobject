@@ -32,6 +32,7 @@
 */
 
 defined('__FC_LIB') or include_once('fc.lib.php');
+// files are stored in the library/files folder
 defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 
 
@@ -78,12 +79,21 @@ $accepted_requests = array(
 							'show'	=> array('type' => 'application', 'dir' => 'apps')		// output rendering information (html/js)
 					);
 
+$request_found = false;
 foreach($accepted_requests as $request_key => $request_conf) {
 	if(isset($_REQUEST[$request_key])) {
 		$parts = explode('_', $_REQUEST[$request_key]);
 		$filename = 'packages/'.array_shift($parts).'/'.$request_conf['dir'].'/'.implode('/', $parts).'.php';
 		is_file($filename) or die ("'{$_REQUEST[$request_key]}' is not a valid {$request_conf['type']}.");
 		include($filename);
+		$request_found = true;		
 		break;
 	}
+}
+
+if(!$request_found && defined('DEFAULT_APP')) {
+	$parts = explode('_', DEFAULT_APP);
+	$filename = 'packages/'.array_shift($parts).'/apps/'.implode('/', $parts).'.php';
+	is_file($filename) or die ("'{$_REQUEST[$request_key]}' is not a valid {$request_conf['type']}.");
+	include($filename);
 }

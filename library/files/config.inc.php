@@ -204,3 +204,11 @@
 	define('SMTP_ACCOUNT_USERNAME', 'username');
 	define('SMTP_ACCOUNT_PASSWORD', 'mypassword');
 	define('SMTP_ACCOUNT_EMAIL', 'username@example.com');
+
+	
+/**
+* Default App
+*/
+	
+	// Application to redirect to if nothing is specified in the url (typically while accessing root folder)
+	define('DEFAULT_APP', 'linnetts_home');

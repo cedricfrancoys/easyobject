@@ -1,11 +1,11 @@
 {
 	"model": {
-		"day_of_week":{"label":"Day","help":"Day of the week"},
-		"start_time":{"label":"Start","help":"Time at which lesson starts"},
-		"end_time":{"label":"End","help":"Time at which lesson ends"},
-		"class_label":{"label":"Class"},
-		"school_name":{"label":"School"},
-		"teacher_name":{"label":"Teacher"}
+		"id":{"label":"Code","help":"Unique identifier for the customer"},
+		"name":{"label":"Name","help":"Full name for a company (ex.: Linnetts proofinf Ltd)\nFirstname and lastname for an individual (ex.: John Doe)"},
+		"address":{"label":"Address","help":"Official address of the customer (will appear on invoices)"},
+		"vat":{"label":"VAT","help":"VAT number of the customer (if any)"},
+		"jobs_ids":{"label":"Jobs"},
+		"invoices_ids":{"label":"Invoices"}
 	},
 	"view": {
 	}
