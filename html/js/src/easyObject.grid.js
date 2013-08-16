@@ -305,7 +305,7 @@
 				var self = this;
 				var params = {
 					show: 'core_objects_view',
-					view: 'list.default',
+					view: conf.view_name,
 					object_class: conf.class_name,
 					domain: conf.domain,
 					rp: conf.rp,

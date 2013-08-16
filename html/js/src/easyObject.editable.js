@@ -63,7 +63,7 @@
 												.on('change', conf.onchange);
 							if(conf.readonly)			$widget.attr("disabled","disabled");
 // todo: these options should be somewhere in the config
-							if(conf.type == 'float')	$widget.inputmask("decimal", { radixPoint: "." , digits: 2, autoGroup: true, groupSeparator: ",", groupSize: 3});
+							if(conf.type == 'float')	$widget.inputmask("decimal", { radixPoint: "." , digits: 2, autoGroup: false});
 							if(conf.type == 'integer')	$widget.inputmask("integer",  { allowMinus: true });
 							
 							$this.data('widget', $widget.appendTo($this));

@@ -20,6 +20,7 @@
 	*/
 	$.fn.form = function(conf) {
 		var default_conf = {
+// todo : standardize this (object_name or class_name)
 			class_name: '',							// class of the object to edit
 			object_id: 0,							// id of the object to edit
 			view_name: 'form.default',				// view to use for the object edition
@@ -90,7 +91,6 @@
 							case 'button':
 								// enable jQuery UI buttons
 								$(this).button();
-								$(this).css('margin-right', '0.4em');
 								$result.append($(this));
 								break;
 							case 'fieldset':
@@ -513,13 +513,32 @@
 				// buttons
 				$form.find('button').each(function() {
 					var $this = $(this);
-					var action = $this.attr('action');
-					if(action == undefined) return;
+					var action_attr = $this.attr('action');
+					var show_attr = $this.attr('show');
+					var view_attr = $this.attr('view');					
+					var output_attr = $this.attr('output');
 
-					$this.click(function () {
-						//execute action
-						$form.trigger('submit', action);
-					});
+					if(action_attr != undefined) {
+						$this.click(function () {
+							//execute action
+							$form.trigger('submit', action_attr);
+						});					
+					}
+
+					if(show_attr != undefined) {
+						$this.click(function () {
+							if(view_attr == undefined) view_attr = 'form.default';
+							if(output_attr == undefined) output_attr = 'html';							
+							// open new window and transmit the current context
+							window.open('index.php?show='+show_attr+'&'+$.param({
+									view: view_attr,
+									id: conf.object_id,
+									object_class: conf.class_name,
+									output: output_attr
+								})
+							);
+						});
+					}
 
 					// if we need to auto-save drafts, set the timeout handle				
 					if($this.attr('name') == 'autosave') {
@@ -635,7 +654,7 @@
 								$form.remove();
 							}
 						}
-						else if(typeof(msg) != 'undefined') alert(msg);
+		//				else if(typeof(msg) != 'undefined') alert(msg);
 						return false;
 					};
 
@@ -701,8 +720,11 @@
 										if(typeof(json_data.url) != 'undefined' && json_data.url.length > 0) window.location.href = json_data.url;
 										else {
 		// temporary
+		/*
 											if(no_redirect) alert('Action ' + action + ' successfuly executed');
 											else return close('ok', 'Action ' + action + ' successfuly executed');
+		*/
+											return close('ok', 'Action ' + action + ' successfuly executed');
 										}
 									}
 								}

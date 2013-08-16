@@ -324,6 +324,10 @@ class ObjectManager {
 									foreach($path_prev_ids as $path_object_id) {
 // todo : could we not load at once  related fields of all specified objects?
 										$path_values = $this->getFields($user_id, $path_object_class, $path_object_id, array($path_field), $lang);
+										if(is_null($path_values[$path_field])) {
+											$values_array[$object_id][$field] = null;
+											break 3;
+										}
 										// type of returned values may vary (integer or array) depending on the type of the field (i.e. many2many, one2many or many2one)
 										if(!is_array($path_values[$path_field])) $path_values[$path_field] = array($path_values[$path_field]);
 										$path_objects_ids = array_merge($path_objects_ids, $path_values[$path_field]);
@@ -836,9 +840,18 @@ class ObjectManager {
 				//  - all simple field (even the ones already loaded!)
 				//  - complex fields not yet loaded
 
+				
 				// if no fields have been defined, then we will return every simple fields of the object
-
-	 			if(empty($fields)) $fields = $object->getFieldsNames($this->simple_types);
+				// (we also add functional fields having store attribute set to true)
+	 			if(empty($fields)) {
+					$fields = array();
+					$schema = $object->getSchema();
+					foreach($schema as $field => $def) {
+						if(in_array($def['type'], $this->simple_types) || (isset($def['store']) && $def['store'] && in_array($def['result_type'], $this->simple_types))) {
+							$fields[] = $field;
+						}
+					}
+				}
 // todo : we could maybe improve this by removing objects already fully loaded from the ids list
 				$this->loadObjectFields($user_id, $object_class, $ids, $fields, $lang);
 			}

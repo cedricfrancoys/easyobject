@@ -3,7 +3,7 @@
 		"id":{"label":"Code","help":"Unique identifier for the customer"},
 		"name":{"label":"Name","help":"Full name for a company (ex.: Linnetts proofinf Ltd)\nFirstname and lastname for an individual (ex.: John Doe)"},
 		"address":{"label":"Address","help":"Official address of the customer (will appear on invoices)"},
-		"vat":{"label":"VAT","help":"VAT number of the customer (if any)"},
+		"vat":{"label":"VAT","help":"VAT identification number of the customer (if any)"},
 		"jobs_ids":{"label":"Jobs"},
 		"invoices_ids":{"label":"Invoices"}
 	},
