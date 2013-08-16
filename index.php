@@ -66,8 +66,17 @@ define('SESSION_LANG', $params['lang']);
 // from now on, we let the script decide whether or not to output error messages if any
 set_silent(false);
 
+// we need to prevent double escaping (especially for class names)
+if (get_magic_quotes_gpc()) {
+		function stripslashes_deep($value) {
+			return is_array($value) ?  array_map('stripslashes_deep', $value) : stripslashes($value);
+		}
+        $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+}
 // add keys from $_FILES to the superglobal $_REQUEST array (we do this in order to let the manager know when binary fields are present)
 $_REQUEST = array_merge($_REQUEST, array_fill_keys(array_keys($_FILES), ''));
+
+
 
 /**
 * Dispatching : include the requested script

@@ -39,7 +39,7 @@ check_params(array('object_class', 'view'));
 $params = get_params(array(
 							'object_class'		=> null,
 							'id'				=> 0,
-							'ids'				=> null,							
+							'ids'				=> null,
 							'view'				=> 'form.default',
 							'output'			=> 'html',
 							'fields'			=> null,
@@ -316,14 +316,14 @@ switch($params['output']) {
 				}
 				break;
 			case 'form':
-			
+
 				require_once("classes/utils/dompdf/dompdf_config.inc.php");
 
 				function decorate_template($template, $decorator) {
 					$previous_pos = 0;
 					$html = '';
 					// use regular expression to locate all tags in the template
-					preg_match_all("/<([a-z]+)\s*([^>]*)>.*<\/\\1>/iU", $template, $matches, PREG_OFFSET_CAPTURE);					
+					preg_match_all("/<([a-z]+)\s*([^>]*)>.*<\/\\1>/iU", $template, $matches, PREG_OFFSET_CAPTURE);
 					// replace 'var' tags with their associated content
 					for($i = 0, $j = count($matches[2]); $i < $j; ++$i) {
 						// 1) get tag name and attributes
@@ -344,86 +344,91 @@ switch($params['output']) {
 					// add tailer
 					$html .= substr($template, $previous_pos);
 					return $html;
-				}				
-				
+				}
+
 				$package = ObjectManager::getObjectPackageName($params['object_class']);
 				$class_name = ObjectManager::getObjectName($params['object_class']);
-				
+
 				$view_file = "packages/{$package}/views/{$class_name}.{$params['view']}.html";
 				file_exists($view_file) or die("No file for view: {$params['view']}");
 				$html = file_get_contents($view_file);
 
-				
+
 				// check if there is a matching i18n file
 				$json_file = 'packages/'.strtolower(ObjectManager::getObjectPackageName($params['object_class'])).'/i18n/'.$params['ui'].'/'.ucfirst(ObjectManager::getObjectName($params['object_class'])).'.json';
 				file_exists($json_file) or die("No translation file for class: {$params['object_class']}");
-				$labels = json_decode(get_include_contents($json_file), true);			
-				
+				$labels = json_decode(get_include_contents($json_file), true);
+
 				// remove tags: form, button
-				$html = preg_replace(array("'<button[^>]*?>.*?</button>'si", "'<form[^>]*?>'si", "'</form>'si", "'<sup[^>]*?>'si", "'</sup>'si"),array(""),$html);				
+				$html = preg_replace(array("'<button[^>]*?>.*?</button>'si", "'<form[^>]*?>'si", "'</form>'si", "'<sup[^>]*?>'si", "'</sup>'si"),array(""),$html);
 
 				$id = $params['id'];
 				if(isset($params['ids']) && count($params['ids']) > 0) $id = $params['ids'][0];
 				$values = &browse($params['object_class'], array($id));
 
-				$html = decorate_template($html, 
+				$html = decorate_template($html,
 					function ($tag) use ($id, $values, $labels) {
 						if(in_array($tag['name'], array('label', 'var'))) {
 							switch($tag['name']) {
 								case 'var':
-									if(isset($values[$id][$tag['attributes']['id']])) return $values[$id][$tag['attributes']['id']];	
+									if(isset($values[$id][$tag['attributes']['id']])) {
+										return str_replace(array("\n", "\r\n"), "<br />", $values[$id][$tag['attributes']['id']]);
+									}
 									break;
 								case 'label':
 									if(isset($labels['model'][$tag['attributes']['for']])) return $labels['model'][$tag['attributes']['for']]['label'].':';
 									if(isset($labels['view'][$tag['attributes']['name']])) return $labels['view'][$tag['attributes']['name']]['label'].':';
 									break;
-							}							
+							}
 						}
 						return '<'.$tag['name'].'></'.$tag['name'].'>';
 					}
-				);				
+				);
 
 				$styles = "
 					<style>
 					body {
 						font-family:sans-serif;
-						font-size: 0.7em;
-					}					
+						font-size: 0.7em !important;
+						color: #000000 !important;
+					}
 					table {
 						table-layout: fixed;
 					}
 					table, tr {
 						width: 100%;
 					}
-					table, tr, td {	
+					table, tr, td {
 						border-spacing:0;
 						border-collapse:collapse;
 					}
 					td.label {
 						width: 5%;
-						padding-right: 5px;	
+						padding-right: 5px;
 						padding-bottom: 5px;
 						text-align: left;
-						font-weight: bold;						
+						font-weight: bold;
+						white-space: nowrap;
+						overflow: hidden;
+						vertical-align: top;
 					}
 					td.field {
 						width: 95%;
-						padding-bottom: 5px;	
+						text-align: left;
+						padding-bottom: 5px;
+						vertical-align: top;
 					}
-					textarea, input, select {
-						width: 99%;
-						border: 1px solid #000000;
+					td.textarea {
+						border: solid 1px #000000;
+						height: 100px;
 					}
-					textarea {
-						height: 100px;	
-					}
-					</style>	
+					</style>
 				";
 				$dompdf = new DOMPDF();
 				$dompdf->load_html($styles.$html);
 				$dompdf->set_paper("letter", "portrait");
 				$dompdf->render();
-				$dompdf->stream("export.pdf", array("Attachment" => false));			
+				$dompdf->stream("export.pdf", array("Attachment" => false));
 				break;
 		}
 		break;

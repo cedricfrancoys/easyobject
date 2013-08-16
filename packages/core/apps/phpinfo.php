@@ -2,9 +2,12 @@
 // the dispatcher (index.php) is in charge of setting the context and should include the easyObject library
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
+set_silent(true);
+
+/*
 load_class('utils/tcpdf/TCPDF');
 
-set_silent(true);
+
 // todo :
 // replace (and remove) var tags
 // remove tags : buttons, sup
@@ -29,9 +32,6 @@ table, tr {
 table {
 	table-layout: fixed;
 }
-/**
-* UI elements
-*/
 div#loading {
 	position: absolute;
 	top: 40%;
@@ -83,7 +83,6 @@ legend {
 	padding: 0;
 	padding-right: 2px;
 	padding-left: 2px;	
-	padding-bottom /*\**/: 6px\0px; /* IE8 Fix */
 }
 var {
 	width: auto;
@@ -654,7 +653,7 @@ $pdf->writeHTML($html, true, false, true, false, '');
 
 
 //Close and output PDF document
-// $pdf->Output('example_061.pdf', 'I');
-
+$pdf->Output('example_061.pdf', 'I');
+*/
 
  echo phpinfo();

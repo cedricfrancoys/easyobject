@@ -20,7 +20,7 @@
 	$.fn.grid = function(arg) { 
 		var default_conf = {
 			data_type: 'json',										// format of the received data (plugin only supports 'json' for now)
-			rp: 20,													// number of results per page
+			rp: 25,													// number of results per page
 			rp_choices: [5, 10, 25, 50, 100, 250, 500, 1000],		// allowed per-page values 			
 			page: 1,												// default page to display
 			sortname: 'id',											// default field on which perform sort

@@ -13,10 +13,8 @@
 	'html/js/src/jquery.simpletip-1.3.1.js',
 	'html/js/src/jquery.noselect-1.1.js',	
 	'html/js/src/jquery-ui.timepicker-1.0.1.js',	
-
-	'html/js/date.js',	
-	'html/js/jquery.daterangepicker.js',
-	
+	'html/js/src/date.js',	
+	'html/js/src/jquery-ui.daterangepicker.js',	
 	'html/js/src/easyObject.utils.js',
 	'html/js/src/easyObject.grid.js',
 	'html/js/src/easyObject.tree.js',	

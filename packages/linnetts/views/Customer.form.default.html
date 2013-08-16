@@ -1,31 +1,31 @@
 <form action="core_objects_update">
 	<div>
 		<section name="identification">
-			<div>		
+			<div>
 				<span width="50%">
 					<label for="name"></label><var id="name" required="true"></var>
 				</span>
-				<span width="50%">				
-					<label for="vat"></label><var id="vat" required="true"></var>				
-				</span>				
-				<span width="100%">
-					<fieldset title="Address">	
-						<span width="50%">					
-							<var id="address" widget="short_text"></var>
-						</span>
-					</fieldset>
-				</span>	
+				<span width="50%">
+					<label for="vat"></label><var id="vat" required="true"></var>
+				</span>
+			</div>
+			<div>
+				<fieldset title="address">
+					<span width="100%">
+						<var id="address" widget="short_text"></var>
+					</span>
+				</fieldset>
 			</div>
 		</section>
 		<section name="jobs">
-			<span width="100%">			
+			<span width="100%">
 				<var id="jobs_ids" widget="many2many" view="list.default"></var>
-			</span>								
+			</span>
 		</section>
 		<section name="invoices">
-			<span width="100%">			
+			<span width="100%">
 				<var id="invoices_ids" widget="many2many" view="list.default"></var>
-			</span>								
+			</span>
 		</section>
 	</div>
 </form>

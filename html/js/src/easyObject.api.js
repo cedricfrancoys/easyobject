@@ -588,15 +588,18 @@ var easyObject = {
 						}
 					});
 					// create the grid
-					$grid = easyObject.UI.grid(easyObject.get_grid_config(conf));
+					var $grid = easyObject.UI.grid(easyObject.get_grid_config(conf));
 					// remember the original domain
-					var grid_domain_orig = $.extend(true, {}, $grid.data('conf').domain);
+					$grid.data('domain_orig', $.extend(true, {}, $grid.data('conf').domain));
 
 					// create the search button and the associated action when clicking
 					$search = $('<div/>').append($('<table/>').append($('<tr/>').append($('<td>').attr('width', '90%').append($search_criterea)).append($('<td>').append($('<button type="button"/>').button()
 						.click(function(){
 							// 1) generate the new domain (array of conditions)
+							var $grid = $(this).data('grid');
 							var grid_conf = $grid.data('conf');
+							var grid_domain_orig = $grid.data('domain_orig');
+							var schemaObj = easyObject.get_schema(grid_conf.class_name);							
 							// reset the domain to its original state
 							grid_conf.domain = $.extend(true, {}, grid_domain_orig);
 							$search.find('input').each(function(){

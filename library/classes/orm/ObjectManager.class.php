@@ -930,7 +930,8 @@ class ObjectManager {
 								'timestamp'		=> array('=', '<>', '<', '>', '<=', '>='),
 								'selection'		=> array('in', '=', '<>'),
 								'binary'		=> array('like', 'ilike', '='),
-								'many2one'		=> array('in', '='),
+								// contains is allowed for many2one field (for compatibilty reasons)
+								'many2one'		=> array('in', '=', 'contains'),					
 								'one2many'		=> array('contains'),
 								'many2many'		=> array('contains'),
 							);
@@ -973,6 +974,10 @@ class ObjectManager {
 
 						// note: we don't test user permissions on foreign objects here
 						switch($type) {
+							case 'many2one':
+								// use operator '=' instead of 'contains' (which is not sql standard)
+								if($operator == 'contains') $operator = '=';	
+								break;
 							case 'one2many':
 								if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory parameter for one2many field '$field' of class '$object_class'", INVALID_PARAM);
 								// add foreign table to sql query

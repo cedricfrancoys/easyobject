@@ -779,9 +779,9 @@
 					};
 
 					// we check if there is a draft pending
-					var ids = search('core\\version', [[['object_class', '=', conf.class_name], ['object_id', '=', conf.object_id], ['state', '=', 'draft']]], '', 'asc', 0, 1, conf.lang);
+					var ids = search('core\\Version', [[['object_class', '=', conf.class_name], ['object_id', '=', conf.object_id], ['state', '=', 'draft']]], '', 'asc', 0, 1, conf.lang);
 					if(!$.isEmptyObject(ids)) {
-						var result = browse('core\\version', [ids[0]], ['created'], conf.lang);
+						var result = browse('core\\Version', [ids[0]], ['created'], conf.lang);
 						var timestamp = result[ids[0]]['created'];
 						// display dialog
 						var content = "<br /><br />Non-saved changes have been made since the last record of this element. <br />Do you want to recover from auto-saved draft ("+ timestamp +") ?<br /><br /><br />";
