@@ -90,6 +90,7 @@ foreach($classes_list as $class) {
 			if(!isset($m2m_tables[$description['rel_table']])) $m2m_tables[$description['rel_table']] = array($description['rel_foreign_key'], $description['rel_local_key']);
 		}
 		else if($description['type'] == 'function' && isset($description['store']) && $description['store']) {
+			$type = $types_associations[$description['result_type']];
 			$result[] = "`{$field}` {$type} DEFAULT NULL,";
 		}
 	}

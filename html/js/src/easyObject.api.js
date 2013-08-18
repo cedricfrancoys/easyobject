@@ -444,8 +444,7 @@ var easyObject = {
 						height: 'auto',
 						minHeight: 100,
 						x_offset: 0,
-						y_offset: 0,
-						close: function(event, ui) {$('html, body').animate({ scrollTop: 0 }, 0);}
+						y_offset: 0
 					};
 					conf = $.extend(default_conf, conf);
 					var $dia = $('<div/>').attr('title', conf.title).appendTo($('body'));
@@ -495,6 +494,7 @@ var easyObject = {
 					if(typeof conf.object_id == 'undefined' || conf.object_id == 0) {
 						// obtain a new id by creating a new empty object (as no values are specified, the modifier field wont be set)
 						conf.object_id = (update(conf.class_name, [0], {}, conf.lang))[0];
+						conf.newinstance = true;
 						conf.autosave = false;
 					}
 					return $('<form/>').attr('id', 'edit').form($.extend(true, {

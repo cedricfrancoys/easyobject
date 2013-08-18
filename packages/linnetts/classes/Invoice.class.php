@@ -54,7 +54,7 @@ namespace linnetts {
 						array('linnetts_invoice'),
 						array('id'),
 						null,
-						array(array(array('modifier','>',0))),
+						array(array(array('modifier','>','0'))),
 						'id', 'id','desc', 0, 1);
 					if($row = $dbConnection->fetchArray($res)) $code = $row['id'];
 					return sprintf("%d%05d", date("Y"), $code+1);
@@ -88,8 +88,8 @@ namespace linnetts {
 		public static function onchangeJobsIds($om, $uid, $oid, $lang) {
 			$om->update($uid, 'linnetts\Invoice', array($oid), 
 						array(
-								'amount' => null,
-								'total' => null								
+								'amount' => Invoice::getAmount($om, $uid, $oid, $lang),
+								'total' => Invoice::getTotal($om, $uid, $oid, $lang)								
 						), $lang);
 		}
 

@@ -23,6 +23,7 @@
 // todo : standardize this (object_name or class_name)
 			class_name: '',							// class of the object to edit
 			object_id: 0,							// id of the object to edit
+			newinstance: false,						// are we editing a new object
 			view_name: 'form.default',				// view to use for the object edition
 			lang: easyObject.conf.content_lang,		// language in which request the content to server
 			ui: easyObject.conf.user_lang,			// language in which display UI texts
@@ -391,8 +392,7 @@
 // todo : use attr_domain (not easy: can be related to a sublist...)
 
 								// obtain listiew for target object and generate grid config (col_model & url)
-								var domain = [[]];
-								domain[0].push([schemaObj[field]['foreign_field'], 'contains', [conf.object_id]]);
+								var domain = [[[schemaObj[field]['foreign_field'], 'contains', [conf.object_id]]]];
 // tod: deal with this 								
 								// if(attr_domain != undefined) domain[0].push(eval(attr_domain));
 
