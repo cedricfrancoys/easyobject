@@ -27,7 +27,7 @@
 		"nb2_cols":{"label":"B2 cols","help":"Number of B2 Cols+Run"},
 		"nb1_cols":{"label":"B1 cols","help":"Number of B1 Cols+Run"},
 		"no_cols_run":{"label":"cols+RUN","help":"Number of Cols+Run"},			
-		"cols_cost":{"label":"Cols cost","help":"Cols unit cost"},
+		"cols_cost":{"label":"Cols cost","help":"Cols+RUN cost"},
 		"press_hours":{"label":"Press hours","help":"Number of Press hours"},
 		"press_hours_cost":{"label":"Hours Cost","help":"Total cost of Press hours"},
 		"total_press_cost":{"label":"Total Press","help":"Total Pressroom"},
@@ -52,7 +52,7 @@
 		"delivery":{"label":"Delivery details","help":"Address and delivery instructions"},
 		"delivery_cost":{"label":"Delivery cost","help":"Total cost of delivery"},
 		"tariff":{"label":"Tariff","help":"Our estimate for reference of how long a job will tke on press"},
-		"price":{"label":"Price","help":"Total amount for this job (excluding VAT)"},
+		"price":{"label":"Total Job cost","help":"Total amount for this job (excluding VAT)"},
 		"vat":{"label":"VAT","help":"VAT percentage to apply"},
 		"customer_id":{"label":"Client"},
 		"customer_name":{"label":"Client"}

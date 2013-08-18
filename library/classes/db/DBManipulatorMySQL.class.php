@@ -118,7 +118,8 @@ class DBManipulatorMySQL extends DBManipulator {
 	*/
 	private static function escapeString($value) {
 		$result = '';
-		if($value{0} == '`') {
+		if(in_array($value, array(null, 'null', 'NULL'))) $result = 'NULL';
+		else if($value{0} == '`') {
 			// $result = '`'.substr($value, 1, -1).'`';
 			$result = DBManipulatorMySQL::escapeFieldName($value);
 		}

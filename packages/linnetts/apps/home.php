@@ -77,9 +77,14 @@ $(document).ready(function() {
 			var $pane = $('#'+$this.attr('id')+'-content');
 			var loaded = $pane.attr('loaded');
 			if($pane.attr('loaded') == 'false') {
+				var domain = [[]];
+				// quick and not so nice:
+				// add a domain for jobs (so that we only see the ones not yet invoiced)
+				if($this.attr('id') == 'Job') domain[0].push(['invoice_id','is','null']);
 				$pane.prepend(easyObject.UI.list({
 									class_name: 'linnetts'+'\\'+$this.attr('id'),
-									view_name: 'list.default'
+									view_name: 'list.default',
+									domain: domain
 							})
 				);
 				$pane.find('.loader').remove();
@@ -99,7 +104,7 @@ $html->add(
 	<ul>
 		<li id="Workday">Workday</li>
 		<li id="Job">Jobs</li>
-		<li id="Invoice">Ivoices</li>
+		<li id="Invoice">Invoices</li>
 		<li id="Customer">Customers</li>		
 	</ul>
 	<div id="Workday-content" loaded="false">

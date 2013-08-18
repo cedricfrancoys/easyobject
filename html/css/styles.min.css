@@ -793,7 +793,7 @@ sup.help {
 	width: 80px;
 	height: 16px;
 	text-align: right;
-	background: url("images/load.gif") no-repeat transparent;			
+	background: url("easyobject/images/load.gif") no-repeat transparent;			
 }
 
 .ui-grid .pager span {
@@ -836,7 +836,7 @@ sup.help {
 
 .ui-daterangepickercontain {
 position: absolute;
-z-index: 999;
+z-index: 9999;
 }
 .ui-daterangepickercontain .ui-daterangepicker {
 float: left;

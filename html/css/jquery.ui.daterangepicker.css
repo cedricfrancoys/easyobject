@@ -1,6 +1,6 @@
 .ui-daterangepickercontain {
 position: absolute;
-z-index: 999;
+z-index: 3000;
 }
 .ui-daterangepickercontain .ui-daterangepicker {
 float: left;

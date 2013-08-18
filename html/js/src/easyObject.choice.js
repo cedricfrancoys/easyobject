@@ -87,6 +87,7 @@
 						$input.data('val', row.id);
 						$input.val(value);
 						$choice.trigger('change');
+						$('#'+conf.name, $choice).val(row.id);
 					});
 				});				
 			},

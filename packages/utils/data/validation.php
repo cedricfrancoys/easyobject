@@ -182,6 +182,7 @@ foreach($classes_list as $class) {
 $allowed_associations = array(
 	'boolean' 		=> array('bool', 'tinyint', 'smallint', 'mediumint', 'int', 'bigint'),
 	'integer' 		=> array('tinyint', 'smallint', 'mediumint', 'int', 'bigint'),
+	'float' 		=> array('float', 'decimal'),	
 	'string' 		=> array('char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'blob', 'mediumblob'),
 	'short_text' 	=> array('char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'blob', 'mediumblob'),
 	'text' 			=> array('tinytext', 'text', 'mediumtext', 'longtext', 'blob'),

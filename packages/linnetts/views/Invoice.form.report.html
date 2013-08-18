@@ -1,0 +1,122 @@
+<form>
+	<p style="height: 160px;">
+		<img src="packages/linnetts/html/img/invoice_header.jpg" name="images1" align=left width="60%" border="0">
+	</p>
+	<p>Invoice to:</p>
+	<table width="85%" border="0" cellpadding="4" cellspacing="0">
+		<tr valign="top">
+			<td rowspan="3" width="31%" style="height: 30px; border: solid 1px black;">
+				<var id="customer_id">
+					<div style="font-weight: bold;"><var id="name"></var></div>
+					<div><var id="address"></var></div>
+				</var>
+			</td>
+			<td width="32%" style="text-align: right;">
+				Invoice no.
+			</td>
+			<td width="20%" style="border: solid 1px black;">
+				<var id="code"></var>
+			</td>
+		</tr>
+		<tr valign="top">
+			<td></td>
+			<td></td>
+		</tr>
+		<tr valign="top">
+			<td style="text-align: right;">
+				Date
+			</td>
+			<td style="border: solid 1px black;">
+				<var id="date"></var>
+			</td>
+		</tr>
+	</table>
+	<div style="position: relative; width: 100%; height: 480px; padding-top: 15px;">
+		<table width="100%" border="0" cellpadding="4" cellspacing="0">
+			<tr valign="top">
+				<td width="11%" height="30" style="border-bottom: solid 1px black;">
+					<p>Our job no.</p>
+				</td>
+				<td width="51%" style="border-bottom: solid 1px black;">
+					<p>Description</p>
+				</td>
+				<td width="15%" style="border-bottom: solid 1px black;">
+					<p>Client job no.</p>
+				</td>
+				<td width="14%" style="border-bottom: solid 1px black;">
+					<p>Amount</p>
+				</td>
+			</tr>
+			<var id="jobs_ids">
+				<tr valign="top">
+					<td style="padding-left: 7px;">
+						<var id="id"></var>
+					</td>
+					<td style="padding-left: 7px;">
+						<var id="invoice_text"></var>
+					</td>
+					<td style="padding-left: 7px;">
+						<var id="client_ref"></var>
+					</td>
+					<td style="padding-left: 7px;">
+						<var id="price"></var>
+					</td>
+				</tr>
+			</var>
+		</table>
+		<table border="1" style="position: absolute; left: 0; top: 20px; width: 100%;">
+			<tr>
+				<td width="11%" style="height: 450px;"></td>
+				<td width="51%" style="height: 450px;"></td>
+				<td width="15%" style="height: 450px;"></td>
+				<td width="14%" style="height: 450px;"></td>
+			</tr>
+		</table>
+	</div>
+	<table width="100%" style="border: 0;" cellpadding="4" cellspacing="0">
+		<tr valign="top">
+			<td width="62%" style="font-size: 9pt;">
+				<p style="font-weight: bold;">TERMS: STRICTLY 30 DAYS NET</p>
+				<p>
+					Any queries regarding this invoice must be made in writing within 30 days.<br />
+				</p>
+				<p>
+					Please remit to account payable at the trading address or, alternatively,<br />
+					via BACS payment to Nat West Bank sort code 60-06-20 account no. 31181759
+				</p>
+				<p>
+					Registered in England 6578834<br />
+					VAT registration No. 932 608231
+				</p>
+			</td>
+			<td width="29%">
+				<table width="100%" border="1" cellpadding="5">
+					<tr>
+						<td width="52%" style="vertical-align: top; text-align: left;">
+							AMOUNT
+						</td>
+						<td width="48%">
+							<var id="amount"></var>
+						</td>
+					</tr>
+					<tr>
+						<td style="vertical-align: top; text-align: left;">
+							VAT
+						</td>
+						<td>
+							<var id="vat"></var>
+						</td>
+					</tr>
+					<tr>
+						<td style="vertical-align: top; text-align: left;">
+							TOTAL
+						</td>
+						<td>
+							<var id="total"></var>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</form>

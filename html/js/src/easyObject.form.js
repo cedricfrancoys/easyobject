@@ -388,16 +388,18 @@
 							case 'many2many':
 								var class_name = schemaObj[field]['foreign_object'];
 
-// todo : use attr_domain
-// besoin d'une fonction permettant de fusionner deux domaines
-// 1) convertir le texte de l'attribut 'domain' en objet JS
-// 2) fusionner des objets A[], B[] : merge_domains()
+// todo : use attr_domain (not easy: can be related to a sublist...)
 
 								// obtain listiew for target object and generate grid config (col_model & url)
+								var domain = [[]];
+								domain[0].push([schemaObj[field]['foreign_field'], 'contains', [conf.object_id]]);
+// tod: deal with this 								
+								// if(attr_domain != undefined) domain[0].push(eval(attr_domain));
+
 								$.extend(config, easyObject.get_grid_config({
 										class_name: class_name,
 										view_name: (attr_view != undefined)?attr_view:'list.default',
-										domain: [[[ schemaObj[field]['foreign_field'], 'contains', [conf.object_id]]]]
+										domain: domain
 								}));
 
 								$.extend(config, {
@@ -427,7 +429,15 @@
 									add: {
 										func: function($grid) {
 // todo : display only items not already present in relation
-											$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
+// todo: attr_domain is here too											
+											var config = {class_name: class_name, view_name: 'list.default', lang: conf.lang};
+											if(attr_domain != undefined) {
+												var domain = [[]];											
+												domain[0].push(eval(attr_domain));
+												config = $.extend(true, config, {domain: domain});
+											}
+
+											$list = easyObject.UI.list(config);
 											$dia = easyObject.UI.dialog({
 													content: $list,
 													title: 'Add relation'});
@@ -647,12 +657,14 @@
 						if($form.parent().parent().hasClass('ui-dialog')) { // form is inside a dialog
 							if(type == 'cancel'){
 								$form.parent().dialog('destroy');	// we don't trigger the 'close' event
-								$form.remove();								
+								$form.remove();
 							}
 							if(type == 'ok') {
 								$form.parent().dialog('close').dialog('destroy');
 								$form.remove();
 							}
+							// go to top of page
+							$('html, body').animate({ scrollTop: 0 }, 0);
 						}
 		//				else if(typeof(msg) != 'undefined') alert(msg);
 						return false;

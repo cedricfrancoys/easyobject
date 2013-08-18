@@ -22,7 +22,7 @@ namespace knine {
 										),
 				'publications_ids'	=> array('type' => 'many2many', 'foreign_object' => 'knine\Publication', 'foreign_field' => 'articles_ids', 'rel_table' => 'knine_rel_article_publication', 'rel_foreign_key' => 'publication_id', 'rel_local_key' => 'article_id'),
 
-				'parent_id' 		=> array('type' => 'many2one', 'onchange' => 'alternet\Association::onchange_parent_id', 'foreign_object' => 'knine\Article'),
+				'parent_id' 		=> array('type' => 'many2one', 'foreign_object' => 'knine\Article'),
 				'children_ids'		=> array('type' => 'one2many', 'foreign_object' => 'knine\Article', 'foreign_field' => 'parent_id'),
 				'sequence' 			=> array('type' => 'integer'),
 
@@ -62,10 +62,6 @@ namespace knine {
  		public static function callable_isRoot($om, $uid, $oid, $lang) {
 			$res = $om->browse($uid, 'knine\Article', array($oid), array('parent_id'), $lang);
 			return empty($res[$oid]['parent_id']);
-		}
-
-		public static function onchange_parent_id($om, $uid, $oid, $lang) {
-			$om->update($uid, 'alternet\Association', array($oid), array('is_root' => Association::callable_isRoot($om, $uid, $oid, $lang)), $lang);
 		}
 
 	}

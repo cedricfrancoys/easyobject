@@ -444,7 +444,8 @@ var easyObject = {
 						height: 'auto',
 						minHeight: 100,
 						x_offset: 0,
-						y_offset: 0
+						y_offset: 0,
+						close: function(event, ui) {$('html, body').animate({ scrollTop: 0 }, 0);}
 					};
 					conf = $.extend(default_conf, conf);
 					var $dia = $('<div/>').attr('title', conf.title).appendTo($('body'));
@@ -554,14 +555,16 @@ var easyObject = {
 								&& schemaObj[field]['store'] == true
 								)
 							) {
-							var field_name = field;
+							var field_label = field;
 							if(!$.isEmptyObject(langObj) && typeof(langObj['model'][field]) != 'undefined' && typeof(langObj['model'][field]['label']) != 'undefined') {
-								field_name = langObj['model'][field]['label'];
+								field_label = langObj['model'][field]['label'];
 							}
+							// generate a unique name
+							var field_name = field+(new Date()).getTime();
 							if(schemaObj[field]['type'] == 'date' || schemaObj[field]['type'] == 'datetime') {
 								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'})
-									.append($('<div/>').append($('<label/>').css({'display': 'block', 'float': 'left', 'text-align': 'right', 'width': '80px', 'margin-right': '4px'}).append(field_name))
-										.append($('<input type="text"/>').attr('name', field).css('margin-right', '10px')
+									.append($('<div/>').append($('<label/>').css({'display': 'block', 'float': 'left', 'text-align': 'right', 'width': '80px', 'margin-right': '4px'}).append(field_label))
+										.append($('<input type="text"/>').attr('for', field).attr('name', field_name).attr('id', field_name).css('margin-right', '10px')
 											.daterangepicker({
 												dateFormat: 'yy-mm-dd',
 												presetRanges: [
@@ -569,6 +572,7 @@ var easyObject = {
 													{text: 'The previous Month', dateStart: function(){ return Date.parse('1 month ago').moveToFirstDayOfMonth();  }, dateEnd: function(){ return Date.parse('1 month ago').moveToLastDayOfMonth();  } }
 												],
 												presets: {
+													specificDate: 'Specific Date',
 													allDatesBefore: 'All Dates Before',
 													allDatesAfter: 'All Dates After',
 													dateRange: 'Date Range'
@@ -583,7 +587,7 @@ var easyObject = {
 
 							}
 							else {
-								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css({'display': 'block', 'float': 'left', 'text-align': 'right', 'width': '80px', 'margin-right': '4px'}).append(field_name)).append($('<input type="text"/>').attr('name', field).css('margin-right', '10px'))));
+								$search_criterea.append($('<div/>').css({'float': 'left', 'margin-bottom': '2px'}).append($('<div/>').append($('<label/>').css({'display': 'block', 'float': 'left', 'text-align': 'right', 'width': '80px', 'margin-right': '4px'}).append(field_label)).append($('<input type="text"/>').attr('for', field).attr('name', field_name).attr('id', field_name).css('margin-right', '10px'))));
 							}
 						}
 					});
@@ -593,18 +597,19 @@ var easyObject = {
 					$grid.data('domain_orig', $.extend(true, {}, $grid.data('conf').domain));
 
 					// create the search button and the associated action when clicking
-					$search = $('<div/>').append($('<table/>').append($('<tr/>').append($('<td>').attr('width', '90%').append($search_criterea)).append($('<td>').append($('<button type="button"/>').button()
+					var $search = $('<div/>').append($('<table/>').append($('<tr/>').append($('<td>').attr('width', '90%').append($search_criterea)).append($('<td>').append($('<button type="button"/>').button()
 						.click(function(){
 							// 1) generate the new domain (array of conditions)
-							var $grid = $(this).data('grid');
+							var $grid = $search.data('grid');
 							var grid_conf = $grid.data('conf');
 							var grid_domain_orig = $grid.data('domain_orig');
 							var schemaObj = easyObject.get_schema(grid_conf.class_name);							
+
 							// reset the domain to its original state
 							grid_conf.domain = $.extend(true, {}, grid_domain_orig);
 							$search.find('input').each(function(){
 								var $item = $(this);
-								var field = $item.attr('name');
+								var field = $item.attr('for');
 								var value = $item.val();
 								if(value.length) {
 									// reset the number ofmatching records
@@ -651,7 +656,7 @@ var easyObject = {
 							$grid.trigger('reload');
 						}
 					).css('margin-bottom', '2px').text('search')))));
-					return $('<div/>').append($search).append($grid).data('grid', $grid);
+					return $('<div/>').append($search.data('grid', $grid)).append($grid).data('grid', $grid);
 				}
 		}
 };

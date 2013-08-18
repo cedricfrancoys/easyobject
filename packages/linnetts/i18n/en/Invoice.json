@@ -6,7 +6,10 @@
 		"customer_name":{"label":"Customer"},		
 		"jobs_ids":{"label":"Related jobs"},		
 		"description":{"label":"Description", "help":"This text will appear on the final invoice"},				
-		"price":{"label":"Price", "help":"Invoice amount (excluding VAT)"}
+		"amount":{"label":"Amount", "help":"Sum of jobs prices"},
+		"vat_rate":{"label":"VAT rate", "help":"VAT rate to apply to this invoice"},				
+		"vat":{"label":"VAT", "help":"VAT amount"},		
+		"toal":{"label":"Total", "help":"Total invoiced amount (including VAT)"}		
 	},
 	"view": {
 	}

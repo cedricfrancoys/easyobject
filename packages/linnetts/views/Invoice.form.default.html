@@ -10,21 +10,17 @@
 				<span width="50%">
 					<label for="date"></label><var id="date" required="true"></var>
 					<br />
-					<label for="price"></label><var id="price" required="true"></var>
+					<label for="vat_rate"></label><var id="vat_rate" required="true"></var>
 				</span>	
-			</div>
-			<div>	
-				<span width="100%">								
-					<label for="description"></label>
-					<br />
-					<var id="description" widget="short_text"></var>
-				</span>
 			</div>
 		</section>
 		<section name="jobs">
 			<span width="100%">			
-				<var id="jobs_ids" widget="many2many" view="list.default"></var>
+				<var id="jobs_ids" widget="many2many" view="list.default" domain="['customer_id', '=', $('#customer_id', $form).val()]"></var>
 			</span>								
 		</section>
 	</div>
+	<div align="left">
+		<button name="print invoice" type="button" show="core_objects_view" view="form.report" output="pdf"></button>
+	</div>	
 </form>

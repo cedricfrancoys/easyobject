@@ -84,7 +84,7 @@ class ObjectManager {
 			// and delete the associated record
 			$this->dbConnection->deleteRecords($object_table, array($object_id));
 		}
-		// create a new record with the found walue, or let the autoincrement do the job
+		// create a new record with the found value, or let the autoincrement do the job
 		$this->dbConnection->addRecords($object_table, array_keys($creation_array), array(array_values($creation_array)));
 		if($object_id <= 0) $object_id = $this->dbConnection->getLastId();
 		return $object_id;
@@ -101,7 +101,7 @@ class ObjectManager {
 			if(!class_exists($object_class)) {
 				// first, read the file content to see if the class extends from another, which could not be loaded yet
 				// (we do so because we cannot use __autoload mechanism since the script might be run in CLI SAPI)
-				$filename = 'packages/'.$this->getObjectPackageName($object_class).'/classes/'.$this->getObjectName($object_class).'.class.php';
+				$filename = realpath($_SERVER['DOCUMENT_ROOT']).dirname($_SERVER['PHP_SELF']).'/packages/'.$this->getObjectPackageName($object_class).'/classes/'.$this->getObjectName($object_class).'.class.php';
 				if(!is_file($filename)) throw new Exception("unknown object class : '$object_class'", UNKNOWN_OBJECT);
 				preg_match('/\bextends\b(.*)\{/iU', file_get_contents($filename, FILE_USE_INCLUDE_PATH), $matches);
 				if(!isset($matches[1])) throw new Exception("malformed class file for object '$object_class' : parent class name not found", INVALID_PARAM);
@@ -219,6 +219,8 @@ class ObjectManager {
 
 	/**
 	* Gets the complete schema of an object (including special fields).
+	* note: this method is not set as static since we need to load class file in order to retrieve the schema
+	* (and this is only done in the getObjectStaticInstance method)
 	*
 	* @param string $object_class
 	* @return string
@@ -309,6 +311,7 @@ class ObjectManager {
 
 						switch($schema[$field]['type']) {
 							case 'related':
+// note: we don't handle the store attribute for related fields
 								if(!$this->checkFieldAttributes(array('result_type', 'foreign_object', 'path'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
 								// class of the object at the current position (of the 'path' variable), start with the $object_class given as parameter
 								$path_object_class = $object_class;
@@ -346,7 +349,7 @@ class ObjectManager {
 								// handle the 'store' attribute
                         		// if set and equals to true, value should be in database
                         		// (case with NULL DB value handled during second pass)
-// todo : validate this code
+// todo : validate this code (see below too)
 								// note: only simple types can be stored
 								if(isset($schema[$field]['store']) && $schema[$field]['store'] && in_array($schema[$field]['result_type'], $this->simple_types)) {
 									if($lang != DEFAULT_LANG && isset($schema[$field]['multilang']) && $schema[$field]['multilang']) $simple_fields_multilang[] = $field;
@@ -397,8 +400,18 @@ class ObjectManager {
 						if($schema[$column]['type'] == 'function' && is_null($value) && isset($schema[$column]['store']) && $schema[$column]['store'] && is_callable($schema[$column]['function'])) {
 // todo : change this (return value should be an array of values rather than the value of a sole object)
 							$computed_value = call_user_func($schema[$column]['function'], $this, $user_id, $object_id, $lang);
+
+// todo : not sure this is correct (what if it is a brand new object with functional fields but on which we don't do changes?)
 							// assign the field to the computed value and mark it as modified (to prevent doing so at each load)
-							$object->setValues($user_id, array($column => $computed_value), $lang, true);
+							// $object->setValues($user_id, array($column => $computed_value), $lang, true);
+							
+// temporary fix							
+							$res_array = $object->getValues(array('modifier'));
+							if(empty($res_array['modifier']))
+								$object->setValues($user_id, array($column => $computed_value), $lang, false);	
+							else
+								$object->setValues($user_id, array($column => $computed_value), $lang, true);
+
 						}
 						// note : sometimes, we need the value, even if it is empty (and it is important that it overwrites the default value, if any)
 						// it means that, for existing objects, default value might be overwritten by an empty value
@@ -830,34 +843,44 @@ class ObjectManager {
 			if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, 'id', 'asc', 0, '', $lang);
 
 			$object = &$this->getObjectStaticInstance($object_class);
-
+			$schema = $object->getSchema();
+					
+			// if no fields have been defined, then we will return every simple fields of the object
+			// (we also add functional fields having store attribute set to true)
+			if(empty($fields)) {
+				$fields = array();
+				foreach($schema as $field => $def) {
+					if(in_array($def['type'], $this->simple_types) || (isset($def['store']) && $def['store'] && in_array($def['result_type'], $this->simple_types))) {
+						$fields[] = $field;
+					}
+				}
+			}
+			else {
+				// let's be kind and remove unexisting fields
+				// values from fields must be in keys from schema
+				$allowed_fields = array_keys($schema);
+				for($i = 0, $j = count($fields); $i < $j; ++$i) {
+					if(!in_array($fields[$i], $allowed_fields)) unset($fields[$i]);
+				}
+			}
 			// if the script is running in standalone mode
 			if(OPERATION_MODE == 'standalone') {
 				// first we request all fields of all objects at once to generate a bulk query
-				// in order to minimize the numlber of SQL queries
+				// in order to minimize the number of SQL queries
 				// (if some multilang field are required they'll be loaded all at once from core_translation)
 				// note : an sql query will be generated for:
 				//  - all simple field (even the ones already loaded!)
 				//  - complex fields not yet loaded
-
-				
-				// if no fields have been defined, then we will return every simple fields of the object
-				// (we also add functional fields having store attribute set to true)
-	 			if(empty($fields)) {
-					$fields = array();
-					$schema = $object->getSchema();
-					foreach($schema as $field => $def) {
-						if(in_array($def['type'], $this->simple_types) || (isset($def['store']) && $def['store'] && in_array($def['result_type'], $this->simple_types))) {
-							$fields[] = $field;
-						}
-					}
-				}
 // todo : we could maybe improve this by removing objects already fully loaded from the ids list
 				$this->loadObjectFields($user_id, $object_class, $ids, $fields, $lang);
 			}
 
 			// add order fields if necessary
-			if(method_exists($object, 'getOrder')) $fields = array_unique(array_merge($fields, $object->getOrder()));
+			if(method_exists($object, 'getOrder')) {
+				// note: we'll need $order var later
+				$order = $object->getOrder();
+				$fields = array_unique(array_merge($fields, $order));
+			}
 
 			foreach($ids as $object_id) {
 				if($object_id == 0) {
@@ -931,7 +954,7 @@ class ObjectManager {
 								'selection'		=> array('in', '=', '<>'),
 								'binary'		=> array('like', 'ilike', '='),
 								// contains is allowed for many2one field (for compatibilty reasons)
-								'many2one'		=> array('in', '=', 'contains'),					
+								'many2one'		=> array('is', 'in', '=', 'contains'),					
 								'one2many'		=> array('contains'),
 								'many2many'		=> array('contains'),
 							);
@@ -955,7 +978,8 @@ class ObjectManager {
 			if(!empty($domain) && !empty($domain[0]) && !empty($domain[0][0])) { // domain structure is correct and contains at least one condition
 
 				// we check, for each clause, if it's about a "special field"
-				$special_fields = array_keys(\core\Object::getSpecialFields());
+				$special_fields = \core\Object::getSpecialFields();
+
 				for($j = 0, $max_j = count($domain); $j < $max_j; ++$j) {
 					for($i = 0, $max_i = count($domain[$j]); $i < $max_i; ++$i) {
 						if(!isset($domain[$j][$i]) || !is_array($domain[$j][$i])) throw new Exception("malformed domain", INVALID_PARAM);
@@ -970,7 +994,7 @@ class ObjectManager {
 						if(!in_array($field, array_keys($schema))) throw new Exception("invalid domain, unexisting field '$field' for object '$object_class'", INVALID_PARAM);
 						if(!in_array($operator, $valid_operators[$type])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' in object '$object_class'", INVALID_PARAM);
 						// remember special fields involved in the domain (by removing them from the special_fields list)
-						if(in_array($field, $special_fields)) unset($special_fields[$field]);
+						if(isset($special_fields[$field])) unset($special_fields[$field]);
 
 						// note: we don't test user permissions on foreign objects here
 						switch($type) {
