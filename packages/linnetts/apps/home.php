@@ -102,7 +102,7 @@ $html->add(
 <<<EOT
 <div id="panel" style="display: none;">
 	<ul>
-		<li id="Workday">Workday</li>
+		<li id="Workday">Workdays</li>
 		<li id="Job">Jobs</li>
 		<li id="Invoice">Invoices</li>
 		<li id="Customer">Customers</li>		
