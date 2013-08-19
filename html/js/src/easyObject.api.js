@@ -512,8 +512,8 @@ var easyObject = {
 					.grid($.extend(true, {
 						edit: {
 							func: function($grid, ids) {
-								$form = easyObject.UI.form({class_name: conf.class_name, object_id: ids[0], view_name: 'form.default', lang: conf.lang});
-								$dia = easyObject.UI.dialog({
+								var $form = easyObject.UI.form({class_name: conf.class_name, object_id: ids[0], view_name: 'form.default', lang: conf.lang});
+								var $dia = easyObject.UI.dialog({
 										content: $form,
 										title: 'Object edition - ' + conf.class_name,
 										width: easyObject.conf.dialog_width,
@@ -530,7 +530,7 @@ var easyObject = {
 						},
 						add: {
 							func: function($grid) {
-								$dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: easyObject.conf.dialog_width, height: 'auto'});
+								var $dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: easyObject.conf.dialog_width, height: 'auto'});
 								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $(this).dialog('destroy');}});
 							}
 						}
