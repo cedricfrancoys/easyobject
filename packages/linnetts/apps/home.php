@@ -41,8 +41,8 @@ $html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
 
 // $html->addJSFile('html/js/ckeditor/ckeditor.js');
 // $html->addJSFile('html/js/ace/src-min/ace.js');
-// $html->addJSFile('html/js/easyObject.min.js');
 
+/*
 $html->addJSFile('html/js/src/jquery.simpletip-1.3.1.js');
 $html->addJSFile('html/js/src/jquery.noselect-1.1.js');
 $html->addJSFile('html/js/src/jquery-ui.timepicker-1.0.1.js');
@@ -57,9 +57,9 @@ $html->addJSFile('html/js/src/easyObject.choice.js');
 $html->addJSFile('html/js/src/jquery.inputmask.bundle.js');
 $html->addJSFile('html/js/src/easyObject.editable.js');
 $html->addJSFile('html/js/src/easyObject.form.js');
-
-// changes to this one
 $html->addJSFile('html/js/src/easyObject.api.js');
+*/
+$html->addJSFile('html/js/easyObject.min.js');
 
 $html->addScript(
 <<<'EOT'
@@ -80,7 +80,7 @@ $(document).ready(function() {
 				var domain = [[]];
 				// quick and not so nice:
 				// add a domain for jobs (so that we only see the ones not yet invoiced)
-				if($this.attr('id') == 'Job') domain[0].push(['invoice_id','is','null']);
+				if($this.attr('id') == 'Job') domain[0].push(['invoice_id','=','0']);
 				$pane.prepend(easyObject.UI.list({
 									class_name: 'linnetts'+'\\'+$this.attr('id'),
 									view_name: 'list.default',

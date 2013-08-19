@@ -83,15 +83,14 @@ foreach($classes_list as $class) {
 			$type = $types_associations[$description['type']];
 			if($field == 'id') $result[] = "`{$field}` {$type} NOT NULL AUTO_INCREMENT,";
 			elseif(in_array($field, array('creator','modifier','published','deleted'))) $result[] = "`{$field}` {$type} NOT NULL DEFAULT '0',";
-			elseif(in_array($field, array('created','modified'))) $result[] = "`{$field}` {$type} DEFAULT NULL,";
-			else $result[] = "`{$field}` {$type},";
-		}
-		else if($description['type'] == 'many2many') {
-			if(!isset($m2m_tables[$description['rel_table']])) $m2m_tables[$description['rel_table']] = array($description['rel_foreign_key'], $description['rel_local_key']);
+			else $result[] = "`{$field}` {$type} NOT NULL,";
 		}
 		else if($description['type'] == 'function' && isset($description['store']) && $description['store']) {
 			$type = $types_associations[$description['result_type']];
 			$result[] = "`{$field}` {$type} DEFAULT NULL,";
+		}
+		else if($description['type'] == 'many2many') {
+			if(!isset($m2m_tables[$description['rel_table']])) $m2m_tables[$description['rel_table']] = array($description['rel_foreign_key'], $description['rel_local_key']);
 		}
 	}
 	$result[] = "PRIMARY KEY (`id`)";
@@ -108,6 +107,9 @@ foreach($m2m_tables as $table => $columns) {
 	$key = rtrim($key, ",");
 	$result[] = "PRIMARY KEY ({$key})";
 	$result[] = ");\n";
+	// add an empty records (mandatory for JOIN conditions on empty tables)
+	$result[] = "INSERT INTO `{$table}` (".implode(',', array_map(function($col) {return "`{$col}`";}, $columns)).') VALUES ';
+	$result[]= '('.implode(',', array_fill(0, count($columns), 0)).");\n";
 }
 
 // send json result

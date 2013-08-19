@@ -11,6 +11,10 @@ namespace linnetts {
 				'jobs_ids' 	=> array('type' => 'many2many', 'foreign_object' => 'linnetts\Job', 'foreign_field' => 'workdays_ids', 'rel_table' => 'linnetts_rel_workday_job', 'rel_foreign_key' => 'job_id', 'rel_local_key' => 'workday_id')
 			);
 		}
-
+		public static function getDefaults() {
+			return array(				
+				'day'			=> function() { return date("Y-m-d"); }
+			);
+		}
 	}
 }
