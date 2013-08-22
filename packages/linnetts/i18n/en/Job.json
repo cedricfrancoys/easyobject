@@ -1,6 +1,6 @@
 {
 	"model": {
-		"id":{"label":"Our ref","help":"Unique job identifier (automatically generated)"},
+		"our_ref":{"label":"Our ref","help":"Unique job identifier"},
 		"title":{"label":"Title","help":"Complete title of this job"},
 		"client_ref":{"label":"Client ref","help":"Reference provided by the customer"},
 		"brief":{"label":"Brief","help":"These are the instructions from the client"},
@@ -51,7 +51,7 @@
 		"invoice_text":{"label":"Invoice text","help":"Details of the job that will appear on the invoice"},		
 		"delivery":{"label":"Delivery details","help":"Address and delivery instructions"},
 		"delivery_cost":{"label":"Delivery cost","help":"Total cost of delivery"},
-		"tariff":{"label":"Tariff","help":"Our estimate for reference of how long a job will tke on press"},
+		"tariff":{"label":"Tariff","help":"Our estimate (in hours) for reference of how long a job will take on press"},
 		"price":{"label":"Total Job cost","help":"Total amount for this job (excluding VAT)"},
 		"vat":{"label":"VAT","help":"VAT percentage to apply"},
 		"customer_id":{"label":"Client"},

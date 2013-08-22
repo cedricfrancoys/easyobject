@@ -117,10 +117,10 @@
 							<var id="stock"></var>
 						</td>
 						<td class="label" style="width: 8%; padding-left: 4px; text-align: right;">
-
+							<label for="stock_cost"></label>
 						</td>
 						<td class="field" style="width: 6%;">
-
+							<var id="stock_cost" onchange="$('#price', $form).trigger('change')"></var>
 						</td>
 						<td class="label" style="width: 4%; padding-left: 4px; text-align: right;">
 							<label for="run"></label>
@@ -135,10 +135,10 @@
 							<var id="sheets_mounted"></var>
 						</td>
 						<td class="label" style="width: 10%; padding-left: 4px; text-align: right;">
-
+							<label for="mounting_cost"></label>
 						</td>
 						<td class="field" style="width: 10%;">
-
+							<var id="mounting_cost" onchange="$('#price', $form).trigger('change')"></var>
 						</td>
 					</tr>
 				</table>
@@ -163,10 +163,10 @@
 													<var id="nb3_plates"></var>
 												</td>
 												<td class="label" style="width: 30%; text-align: right;">
-
+													<label for="plate_cost"></label>
 												</td>
 												<td class="field" style="width: 20%;">
-
+													<var id="plate_cost" onchange="$('#total_repro', $form).trigger('change')"></var>
 												</td>
 											</tr>
 											<tr>
@@ -197,20 +197,20 @@
 													<var id="mac_hours"></var>
 												</td>
 												<td class="label" style="padding-left: 8px; text-align: right;">
-
+													<label for="mac_hours_cost"></label>
 												</td>
 												<td class="field">
-
+													<var id="mac_hours_cost" onchange="$('#total_repro', $form).trigger('change')"></var>
 												</td>
 											</tr>
 											<tr>
 												<td></td>
 												<td></td>
 												<td class="label" style="padding-left: 8px; text-align: right;">
-
+													<label for="total_repro"></label>
 												</td>
 												<td class="field">
-
+													<var id="total_repro" onchange="$('#total_repro', $form).val(parseFloat($('#plate_cost', $form).val())+parseFloat($('#mac_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>													
 												</td>
 											</tr>
 
@@ -236,10 +236,10 @@
 													<var id="no_cols_run"></var>
 												</td>
 												<td class="label" style="width: 35%; padding-left: 8px; text-align: right;">
-
+													<label for="cols_cost"></label>
 												</td>
 												<td class="field" style="width: 15%;">
-
+													<var id="cols_cost" onchange="$('#total_press_cost', $form).trigger('change')"></var>
 												</td>
 											</tr>
 											<tr>
@@ -250,20 +250,20 @@
 													<var id="press_hours"></var>
 												</td>
 												<td class="label" style="padding-left: 8px; text-align: right;">
-
+													<label for="press_hours_cost"></label>
 												</td>
 												<td class="field">
-
+													<var id="press_hours_cost" onchange="$('#total_press_cost', $form).trigger('change')"></var>
 												</td>
 											</tr>
 											<tr>
 												<td></td>
 												<td></td>
 												<td class="label" style="padding-left: 8px; text-align: right;">
-
+													<label for="total_press_cost"></label>
 												</td>
 												<td class="field">
-
+													<var id="total_press_cost" onchange="$('#total_press_cost', $form).val(parseFloat($('#cols_cost', $form).val())+parseFloat($('#press_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>
 												</td>
 											</tr>
 										</table>
@@ -298,10 +298,10 @@
 																<var id="fin_1"></var>
 															</td>
 															<td class="label" style="width: 15%; text-align: right;">
-
+																<label for="fin_1_cost"></label>
 															</td>
 															<td class="field" style="width: 10%;">
-
+																<var id="fin_1_cost" onchange="$('#fin_our_cost', $form).trigger('change')"></var>
 															</td>
 														</tr>
 														<tr>
@@ -312,10 +312,10 @@
 																<var id="fin_2"></var>
 															</td>
 															<td class="label" style="text-align: right;">
-
+																<label for="fin_2_cost"></label>
 															</td>
 															<td class="field">
-
+																<var id="fin_2_cost" onchange="$('#fin_our_cost', $form).trigger('change')"></var>
 															</td>
 														</tr>
 														<tr>
@@ -326,10 +326,10 @@
 																<var id="fin_3"></var>
 															</td>
 															<td class="label" class="label" style="text-align: right;">
-
+																<label for="fin_3_cost"></label>
 															</td>
 															<td class="field">
-
+																<var id="fin_3_cost" onchange="$('#fin_our_cost', $form).trigger('change')"></var>
 															</td>
 														</tr>
 														<tr>
@@ -340,10 +340,10 @@
 																<var id="fin_4"></var>
 															</td>
 															<td class="label" style="text-align: right;">
-
+																<label for="fin_4_cost"></label>
 															</td>
 															<td class="field">
-
+																<var id="fin_4_cost" onchange="$('#fin_our_cost', $form).trigger('change')"></var>
 															</td>
 														</tr>
 													</table>
@@ -354,10 +354,10 @@
 													<table style="table-layout: fixed">
 														<tr>
 															<td class="label" style="text-align: right; width: 60%;">
-
+																<label for="fin_our_cost"></label>
 															</td>
 															<td class="field" style="width: 30%;">
-
+																<var id="fin_our_cost" onchange="$('#fin_our_cost', $form).val(parseFloat($('#fin_1_cost', $form).val())+parseFloat($('#fin_2_cost', $form).val())+parseFloat($('#fin_3_cost', $form).val())+parseFloat($('#fin_4_cost', $form).val()))"></var>
 															</td>
 														<tr>
 													</table>
@@ -368,10 +368,10 @@
 													<table style="table-layout: fixed">
 														<tr>
 															<td class="label" style="text-align: right; width: 60%;">
-
+																<label for="total_fin"></label>
 															</td>
 															<td class="field" style="width: 30%;">
-
+																<var id="total_fin" onchange="$('#price', $form).trigger('change')"></var>
 															</td>
 														<tr>
 													</table>
@@ -413,10 +413,10 @@
 													<table>
 														<tr>
 															<td class="label" style="text-align: right; width: 60%;">
-
+																<label for="total_scr_cost"></label>
 															</td>
 															<td class="field" style="width: 30%;">
-
+																<var id="total_scr_cost" onchange="$('#price', $form).trigger('change')"></var>
 															</td>
 														<tr>
 													</table>
@@ -450,10 +450,10 @@
 								<tr>
 									<td style="width: 70%;"></td>
 									<td class="label" style="width: 15%; padding-left: 4px; text-align: right;">
-
+										<label for="extra_cost"></label>
 									</td>
 									<td class="field" style="width: 15%;">
-
+										<var id="extra_cost" onchange="$('#price', $form).trigger('change')"></var>
 									</td>
 								</tr>
 							</table>
@@ -479,10 +479,10 @@
 									</td>
 									<td style="width: 15%;"></td>
 									<td class="label" style="width: 15%; padding-left: 4px; text-align: right; vertical-align: top;">
-
+										<label for="delivery_cost" onchange="$('#price', $form).trigger('change')"></label>
 									</td>
 									<td class="field" style="width: 10%; vertical-align: top;">
-
+										<var id="delivery_cost" onchange="$('#price', $form).trigger('change')"></var>
 									</td>
 									<td style="width: 25%;">
 										<table>
@@ -496,10 +496,10 @@
 											</tr>
 											<tr>
 												<td class="label" style="text-align: right;">
-
+													<label for="price"></label>
 												</td>
 												<td class="field">
-
+													<var id="price" onchange="$('#price', $form).val(parseFloat($('#stock_cost', $form).val())+parseFloat($('#mounting_cost', $form).val())+parseFloat($('#total_repro', $form).val())+parseFloat($('#total_press_cost', $form).val())+parseFloat($('#total_fin', $form).val())+parseFloat($('#total_scr_cost', $form).val())+parseFloat($('#extra_cost', $form).val())+parseFloat($('#delivery_cost', $form).val()))"></var>
 												</td>
 											</tr>
 										</table>
@@ -511,5 +511,6 @@
 				</table>
 			</td>
 		</tr>
+
 	</table>
 </form>
