@@ -149,11 +149,10 @@
 */
 							break;
 						case 'date':
-							var value = $.datepicker.formatDate('dd/mm/yy', new Date(conf.value));
+// todo: define format in conf
 							$this.data('widget', $('<input />')
 												.attr({id: conf.name, name: conf.name})
-//												.val(conf.value)
-												.val(value)
+												.val(conf.value)
 												.on('change', conf.onchange)
 												.datepicker({ dateFormat: 'dd/mm/yy', yearRange: 'c-70:c+20', changeMonth: true, changeYear: true })
 												.appendTo($this)
