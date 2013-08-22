@@ -8,7 +8,7 @@
 							<label for="our_ref"></label>
 						</td>
 						<td class="field" width="5%" style="width: 5%;">
-							<var id="our_ref"></var>
+							<var id="our_ref" required="true"></var>
 						</td>
 						<td class="label" width="4%" style="width: 4%; padding-left: 4px; text-align: right;">
 							<label for="date"></label>
@@ -210,7 +210,7 @@
 													<label for="total_repro"></label>
 												</td>
 												<td class="field">
-													<var id="total_repro" onchange="$('#total_repro', $form).val(parseFloat($('#plate_cost', $form).val())+parseFloat($('#mac_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>													
+													<var id="total_repro" onchange="$('#total_repro', $form).val(Number($('#plate_cost', $form).val())+Number($('#mac_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>													
 												</td>
 											</tr>
 
@@ -263,7 +263,7 @@
 													<label for="total_press_cost"></label>
 												</td>
 												<td class="field">
-													<var id="total_press_cost" onchange="$('#total_press_cost', $form).val(parseFloat($('#cols_cost', $form).val())+parseFloat($('#press_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>
+													<var id="total_press_cost" onchange="$('#total_press_cost', $form).val(Number($('#cols_cost', $form).val())+Number($('#press_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>
 												</td>
 											</tr>
 										</table>
@@ -357,7 +357,7 @@
 																<label for="fin_our_cost"></label>
 															</td>
 															<td class="field" style="width: 30%;">
-																<var id="fin_our_cost" onchange="$('#fin_our_cost', $form).val(parseFloat($('#fin_1_cost', $form).val())+parseFloat($('#fin_2_cost', $form).val())+parseFloat($('#fin_3_cost', $form).val())+parseFloat($('#fin_4_cost', $form).val()))"></var>
+																<var id="fin_our_cost" onchange="$('#fin_our_cost', $form).val(Number($('#fin_1_cost', $form).val())+Number($('#fin_2_cost', $form).val())+Number($('#fin_3_cost', $form).val())+Number($('#fin_4_cost', $form).val()))"></var>
 															</td>
 														<tr>
 													</table>
@@ -499,7 +499,7 @@
 													<label for="price"></label>
 												</td>
 												<td class="field">
-													<var id="price" onchange="$('#price', $form).val(parseFloat($('#stock_cost', $form).val())+parseFloat($('#mounting_cost', $form).val())+parseFloat($('#total_repro', $form).val())+parseFloat($('#total_press_cost', $form).val())+parseFloat($('#total_fin', $form).val())+parseFloat($('#total_scr_cost', $form).val())+parseFloat($('#extra_cost', $form).val())+parseFloat($('#delivery_cost', $form).val()))"></var>
+													<var id="price" onchange="$('#price', $form).val(Number($('#stock_cost', $form).val())+Number($('#mounting_cost', $form).val())+Number($('#total_repro', $form).val())+Number($('#total_press_cost', $form).val())+Number($('#total_fin', $form).val())+Number($('#total_scr_cost', $form).val())+Number($('#extra_cost', $form).val())+Number($('#delivery_cost', $form).val()))"></var>
 												</td>
 											</tr>
 										</table>
