@@ -11,10 +11,10 @@
  */
 
 // require jquery-1.7.1.js (or later), ckeditor.js, jquery-ui.timepicker.js, easyObject.grid.js, easyObject.dropdownlist.js, easyObject.choice.js
- 
+
 (function($){
 
-	/** 
+	/**
 	 * We use jQuery valHooks on textareas to modify the behaviour of the $.val method (that is used by $.serialize) in order to:
 	 *  - use wysiwyg editor value when one is attached to the textarea
 	 *  - preserve carriage returns
@@ -25,7 +25,7 @@
 			if(typeof $(elem).data('value') == 'function') return $(elem).data('value')();
 			else return elem.value.replace(/\r?\n/g, "\r\n");
 		}
-	};					
+	};
 
 	$.fn.editable = function(arg, val){
 		var default_conf = {
@@ -56,7 +56,7 @@
 							break;
 						case 'integer':
 						case 'float':
-						case 'string': 						
+						case 'string':
 							var $widget = $('<input type="text"/>')
 												.attr({id: conf.name, name: conf.name})
 												.val(conf.value)
@@ -65,7 +65,7 @@
 // todo: these options should be somewhere in the config
 							if(conf.type == 'float')	$widget.inputmask("decimal", { radixPoint: "." , digits: 2, autoGroup: false});
 							if(conf.type == 'integer')	$widget.inputmask("integer",  { allowMinus: true });
-							
+
 							$this.data('widget', $widget.appendTo($this));
 							break;
 						case 'password':
@@ -78,7 +78,7 @@
 															}
 													)
 												.appendTo($this)
-										); 
+										);
 							break;
 						case 'short_text':
 							$this.data('widget', $('<textarea />')
@@ -88,7 +88,7 @@
 												.appendTo($this)
 										);
 							break;
-						case 'text': 
+						case 'text':
 							$textarea = $('<textarea />')
 										.css('display', 'none')
 										.attr({id: conf.name, name: conf.name })
@@ -96,14 +96,14 @@
 										.appendTo($this);
 // todo : build the ckeditor configuration object based on the current conf (customized toolbar, browsers url, ...)
 							CKEDITOR.replace($textarea[0], {
-									filebrowserImageBrowseUrl: '?show=utils_publicPicasaBrowser',									
-// temporary									
-									linkbrowserInternalUrl: '?show=icway_pagesBrowser',									
+									filebrowserImageBrowseUrl: '?show=utils_publicPicasaBrowser',
+// temporary
+									linkbrowserInternalUrl: '?show=icway_pagesBrowser',
 									height: 250,
 									toolbar: [
 										['Maximize'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],
 										'/',
-										['Source'],['Format'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Anchor','Link','Image','Table','SpecialChar']	
+										['Source'],['Format'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Anchor','Link','Image','Table','SpecialChar']
 									],
 									enterMode: CKEDITOR.ENTER_BR,
 									// change detection : we use the instanceReady event to catch the instance of the editor being created
@@ -118,50 +118,52 @@
 							$textarea.data('value', function() {
 								return CKEDITOR.instances[conf.name].getData();
 							});
-*/							
+*/
 							break;
 						case 'code':
 							$textarea = $('<textarea />')
-										.css('display', 'none')										
+										.css('display', 'none')
 										.attr({name: conf.name})
 										.html(conf.value)
 										.appendTo($this);
 							$div = $('<div />')
 										.attr({id: conf.name })
 										.html(conf.value)
-										.css('height', '250')										
+										.css('height', '250')
 										.appendTo($this);
-						
+
 							var editor = ace.edit(conf.name);
-							editor.getSession().setMode("ace/mode/javascript");						
+							editor.getSession().setMode("ace/mode/javascript");
 
 							// synchronize editor and textarea
-// todo : dirty and slow! improve this							
-							editor.getSession().on('change', function(){ 
-								$textarea.val(editor.getSession().getValue()); 
-							});							
-/*							
+// todo : dirty and slow! improve this
+							editor.getSession().on('change', function(){
+								$textarea.val(editor.getSession().getValue());
+							});
+/*
 							// this is the method that will be called by $.valHooks
 							$textarea.data('value', function() {
 								var editor = ace.edit(conf.name);
 								return editor.getSession().getValue();
 							});
-*/							
-							break;							
+*/
+							break;
 						case 'date':
+							var value = $.datepicker.formatDate('dd/mm/yy', new Date(conf.value));
 							$this.data('widget', $('<input />')
 												.attr({id: conf.name, name: conf.name})
-												.val(conf.value)
-												.on('change', conf.onchange)												
-												.datepicker({ dateFormat: 'yy-mm-dd', yearRange: 'c-70:c+20', changeMonth: true, changeYear: true })
+//												.val(conf.value)
+												.val(value)
+												.on('change', conf.onchange)
+												.datepicker({ dateFormat: 'dd/mm/yy', yearRange: 'c-70:c+20', changeMonth: true, changeYear: true })
 												.appendTo($this)
 										);
 							break;
-						case 'time': 
+						case 'time':
 							$this.data('widget', $('<input />')
 												.attr({id: conf.name, name: conf.name})
 												.val(conf.value)
-												.on('change', conf.onchange)												
+												.on('change', conf.onchange)
 												.timepicker({timeFormat: 'hh:mm:ss'})
 												.appendTo($this)
 										);
@@ -170,15 +172,15 @@
 							$this.data('widget', $('<input />')
 												.attr({id: conf.name, name: conf.name})
 												.val(conf.value)
-												.on('change', conf.onchange)												
+												.on('change', conf.onchange)
 												.datetimepicker({ dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm:ss' })
 												.appendTo($this)
 										);
 							break;
 						case 'timestamp':
-//todo										
+//todo
 							break;
-						case 'selection': 
+						case 'selection':
 							$select =	$('<select />')
 										.attr({id: conf.name, name: conf.name})
 										.on('change', conf.onchange)
@@ -191,7 +193,7 @@
 							});
 							break;
 						case 'binary':
-// todo : we could beautify this just a little bit						
+// todo : we could beautify this just a little bit
 							$this.data('widget', $('<input type="file" />')
 												.attr({id: conf.name, name: conf.name})
 												.on('change', conf.onchange)
@@ -208,15 +210,15 @@
 									);
 							// an element with class 'choice_input' is generated by method .choice()
 							$this.data('widget', $('.choice_input', $this));
-							
+
 							$this.append($('<input type="hidden"/>')
 											.attr({id: conf.name, name: conf.name})
 											.on('change', conf.onchange)
 										);
-							
+
 							break;
 						case 'one2many':
-							// display a tree if recursion is found (i.e. : destination class is the same that the one of the current object), use dropdown list otherwise 
+							// display a tree if recursion is found (i.e. : destination class is the same that the one of the current object), use dropdown list otherwise
 							if(conf.parent_class == conf.class_name) {
 								$this.tree(conf);
 							}
@@ -234,7 +236,7 @@
 										value += '-'+conf.less[i];
 									}
 									$('#'+conf.name).val(value);
-								});						
+								});
 							}
 							break;
 						case 'many2many':
@@ -265,7 +267,7 @@
 							break;
 					}
 				})($(this).empty(), $.extend(true, default_conf, arg));
-			});				
+			});
 		}
 		// setter or getter
 		else {
@@ -278,7 +280,7 @@
 						break;
 					case 'unset' :
 						$widget = $this.data('widget');
-						if(typeof $widget == 'object') $widget.removeClass(value);					
+						if(typeof $widget == 'object') $widget.removeClass(value);
 						break;
 				}
 			})($(this), arg, val);

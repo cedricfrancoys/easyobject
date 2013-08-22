@@ -196,6 +196,12 @@
 	// define('DRAFT_VALIDITY', 10);
 	define('DRAFT_VALIDITY', 0);
 
+/**
+* Date formatting
+*/
+
+	define('DATE_FORMAT', 'd/m/Y');
+
 
 /**
 * Email sending

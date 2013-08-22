@@ -797,7 +797,8 @@
 						var timestamp = result[ids[0]]['created'];
 						// display dialog
 						var content = "<br /><br />Non-saved changes have been made since the last record of this element. <br />Do you want to recover from auto-saved draft ("+ timestamp +") ?<br /><br /><br />";
-						// important : ignoring draft may result in loss of previous non-saved changes
+// todo: add notice	below
+// important : ignoring draft may result in loss of previous non-saved changes
 						$dia = easyObject.UI.dialog({
 							content: $('<div/>').append($('<div/>').css('padding', '10px').html(content))
 							.append($('<div/>').css('text-align', 'center')

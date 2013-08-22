@@ -444,6 +444,20 @@ class ObjectManager {
 			foreach($ids as $object_id) {
 				if(isset($values_array[$object_id])) {
 					$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
+					$schema = $object->getSchema();
+					// do some pre-treatment if necessary (this step is symetric to the one in setFields method)
+					foreach($values_array[$object_id] as $field => $value) {
+						switch($schema[$field]['type']){
+							case 'date':
+								load_class('utils/DateFormatter');
+								$dateFormatter = new DateFormatter($value, DATE_SQL);
+								// DATE_FORMAT is a constant defined in config.inc.php 
+								$values_array[$object_id][$field] = $dateFormatter->getDate(DATE_FORMAT);
+								break;
+							default:
+								break;
+						}					
+					}
 					$object->setValues($user_id, $values_array[$object_id], $lang, false);
 				}
 			}
@@ -624,10 +638,10 @@ class ObjectManager {
 						break;
 					case 'date':
 						load_class('utils/DateFormatter');
-						$dateFormatter = new DateFormatter();
-						if(is_array($value)) $dateFormatter->setDate($value, DATE_ARRAY);
-						else $dateFormatter->setDate($value, DATE_STRING);
-						$fields_values[$field] = $dateFormatter->getDate(DATE_SQL);
+						$dateFormatter = new DateFormatter($value, DATE_FORMAT);
+//						if(is_array($value)) $dateFormatter->setDate($value, DATE_ARRAY);
+//						else $dateFormatter->setDate($value, DATE_STRING);
+						$fields_values[$field] = $dateFormatter->getDate(DATE_SQL);						
 						break;
 					case 'binary':
 						// note : this won't work in client-server mode (since in that case $_FILES array is only available on client-side)
@@ -850,9 +864,10 @@ class ObjectManager {
 			if(empty($fields)) {
 				$fields = array();
 				foreach($schema as $field => $def) {
-					if(in_array($def['type'], $this->simple_types) || (isset($def['store']) && $def['store'] && in_array($def['result_type'], $this->simple_types))) {
+//					if(in_array($def['type'], $this->simple_types) || (isset($def['store']) && $def['store'] && in_array($def['result_type'], $this->simple_types)))
+// todo: to validate
+					if(in_array($def['type'], $this->simple_types) || ($def['type'] == 'function' && isset($def['result_type']) && in_array($def['result_type'], $this->simple_types)))					
 						$fields[] = $field;
-					}
 				}
 			}
 			else {

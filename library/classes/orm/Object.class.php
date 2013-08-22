@@ -213,6 +213,7 @@ class Object {
 				$this->loaded_fields[$lang]		= array();
 		}
 		foreach($keys as $field) {
+
 			if(in_array($field, $schema)) {
 				// if it has not yet been modified, set the field to its new value
 				if(!isset($this->modified_fields[$lang][$field])) {

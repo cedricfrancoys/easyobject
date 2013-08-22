@@ -59,7 +59,8 @@ class DateFormatter {
 	public function getTimestamp() {
 		return $this->dateTime->getTimestamp();
 	}
-
+	
+	// in case of doubt (ex. 01/01/2012), little endian format will be chosen
 	private function checkStringDate($string_date) {
 		// little endian : dd/mm/yyyy or d/m/yyyy or d/mm/yyyy or dd/m/yyyy
 		if(preg_match("/^(0?[1-9]|[12][0-9]|3[01])[- \/\.](0?[1-9]|1[012])[- \/\.]((19|20)[0-9]{2})$/", $string_date) == 0) {
