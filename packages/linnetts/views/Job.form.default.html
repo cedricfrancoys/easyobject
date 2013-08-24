@@ -156,38 +156,26 @@
 										<fieldset>
 										<table style="table-layout: fixed">
 											<tr>
-												<td class="label" style="width: 30%;">
-													<label for="nb3_plates"></label>
+												<td class="label" style="width: 30%;">													
+													<table>
+														<tr><td style="height: 25px;"><label for="nb3_plates"></label></td></tr>
+														<tr><td style="height: 25px;"><label for="nb2_plates"></label></td></tr>	
+														<tr><td style="height: 25px;"><label for="nb1_plates"></label></td></tr>															
+													</table>
 												</td>
 												<td class="field" style="width: 20%;">
-													<var id="nb3_plates"></var>
+													<table>
+														<tr><td style="height: 25px;"><var id="nb3_plates"></var></td></tr>
+														<tr><td style="height: 25px;"><var id="nb2_plates"></var></td></tr>	
+														<tr><td style="height: 25px;"><var id="nb1_plates"></var></td></tr>															
+													</table>
 												</td>
-												<td class="label" style="width: 30%; text-align: right;">
+												<td class="label" style="width: 30%; text-align: right; vertical-align: top;">
 													<label for="plate_cost"></label>
 												</td>
-												<td class="field" style="width: 20%;">
+												<td class="field" style="width: 20%; vertical-align: top;">
 													<var id="plate_cost" onchange="$('#total_repro', $form).trigger('change')"></var>
 												</td>
-											</tr>
-											<tr>
-												<td class="label">
-													<label for="nb2_plates"></label>
-												</td>
-												<td class="field">
-													<var id="nb2_plates"></var>
-												</td>
-												<td></td>
-												<td></td>
-											</tr>
-											<tr>
-												<td class="label">
-													<label for="nb1_plates"></label>
-												</td>
-												<td class="field">
-													<var id="nb1_plates"></var>
-												</td>
-												<td></td>
-												<td></td>
 											</tr>
 											<tr>
 												<td class="label">
@@ -210,7 +198,7 @@
 													<label for="total_repro"></label>
 												</td>
 												<td class="field">
-													<var id="total_repro" onchange="$('#total_repro', $form).val(Number($('#plate_cost', $form).val())+Number($('#mac_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>													
+													<var id="total_repro" onchange="$('#total_repro', $form).val( Number(Number($('#plate_cost', $form).val())+Number($('#mac_hours_cost', $form).val())).toFixed(2) );$('#price', $form).trigger('change')"></var>
 												</td>
 											</tr>
 
@@ -229,13 +217,13 @@
 										<fieldset>
 										<table style="table-layout: fixed">
 											<tr>
-												<td class="label" style="width: 30%;">
+												<td class="label" style="width:20%;">
 													<label for="no_cols_run"></label>
 												</td>
-												<td class="field" style="width: 20%;">
+												<td class="field" style="width: 40%;">
 													<var id="no_cols_run"></var>
 												</td>
-												<td class="label" style="width: 35%; padding-left: 8px; text-align: right;">
+												<td class="label" style="width: 25%; padding-left: 8px; text-align: right;">
 													<label for="cols_cost"></label>
 												</td>
 												<td class="field" style="width: 15%;">
@@ -263,7 +251,7 @@
 													<label for="total_press_cost"></label>
 												</td>
 												<td class="field">
-													<var id="total_press_cost" onchange="$('#total_press_cost', $form).val(Number($('#cols_cost', $form).val())+Number($('#press_hours_cost', $form).val()));$('#price', $form).trigger('change')"></var>
+													<var id="total_press_cost" onchange="$('#total_press_cost', $form).val( Number(Number($('#cols_cost', $form).val())+Number($('#press_hours_cost', $form).val())).toFixed(2) );$('#price', $form).trigger('change')"></var>
 												</td>
 											</tr>
 										</table>
@@ -357,12 +345,12 @@
 																<label for="fin_our_cost"></label>
 															</td>
 															<td class="field" style="width: 30%;">
-																<var id="fin_our_cost" onchange="$('#fin_our_cost', $form).val(Number($('#fin_1_cost', $form).val())+Number($('#fin_2_cost', $form).val())+Number($('#fin_3_cost', $form).val())+Number($('#fin_4_cost', $form).val()))"></var>
+																<var id="fin_our_cost" onchange="$('#fin_our_cost', $form).val( Number(Number($('#fin_1_cost', $form).val())+Number($('#fin_2_cost', $form).val())+Number($('#fin_3_cost', $form).val())+Number($('#fin_4_cost', $form).val())).toFixed(2) )"></var>
 															</td>
 														<tr>
 													</table>
 												</td>
-											</tr>											
+											</tr>
 											<tr>
 												<td>
 													<table style="table-layout: fixed">
@@ -499,7 +487,7 @@
 													<label for="price"></label>
 												</td>
 												<td class="field">
-													<var id="price" onchange="$('#price', $form).val(Number($('#stock_cost', $form).val())+Number($('#mounting_cost', $form).val())+Number($('#total_repro', $form).val())+Number($('#total_press_cost', $form).val())+Number($('#total_fin', $form).val())+Number($('#total_scr_cost', $form).val())+Number($('#extra_cost', $form).val())+Number($('#delivery_cost', $form).val()))"></var>
+													<var id="price" onchange="$('#price', $form).val( Number(Number($('#stock_cost', $form).val())+Number($('#mounting_cost', $form).val())+Number($('#total_repro', $form).val())+Number($('#total_press_cost', $form).val())+Number($('#total_fin', $form).val())+Number($('#total_scr_cost', $form).val())+Number($('#extra_cost', $form).val())+Number($('#delivery_cost', $form).val())).toFixed(2) )"></var>
 												</td>
 											</tr>
 										</table>
@@ -515,6 +503,6 @@
 	</table>
 	<div align="left">
 		<button name="print job sheet" type="button" show="core_objects_view" view="form.sheet" output="pdf"></button>
-		<button name="print costing sheet" type="button" show="core_objects_view" view="form.costs" output="pdf"></button>		
+		<button name="print costing sheet" type="button" show="core_objects_view" view="form.costs" output="pdf"></button>
 	</div>
 </form>

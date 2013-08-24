@@ -32,7 +32,6 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-
 check_params(array('object_class', 'view'));
 
 // assign values with the received parameters
@@ -284,7 +283,7 @@ else {
 					";
 					$dompdf = new DOMPDF();
 					$dompdf->load_html($styles.$doc);
-					$dompdf->set_paper("letter", "portrait");
+					$dompdf->set_paper("letter", "landscape");
 					$dompdf->render();
 					$dompdf->stream("export.pdf", array("Attachment" => false));				
 					break;					
@@ -303,6 +302,10 @@ else {
 			load_class('utils/phpQuery');
 			$doc = phpQuery::newDocument($html);
 
+			$orientation = pq('form')->attr('orientation');
+			// if(!empty(pq('form')->attr('orientation'))) 
+			if(empty($orientation)) $orientation  = 'portrait';
+			
 			// parser function allowing recursive calls
 			function parse($elem, $object_class, $ids, $lang) {
 				$html = '';
@@ -315,7 +318,8 @@ else {
 				foreach($elem['var'] as $node) {
 					$var = pq($node);
 					if($var->parents()->filter('var')->length()==0) $fields[] = $var->attr('id');
-				}	
+				}
+				
 				// 2) get labels
 				// check if there is a matching i18n file
 				// set fields names as default value
@@ -364,7 +368,21 @@ else {
 								$parent->append(parse(pq('<div />')->append($var->children()), $schema[$field]['foreign_object'], $values[$id][$field], $lang));
 							}
 							else {
-								if(isset($values[$id][$field])) $parent->append(str_replace(array("\n", "\r\n"), "<br />", $values[$id][$field]));											
+								if(isset($values[$id][$field])) {
+									switch($type) {
+											case 'string':
+											case 'short_text':
+											case 'text':
+												$parent->append(str_replace(array("\n", "\r\n"), "<br />", $values[$id][$field]));
+												break;
+											case 'float':
+												$parent->append(sprintf("%.2f", $values[$id][$field]));	
+												break;
+											default:
+												$parent->append($values[$id][$field]);
+												break;											
+									}									
+								}
 							}
 							$var->remove();
 						}
@@ -422,7 +440,7 @@ else {
 					
 					$dompdf = new DOMPDF();
 					$dompdf->load_html($styles.$html);
-					$dompdf->set_paper("letter", "portrait");
+					$dompdf->set_paper("letter", $orientation);
 					$dompdf->render();
 					$dompdf->stream("export.pdf", array("Attachment" => false));
 					break;

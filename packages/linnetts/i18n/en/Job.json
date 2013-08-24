@@ -14,7 +14,7 @@
 		"stock":{"label":"STOCK"},
 		"stock_cost":{"label":"Stock cost"},
 		"run":{"label":"RUN"},
-		"sheets_mounted":{"label":"No. sheets","help":"Number of sheets mounted"},
+		"sheets_mounted":{"label":"No.Mounted","help":"Number of sheets mounted"},
 		"mounting_cost":{"label":"Mount. cost","help":"Mounting costs"},
 		"nb3_plates":{"label":"B3 plates","help":"Number of B3 plates"},
 		"nb2_plates":{"label":"B2 plates","help":"Number of B2 plates"},

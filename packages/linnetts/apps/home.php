@@ -20,9 +20,7 @@
 */
 
 /*
-* file: views/core/user/login.php
-*
-* Displays the logon screen.
+* file: packages/linnetts/apps/home.php
 *
 */
 

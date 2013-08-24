@@ -449,10 +449,14 @@ class ObjectManager {
 					foreach($values_array[$object_id] as $field => $value) {
 						switch($schema[$field]['type']){
 							case 'date':
-								load_class('utils/DateFormatter');
-								$dateFormatter = new DateFormatter($value, DATE_SQL);
-								// DATE_FORMAT is a constant defined in config.inc.php 
-								$values_array[$object_id][$field] = $dateFormatter->getDate(DATE_FORMAT);
+								if($value == '0000-00-00') $value = ''; 
+								else {
+									load_class('utils/DateFormatter');
+									$dateFormatter = new DateFormatter($value, DATE_SQL);
+									// DATE_FORMAT is a constant defined in config.inc.php 
+									$value = $dateFormatter->getDate(DATE_FORMAT);
+								}
+								$values_array[$object_id][$field] = $value;
 								break;
 							default:
 								break;
@@ -637,11 +641,15 @@ class ObjectManager {
 						$fields_values[$field] = str_replace('&amp;', '&', HtmlCleaner::clean($value, null, array('class')));
 						break;
 					case 'date':
-						load_class('utils/DateFormatter');
-						$dateFormatter = new DateFormatter($value, DATE_FORMAT);
-//						if(is_array($value)) $dateFormatter->setDate($value, DATE_ARRAY);
-//						else $dateFormatter->setDate($value, DATE_STRING);
-						$fields_values[$field] = $dateFormatter->getDate(DATE_SQL);						
+						if(empty($value)) $value = '0000-00-00';
+						else {
+							load_class('utils/DateFormatter');
+							$dateFormatter = new DateFormatter($value, DATE_FORMAT);
+	//						if(is_array($value)) $dateFormatter->setDate($value, DATE_ARRAY);
+	//						else $dateFormatter->setDate($value, DATE_STRING);
+							$value = $dateFormatter->getDate(DATE_SQL);	
+						}
+						$fields_values[$field] = $value;
 						break;
 					case 'binary':
 						// note : this won't work in client-server mode (since in that case $_FILES array is only available on client-side)

@@ -65,7 +65,7 @@ namespace linnetts {
 		}
 			
 		public static function getAmount($om, $uid, $oid, $lang) {
-			$amount = 0.0;
+			$amount = 0.00;
 			// get jobs list
 			$res = $om->browse($uid, 'linnetts\Invoice', array($oid), array('jobs_ids'), $lang);
 			$jobs_ids = $res[$oid]['jobs_ids'];
