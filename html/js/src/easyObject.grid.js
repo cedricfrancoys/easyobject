@@ -377,7 +377,7 @@
 					if(typeof(field) != 'undefined') {
 						// check field format (a full format means that the field is probabily refering to another object)
 
-						if(langObj && typeof(langObj['model'][field]) != 'undefined' && typeof(langObj['model'][field]['label']) != 'undefined') {
+						if(!$.isEmptyObject(langObj) && typeof(langObj['model'][field]) != 'undefined' && typeof(langObj['model'][field]['label']) != 'undefined') {
 							$(this).text(langObj['model'][field]['label']);
 							if(typeof(langObj['model'][field]['help']) != 'undefined') {
 								$(this).append($('<sup/>').addClass('help').text('?'));

@@ -300,10 +300,12 @@ var easyObject = {
 					dataType: 'json',
 					contentType: 'application/json; charset=utf-8',
 					success: function(json_data){
-							if(typeof(easyObject.schemas[package_name]) == 'undefined') easyObject.schemas[package_name] = new Array();
-							easyObject.schemas[package_name][class_name] = json_data;
+						if(typeof(easyObject.schemas[package_name]) == 'undefined') easyObject.schemas[package_name] = new Array();
+						easyObject.schemas[package_name][class_name] = json_data;
 					},
 					error: function(e){
+						// data not found
+						easyObject.schemas[package_name][class_name] = {};
 					}
 				});
 		},
@@ -330,6 +332,8 @@ var easyObject = {
 						easyObject.i18n[package_name][object_name] = json_data;
 					},
 					error: function(e){
+						// data not found
+						easyObject.i18n[package_name][object_name] = {};
 					}
 				});
 		},
@@ -354,11 +358,13 @@ var easyObject = {
 					dataType: 'html',
 					contentType: 'application/html; charset=utf-8',
 					success: function(json_data){
-							if(typeof(easyObject.views[package_name]) == 'undefined') easyObject.views[package_name] = new Array();
-							if(typeof(easyObject.views[package_name][object_name]) == 'undefined') easyObject.views[package_name][object_name] = new Array();
-							easyObject.views[package_name][object_name][view_name] = json_data;
+						if(typeof(easyObject.views[package_name]) == 'undefined') easyObject.views[package_name] = new Array();
+						if(typeof(easyObject.views[package_name][object_name]) == 'undefined') easyObject.views[package_name][object_name] = new Array();
+						easyObject.views[package_name][object_name][view_name] = json_data;
 					},
 					error: function(e){
+						// data not found
+						easyObject.views[package_name][object_name][view_name] = {};
 					}
 				});
 		},

@@ -62,8 +62,11 @@ $html->addJSFile('html/js/easyObject.min.js');
 $html->addScript(
 <<<'EOT'
 $(document).ready(function() {
+	var dialog_width = 900;
+	var max_width = $(window).width();
+	if(dialog_width > max_width) dialog_width = max_width*0.8;
 	easyObject.init({
-		dialog_width: 900
+		dialog_width: dialog_width
 	});
 
 	$('#panel').panel({

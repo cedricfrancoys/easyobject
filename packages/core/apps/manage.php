@@ -89,16 +89,14 @@ $(document).ready(function() {
 	// events
 	$('#package').on('change', function() {
 		$.getJSON('index.php?get=core_packages_listing&package='+$(this).val(), function (json_data) {
-				$('#classes').empty()
+				$('#classes').empty();
 				$.each(json_data, function(i, item){
-
 					$('#classes').append($('<span/>').css({'display': 'block', 'cursor': 'pointer'}).append(item)
 						.click(function() {
 							selection.removeClass('selected');
 							selection = $(this);
-							selection.addClass('selected');
-
-							$('#recycle').on('change', function() {
+							selection.addClass('selected');				
+							$('#recycle').unbind('change').on('change', function() {
 								$('#main')
 								.empty()
 								.append(easyObject.UI.list({

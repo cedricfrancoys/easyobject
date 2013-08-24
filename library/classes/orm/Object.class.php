@@ -80,7 +80,7 @@ class Object {
 			// get default values, set fields for default language, and mark fields as modified
 			foreach($defaults as $field => $default_value) if(isset($this->schema[$field]) && is_callable($default_value)) $fields_values[$field] = call_user_func($default_value);
 			// we use the SYSTEM_USER_ID (=0) so that the modifier field is left to 0
-			// (which is necessary to make the distinction between objects being created and objects actually created)
+			// (which is necessary to make the distinction between objects being created/drafts and objects actually created)
 			$this->setValues(SYSTEM_USER_ID, $fields_values);
     	}
 	}
@@ -108,7 +108,8 @@ class Object {
 	}
 
 	/**
-	* This method must be overridden by children classes
+	* Returns the user-defined part of the schema (i.e. fields list with types and other attributes)
+	* This method must be overridden by children classes.
 	*
 	* @access public
 	*/
@@ -116,6 +117,12 @@ class Object {
 		return array();
 	}
 
+	/**
+	* Returns the name of the database table related to this object
+	* This method may be overridden by children classes
+	*
+	* @access public
+	*/
 	public function getTable() {
 		return strtolower(str_replace('\\', '_', get_class($this)));
 	}
@@ -213,7 +220,6 @@ class Object {
 				$this->loaded_fields[$lang]		= array();
 		}
 		foreach($keys as $field) {
-
 			if(in_array($field, $schema)) {
 				// if it has not yet been modified, set the field to its new value
 				if(!isset($this->modified_fields[$lang][$field])) {
@@ -231,7 +237,7 @@ class Object {
 					}
 				}
 				// mark field as loaded
-				// (if field has been modified, this allows to make a check to prevent it from being overwritten with further loading operations)
+				// (if field has been modified, this allows to prevent it from being overwritten with further loading operations)
 				$this->loaded_fields[$lang][$field] = true;
 			}
 		}
@@ -239,8 +245,7 @@ class Object {
 
 	/**
 	* Magic method for handling dynamic getters and setters
-	*
-	*	Note : This mechanism only works under standalone mode
+	* Note : This mechanism only works under standalone mode
 	*
 	* @param string $name
 	* @param array $arguments
