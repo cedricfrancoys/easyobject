@@ -7,7 +7,7 @@ namespace icway {
 		public static function getColumns() {
 			return array(
 				'name'				=> array('type' => 'string'),
-				'resources_ids'	=> array('type' => 'one2many', 'foreign_object'	=> 'icway\Resource', 'foreign_field' => 'category_id')
+				'resources_ids'		=> array('type' => 'one2many', 'foreign_object'	=> 'icway\Resource', 'foreign_field' => 'category_id')
 			);
 		}
 

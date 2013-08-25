@@ -4,37 +4,18 @@
 	<title>ICway</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8">
 	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/site.css" />	
-	<script type="text/javascript">
-		window.___gcfg = {
-			lang: 'fr', 
-			parsetags: 'onload'
-		};
-	
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'https://apis.google.com/js/plusone.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		})();
+	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/social-likes.css" />		
 
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'http://connect.facebook.net/fr_FR/all.js#xfbml=1';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		})();
-
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'http://platform.twitter.com/widgets.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		})();
-	</script>
 	<!--[if lte IE 8]>
 	  <style type="text/css">
-	  #loc-bg { 
+	  #loc-bg {
 		filter:progid:DXImageTransform.Microsoft.Shadow(color='#505050', Direction=180, Strength=17), Alpha(Opacity=30);		
 	  } 
 	  </style>
-	<![endif]-->	
+	<![endif]-->
+	
+	<script language="javascript" type="text/javascript" src="html/js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="packages/icway/html/js/social-likes.min.js"></script>		
 </head>
 
 <body>
@@ -84,18 +65,15 @@
 		<div id="bottom-bg"></div>
 		<div id="bottom-inner">				
 			<div class="box">							
-				<h1><label id="share_page">Partager cette page »</label></h1>
-				<ul>
-					<li>
-						<div class="fb-like" data-href="http://developers.facebook.com/docs/reference/plugins/like" data-send="false" data-layout="button_count" data-width="300" data-show-faces="true"></div>
-					</li>
-					<li>
-						<div class="g-plusone" data-size="medium"></div>
-					</li>					
-					<li>
-						<a href="https://twitter.com/share" class="twitter-share-button" data-lang="fr"></a>
-					</li>
+				<h1><var id="share_page" translate="yes"></var> »</h1>
+				<ul>			
+					<li style="font-size: 0.8em;">Si vous aimez le contenu de cette page, faites-le savoir !</li>
 				</ul>				
+				<ul class="social-likes social-likes_vertical" counters="no">			
+					<li class="facebook" style="margin-bottom: 10px;">Facebook</li>
+					<li class="plusone" style="margin-bottom: 10px;">Google+</li>	
+					<li class="twitter" style="margin-bottom: 10px;">Twitter</li>
+				</ul>
 			</div>	
 			<div class="box">
 				<h1><label id="recents_articles">Articles récents »</label></h1>

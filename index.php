@@ -23,8 +23,6 @@
 * Dispatcher's role is to set up the context and handle the client calls
 * note : we use the functions defined in easyobject.api.php to call object manager methods so we don't have to deal with the mode (either "standalone" or "client-server" )
 *
-* @version $Id: index.php 2012-06-01 $
-* @package	easyObject
 */
 
 /**

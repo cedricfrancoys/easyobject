@@ -23,6 +23,9 @@
 defined('__FC_LIB') or include_once('fc.lib.php');
 defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 
+// prevent undesired output
+set_silent(true);
+
 session_start() or die(__FILE__.', line '.__LINE__.", unable to start session.");
 define('SESSION_ID', session_id());
 

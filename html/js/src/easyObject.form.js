@@ -632,7 +632,7 @@
 				$form.find('label,legend,button').each(function() {
 					var name = $(this).attr('name');
 					if(typeof(name) != 'undefined') {
-						if(langObj && typeof(langObj['view'][name]) != 'undefined') {
+						if(!$.isEmptyObject(langObj) && typeof(langObj['view'][name]) != 'undefined') {
 							var value = langObj['view'][name]['label'];
 							$(this).text(value);
 						}

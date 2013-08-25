@@ -8,7 +8,7 @@ namespace icway {
 			return array(
 				'memo'		=> array('type' => 'string'),
 				'content'	=> array('type' => 'text'),
-				'page_id'	=> array('type' => 'many2one', 'foreign_object' => 'icway\Page'),
+				'post_id'	=> array('type' => 'many2one', 'foreign_object' => 'icway\Post'),
 			);
 		}
 
