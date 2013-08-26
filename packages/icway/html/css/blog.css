@@ -296,6 +296,7 @@ body {
 	position: relative;
 	top: 0;
 	width: 480px;
+	text-align: justify;
 }		
 #article-content h1 {
 	font: 1.9em Georgia,serif;
@@ -347,7 +348,7 @@ body {
 	margin-right: 10px;
 	margin-left: 20px;
 	-moz-border-radius-: 8px; -webkit-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px;
-	max-height: 300px;
+	min-height: 210px;
 	max-height: 300px;	
 	overflow : hidden;
 }
@@ -375,6 +376,9 @@ body {
 	color: #808080;
 	font-size: 0.7em;
 }		
+#bottom-inner ul li span.social-likes__button {
+	font-size: 0.9em;
+}
 #footer {
 	padding-top: 8px;
 	color: #1b59c2; 

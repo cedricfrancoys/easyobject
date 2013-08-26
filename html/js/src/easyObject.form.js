@@ -693,7 +693,11 @@
 					// - execute user defined functions (set in views, using 'onSubmit' attribute) that could modify some data
 					conf.onSubmitResult = true;
 					conf.onSubmitCallbacks.fire();					
-					if(!conf.onSubmitResult) return false; // something went wrong : stop the form submission
+					if(!conf.onSubmitResult) {
+						// something went wrong : stop the form submission						
+						easyObject.log('One of the submission callbacks failed');
+						return false; 
+					}
 
 					// 2) POST the form data
 					// we use an iframe to be able to post multipart/form-data content (that ajax does not allow)

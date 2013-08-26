@@ -138,7 +138,7 @@ switch($params['page_id']) {
 							var title = $('#article-content > h1').detach();
 							$('#article-content').empty().append(title);
 							$.each(posts_values, function(id, values) {
-								$('#article-content').append($('<div />').append(values['title']));								
+								$('#article-content').append($('<div />').append($('<a />').attr('href', 'index.php?show=icway_blog&post_id='+id).append(values['title'])));
 							});							
 						});
 					})

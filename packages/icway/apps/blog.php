@@ -27,7 +27,7 @@ $renderer = array(
 							return $values[$params['post_id']]['title'];
 						},
 	'content'		=>	function () use ($params, $values) {
-							return $values[$params['post_id']]['content'];
+							return '<h1>'.$values[$params['post_id']]['title'].'</h1>'.$values[$params['post_id']]['content'];
 						},
 	'tips'			=>	function () use ($params, $values) {
 							$html = '';

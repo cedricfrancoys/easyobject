@@ -19,7 +19,7 @@
 	 *  - use wysiwyg editor value when one is attached to the textarea
 	 *  - preserve carriage returns
 	 */
-	// note : this code has no effect when using the standard submission process (only useful with ajax submission)
+	// note: this code is necesary to handle .val() method on wysiwyg editor
 	$.valHooks.textarea = {
 		get: function( elem ) {
 			if(typeof $(elem).data('value') == 'function') return $(elem).data('value')();
@@ -113,12 +113,10 @@
 										}
 									}
 							});
-/*
 							// this is the method that will be called by $.valHooks
 							$textarea.data('value', function() {
 								return CKEDITOR.instances[conf.name].getData();
 							});
-*/
 							break;
 						case 'code':
 							$textarea = $('<textarea />')
