@@ -79,11 +79,10 @@ $(document).ready(function() {
 			var loaded = $pane.attr('loaded');
 			if($pane.attr('loaded') == 'false') {
 				var domain = [[]];
-				// quick and not so nice:
-				// add a domain for jobs (so that we only see the ones not yet invoiced)
-				if($this.attr('id') == 'Job') domain[0].push(['invoice_id','=','0']);
+				// add a domain if specified
+				if($this.attr('domain') != undefined) domain[0].push(eval($this.attr('domain')));
 				$pane.prepend(easyObject.UI.list({
-									class_name: 'linnetts'+'\\'+$this.attr('id'),
+									class_name: 'linnetts'+'\\'+$this.attr('target'),
 									view_name: 'list.default',
 									domain: domain
 							})
@@ -103,17 +102,21 @@ $html->add(
 <<<EOT
 <div id="panel" style="display: none;">
 	<ul>
-		<li id="Workday">Workdays</li>
-		<li id="Job">Jobs</li>
-		<li id="Invoice">Invoices</li>
-		<li id="Customer">Customers</li>		
+		<li id="Workday" target="Workday">Workdays</li>
+		<li id="Job_progress" target="Job" domain="['invoice_id','=','0']">Jobs in progress</li>
+		<li id="Job_all" target="Job">All jobs</li>		
+		<li id="Invoice" target="Invoice">Invoices</li>
+		<li id="Customer" target="Customer">Customers</li>		
 	</ul>
 	<div id="Workday-content" loaded="false">
 		<div class="loader" style="text-align: center; font-size: 17px; background: url(&quot;html/css/jquery/base/images/spinner.gif&quot;) no-repeat scroll 0% 0% transparent; margin-left: 40%; margin-top: 15%; height: 20px; line-height: 14px; width: 140px;">Loading ...</div>	
 	</div>
-	<div id="Job-content" loaded="false">
+	<div id="Job_progress-content" loaded="false">
 		<div class="loader" style="text-align: center; font-size: 17px; background: url(&quot;html/css/jquery/base/images/spinner.gif&quot;) no-repeat scroll 0% 0% transparent; margin-left: 40%; margin-top: 15%; height: 20px; line-height: 14px; width: 140px;">Loading ...</div>	
 	</div>
+	<div id="Job_all-content" loaded="false">
+		<div class="loader" style="text-align: center; font-size: 17px; background: url(&quot;html/css/jquery/base/images/spinner.gif&quot;) no-repeat scroll 0% 0% transparent; margin-left: 40%; margin-top: 15%; height: 20px; line-height: 14px; width: 140px;">Loading ...</div>	
+	</div>	
 	<div id="Invoice-content" loaded="false">
 		<div class="loader" style="text-align: center; font-size: 17px; background: url(&quot;html/css/jquery/base/images/spinner.gif&quot;) no-repeat scroll 0% 0% transparent; margin-left: 40%; margin-top: 15%; height: 20px; line-height: 14px; width: 140px;">Loading ...</div>	
 	</div>

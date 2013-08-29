@@ -432,13 +432,12 @@
 // todo: attr_domain is here too											
 											var config = {class_name: class_name, view_name: 'list.default', lang: conf.lang};
 											if(attr_domain != undefined) {
-												var domain = [[]];											
-												domain[0].push(eval(attr_domain));
+												var domain = eval(attr_domain);											
 												config = $.extend(true, config, {domain: domain});
 											}
 
-											$list = easyObject.UI.list(config);
-											$dia = easyObject.UI.dialog({
+											var $list = easyObject.UI.list(config);
+											var $dia = easyObject.UI.dialog({
 													content: $list,
 													title: 'Add relation'});
 											$dia.dialog({
@@ -695,6 +694,7 @@
 					conf.onSubmitCallbacks.fire();					
 					if(!conf.onSubmitResult) {
 						// something went wrong : stop the form submission						
+						alert('Either a field contains an invalid value or a mandatory field is left blank.');
 						easyObject.log('One of the submission callbacks failed');
 						return false; 
 					}
@@ -740,7 +740,7 @@
 											if(no_redirect) alert('Action ' + action + ' successfuly executed');
 											else return close('ok', 'Action ' + action + ' successfuly executed');
 		*/
-											return close('ok', 'Action ' + action + ' successfuly executed');
+											if(!no_redirect) return close('ok', 'Action ' + action + ' successfuly executed');
 										}
 									}
 								}

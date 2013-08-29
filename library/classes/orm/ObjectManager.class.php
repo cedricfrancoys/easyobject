@@ -1258,6 +1258,7 @@ class ObjectManager {
 	* @return mixed (integer or array)
 	*/
 	public function remove($user_id, $object_class, $ids, $permanent=false) {
+// todo : handle objects having a relation with the object being deleted
 		try {
 			$result = $ids;
 			if(empty($ids) || (!empty($ids) && !is_array($ids))) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);

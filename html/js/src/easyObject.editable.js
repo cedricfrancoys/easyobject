@@ -259,7 +259,9 @@
 									if(value.length > 0) value += ',';
 									value += '-'+conf.less[i];
 								}
-								$('#'+conf.name).val(value);
+								// todo : add form instance in the config
+								var $form = $this.parents('form:first');
+								$('#'+conf.name, $form).val(value);
 							});
 							break;
 					}

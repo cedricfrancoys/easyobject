@@ -7,11 +7,11 @@
 	<div>	
 		<fieldset title="Jobs">	
 			<span width="100%">	
-				<var id="jobs_ids" view="list.workday" domain="['invoice_id', '=', '0']"></var>
+				<var id="jobs_ids" view="list.workday" domain="[[['invoice_id', '=', '0']]]"></var>
 			</span>	
 		</fieldset>		
 	</div>
 	<div align="left">
-		<button name="print day sheet" type="button" show="core_objects_view" view="form.report" output="pdf&orientation=landscape"></button>
+		<button name="print day sheet" type="button" show="core_objects_view" view="form.report" output="pdf"></button>
 	</div>	
 </form>

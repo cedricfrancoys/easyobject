@@ -20,7 +20,8 @@ namespace linnetts {
 										'onchange' => 'linnetts\Invoice::onchangeVatRate'
 									),				
 				'vat'			=> array('type' => 'function', 
-										'store' => true, 'result_type' => 'float', 
+										'store' => true, 
+										'result_type' => 'float', 
 										'function' => 'linnetts\Invoice::getVAT'
 									),
 				'total'			=> array(
