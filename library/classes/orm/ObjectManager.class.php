@@ -942,7 +942,7 @@ class ObjectManager {
 			// This allows us to sort records when browsing (based on fields returned by optional method 'getOrder')
 			if(isset($order)) {
 				foreach($order as $ofield) {
-					uasort($result, function ($a, $b) {
+					uasort($result, function ($a, $b) use($ofield){
 						if ($a[$ofield] == $b[$ofield]) return 0;
 						return ($a[$ofield] < $b[$ofield]) ? -1 : 1;
 					});
@@ -1258,13 +1258,25 @@ class ObjectManager {
 	* @return mixed (integer or array)
 	*/
 	public function remove($user_id, $object_class, $ids, $permanent=false) {
-// todo : handle objects having a relation with the object being deleted
 		try {
 			$result = $ids;
 			if(empty($ids) || (!empty($ids) && !is_array($ids))) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
+			// 1) check rights and object schema
+			$object = &$this->getObjectStaticInstance($object_class);
+			$schema = $object->getSchema();
+			
 			foreach($ids as $object_id) {
-				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);
+				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);				
+				foreach($schema as $field => $def) {
+// todo : handle other relation types
+					if($def['type'] == 'one2many') {
+						$res = $this->browse($user_id, $object_class, array($object_id), array($field));
+						$this->update($user_id, $def['foreign_object'], $res[$object_id][$field], array($def['foreign_field'] => '0'));
+					}
+				}
 			}
+			
+			// 2) remove object from DB
 			$table_name = $this->getObjectTableName($object_class);
 			if ($permanent) {
 				$this->dbConnection->deleteRecords($table_name, $ids);

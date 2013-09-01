@@ -20,12 +20,9 @@
 */
 
 /*
-* file: actions/core/user/login.php
+* file: packages/core/actions/objects/remove.php
 *
-* Logs a user in.
 *
-* @param string $login
-* @param string $password (locked MD5 value)
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library

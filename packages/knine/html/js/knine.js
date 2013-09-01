@@ -1,7 +1,7 @@
 (function($) {
 	/**
 	* jQuery Knine plugin :
-	* Allows to browse dynamicaly a knowledge article
+	* Allows to browse dynamically a knowledge article
 	*
 	*/
 
@@ -18,7 +18,7 @@
 
 		var methods = {
 			/*
-			*	This method allows to give live to a static object (i.e. generated server-side)
+			*	This method allows to give live to a static object (i.e. server-side generated)
 			*/
 			dynamize: function($elem, conf) {
 				// for all visible links
@@ -70,7 +70,7 @@
 					if(typeof result[conf.article_id] == 'undefined') return; 
 					conf.values = result[conf.article_id];
 				}
-				// First, we build article DOM structure
+				// 1) First, we build article DOM structure
 				var $article = $('<div/>').addClass('article').attr('id', conf.article_id).append($('<div/>').addClass('level').text(conf.level))
 				var $title = $('<div/>').addClass('title').text(conf.level + ' ' + conf.values['title']).appendTo($article);	
 				var $summary = $('<div/>').addClass('summary').html(conf.values['summary']).appendTo($article);
@@ -97,7 +97,7 @@
 				var $summary_link = $('<a/>').addClass('summary_link').text(conf.lang_summary);
 				$article.append($('<div/>').addClass('display_button').append($details_link).append($summary_link));
 
-				// Then we add the dynamics
+				// 2) Then we add the dynamics
 				
 				// handle content display
 				$content.bind('unfold', function() {
@@ -145,7 +145,7 @@
 					$summary_link.hide();						
 				});
 			
-				// check if there is something more to do for the content part (i.e. recurse to a deeper level)
+				// check if there is something more to do for content part (i.e. recurse to a deeper level)
 				if(conf.depth <= 0) {
 					$content.hide();
 					$summary_link.hide();

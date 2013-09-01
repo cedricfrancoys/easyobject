@@ -344,6 +344,8 @@
 						)));
 						if(i%2) $row.addClass('erow');
 						$.each(row.cell, function(i, cell) {
+							// browse method could return fields not included in specified columns
+							if(i >= conf.col_model.length) return;
 							$row.append($('<td/>').append($('<div/>').text(cell)));
 						});	
 						$tbody.append($row);
