@@ -50,12 +50,11 @@ $renderer = array(
 							return $html;
 						},
 	'localizator'	=>	function () use ($params){
+// todo : manage translations here
 							$path = array(1 => 'Accueil', 5 => 'Blog');
 							$html = '<ul>';
-							for($i = 0, $j = count($path); $i < $j; $i++) {
-								foreach($path[$i] as $page_id => $page_title) {
-									$html .= '<li><a href="?show=icway_site&page_id='.$page_id.'">'.$page_title.'</a></li>';
-								}
+							foreach($path as $page_id => $page_title) {
+								$html .= '<li><a href="?show=icway_site&page_id='.$page_id.'">'.$page_title.'</a></li>';
 							}
 							$html .= '</ul>';
 							return $html;

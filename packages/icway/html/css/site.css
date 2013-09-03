@@ -348,6 +348,9 @@ body {
 #bottom-inner ul li a:hover{
 	color: #000;
 }
+#bottom-inner ul li span.social-likes__button {
+	font-size: 0.9em;
+}
 #bottom-inner ul li span.details {
 	color: #808080;
 	font-size: 0.7em;

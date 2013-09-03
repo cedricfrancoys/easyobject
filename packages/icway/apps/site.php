@@ -10,7 +10,7 @@ include('parser.inc.php');
 // force silent mode
 set_silent(true);
 
-$params = get_params(array('page_id'=>1, 'lang'=>'fr'));
+$params = get_params(array('page_id'=>1, 'lang'=>'fr', 'label_id'=>null));
 
 
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'));
@@ -124,31 +124,46 @@ $renderer = array(
 // we replace renderer entries with other methods
 switch($params['page_id']) {
 	case 5:
-		// page 'blog'
-		$renderer['script'] = function() use ($params){
-			return "
-				$(document).ready(function(){
-					$.getScript('html/js/easyObject.api.min.js')
-					.done(function() {
-						$('.select_label').on('click', function() {
-							var label_id = $(this).attr('id');
-							var posts_ids = (browse('icway\\\\Label', [label_id], ['posts_ids'], '{$params['lang']}'))[label_id]['posts_ids'];
-							var posts_values = browse('icway\\\\Post', posts_ids, ['id', 'title', 'modified'], '{$params['lang']}');
-							// obtain related posts 
-							var title = $('#article-content > h1').detach();
-							$('#article-content').empty().append(title);
-							$.each(posts_values, function(id, values) {
-								$('#article-content').append($('<div />').append($('<a />').attr('href', 'index.php?show=icway_blog&post_id='+id).append(values['title'])));
-							});							
+		// page 'blog'		
+		if(isset($params['label_id'])) {
+			$renderer['content'] = function() {
+				$html = '<h1>'.'Bienvenue sur notre blog'.'</h1>';
+				$result = browse('icway\Label', array($params['label_id']), array('posts_ids'), $params['lang']);
+				$posts_ids = $result[$params['label_id']]['posts_ids'];
+				$posts_values = browse('icway\Post', $posts_ids, array('id', 'title', 'modified'), $params['lang']);
+				// obtain related posts 
+				foreach($posts_values as $id => $values) {
+					$html .= '<div>'.'<a href="index.php?show=icway_blog&post_id='.$id.'">'.$values['title'].'</a>'.'</div>';
+				}				
+				return $html;
+			};
+		}
+		else {
+			$renderer['script'] = function() use ($params){
+				return "
+					$(document).ready(function(){
+						$.getScript('html/js/easyObject.api.min.js')
+						.done(function() {
+							$('.select_label').on('click', function() {
+								var label_id = $(this).attr('id');
+								var posts_ids = (browse('icway\\\\Label', [label_id], ['posts_ids'], '{$params['lang']}'))[label_id]['posts_ids'];
+								var posts_values = browse('icway\\\\Post', posts_ids, ['id', 'title', 'modified'], '{$params['lang']}');
+								// obtain related posts 
+								var title = $('#article-content > h1').detach();
+								$('#article-content').empty().append(title);
+								$.each(posts_values, function(id, values) {
+									$('#article-content').append($('<div />').append($('<a />').attr('href', 'index.php?show=icway_blog&post_id='+id).append(values['title'])));
+								});							
+							});
+						})
+						.fail(function(jqxhr, settings, exception) {
+							console.log(exception);
 						});
-					})
-					.fail(function(jqxhr, settings, exception) {
-						console.log(exception);
 					});
-				});
-			";
-		};
-	
+				";
+			};
+		}
+		
 		$renderer['left_column'] = function() {
 			// list of categories
 			$html = '';
@@ -158,7 +173,7 @@ switch($params['page_id']) {
 			$html .= '<ul>';							
 			foreach($labels_values as $label_values) {
 				$html .= '<li>';
-				$html .= '<a href="#" class="select_label" id="'.$label_values['id'].'">'.$label_values['name'].'</a>';
+				$html .= '<a href="index.php?show=icway_site&page_id=5&label_id='.$label_values['id'].'" class="select_label" id="'.$label_values['id'].'">'.$label_values['name'].'</a>';
 				$html .= '</li>';
 			}
 			$html .= '</ul>';														
