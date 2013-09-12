@@ -508,7 +508,7 @@
 					}
 					
 				});
-
+				
 				// insert some hidden controls : predefined fields not present in the specified view
 				if(typeof conf.predefined == 'object') {
 					$.each(conf.predefined, function(field, value){					

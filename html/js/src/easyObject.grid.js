@@ -69,7 +69,8 @@
 						sortorder: conf.sortorder,
 						domain: domain,
 						fields: conf.fields,
-						records: conf.records
+						records: conf.records,
+						lang: conf.lang
 					},
 					contentType: 'application/json; charset=utf-8',
 					success: function(data){callback(data);},

@@ -13,7 +13,7 @@ set_silent(true);
 $params = get_params(array('page_id'=>1, 'lang'=>'fr', 'label_id'=>null));
 
 
-$values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'));
+$values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'), $params['lang']);
 
 /**
 * This array holds the methods to use for rendering the page
@@ -32,11 +32,11 @@ $renderer = array(
 	'script'		=>	function () use ($params, $values) {
 							return $values[$params['page_id']]['script'];
 						},
-	'top_menu'		=>	function () {
+	'top_menu'		=>	function () use ($params) {
 							$html = "<ul>";
 							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('in_menu', '=', '1'))), 'sequence', 'desc');
 							if(!count($ids)) break;
-							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
+							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'), $params['lang']);
 							foreach($sections_values as $section_values) {
 								$title = mb_strtoupper($section_values['title'], 'UTF-8');
 								$html .= "<li><a href=\"index.php?show=icway_site&page_id={$section_values['page_id']}\">$title</a></li>";
@@ -49,7 +49,7 @@ $renderer = array(
 							// recurse to the root section
 							$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));
 							while(count($sections_ids)) {
-								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'));
+								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'), $params['lang']);
 								foreach($sections_values as $section_id => $section_values) {
 									array_unshift($path, array($section_values['page_id'] => $section_values['title']));
 									$sections_ids = array($section_values['parent_id']);
@@ -70,7 +70,7 @@ $renderer = array(
 							$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));
 							$selected_id = null;
 							while(count($sections_ids)) {
-								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id'));
+								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id'), $params['lang']);
 								foreach($sections_values as $section_id => $section_values) {
 									if($section_values['parent_id'] == 0) break 2;
 									$selected_id = $section_id;
@@ -79,12 +79,12 @@ $renderer = array(
 							}
 							// no match found
 							if(is_null($selected_id)) $selected_id = 1;
-							$sections_values = &browse('icway\Section', array($selected_id), array('title', 'sections_ids'));
+							$sections_values = &browse('icway\Section', array($selected_id), array('title', 'sections_ids'), $params['lang']);
 							// note: this is a loop but we only have one item
 							foreach($sections_values as $section_id => $section_values) {
 								$html = '<h1>'.$section_values['title'].'</h1>';
 								$html .= '<ul>';
-								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'));
+								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'), $params['lang']);
 								foreach($subsections_values as $subsection_values) {
 									if($subsection_values['page_id'] == $params['page_id']) $html .= '<li class="current">';
 									else $html .= '<li>';
@@ -95,11 +95,11 @@ $renderer = array(
 							}
 							return $html;
 						},
-	'latest_docs'	=>	function () {
+	'latest_docs'	=>	function () use ($params) {
 							$html = "<ul>";
 							// sort resources by title (inside the current category)
 							$resources_ids = search('icway\Resource', array(array(array())), 'modified', 'desc', 0, 3);
-							$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'));
+							$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'), $params['lang']);
 							foreach($resources_values as $resource_values) {
 								$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);
 								// we use Google doc viewer for other stuff than images
@@ -126,7 +126,7 @@ switch($params['page_id']) {
 	case 5:
 		// page 'blog'		
 		if(isset($params['label_id'])) {
-			$renderer['content'] = function() {
+			$renderer['content'] = function() use ($params) {
 				$html = '<h1>'.'Bienvenue sur notre blog'.'</h1>';
 				$result = browse('icway\Label', array($params['label_id']), array('posts_ids'), $params['lang']);
 				$posts_ids = $result[$params['label_id']]['posts_ids'];
@@ -164,15 +164,16 @@ switch($params['page_id']) {
 			};
 		}
 		
-		$renderer['left_column'] = function() {
+		$renderer['left_column'] = function() use ($params) {
 			// list of categories
 			$html = '';
 			$labels_ids = search('icway\Label', array(array(array())));
-			$labels_values = &browse('icway\Label', $labels_ids, array('id', 'name'));
+			$labels_values = &browse('icway\Label', $labels_ids, array('id', 'name'), $params['lang']);
 			$html = '<h1>'.'Cat&eacute;gories'.'</h1>';							
 			$html .= '<ul>';							
-			foreach($labels_values as $label_values) {
-				$html .= '<li>';
+			foreach($labels_values as $label_values) {				
+				if($label_values['id'] == $params['label_id']) $html .= '<li class="current">';
+				else $html .= '<li>';
 				$html .= '<a href="index.php?show=icway_site&page_id=5&label_id='.$label_values['id'].'" class="select_label" id="'.$label_values['id'].'">'.$label_values['name'].'</a>';
 				$html .= '</li>';
 			}
@@ -189,12 +190,12 @@ switch($params['page_id']) {
 			$html .= '<div class="file_cabinet">';
 
 			$categories_ids = search('icway\Category');
-			$categories_values = &browse('icway\Category', $categories_ids, array('name'));
+			$categories_values = &browse('icway\Category', $categories_ids, array('name'), $params['lang']);
 
 			foreach($categories_ids as $category_id) {
 				// sort resources by title (inside the current category)
 				$resources_ids = search('icway\Resource', array(array(array('category_id','=',$category_id))), 'title');
-				$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'));
+				$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'), $params['lang']);
 				$html .= '<div class="header">'.$categories_values[$category_id]['name'].'</div>';
 				foreach($resources_values as $resource_values) {
 					$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);

@@ -83,7 +83,7 @@ class IdentificationManager {
 					}
 
 					// check if permissions are defined for the current object class
-					$result = $db->getRecords(array('core_permission'), array('id', 'rights'), null, array(array(array('class_name', '=', $object_class), array('group_id', 'in', $groups_ids), array('deleted', '=', 0), array('modifier', '>', 0))));
+					$result = $db->getRecords(array('core_permission'), array('id', 'rights'), null, array(array(array('class_name', '=', $object_class), array('group_id', 'in', $groups_ids), array('deleted', '=', '0'), array('modifier', '>', '0'))));
 					// get the user permissions
 					if($db->getAffectedRows()) while($row = $db->fetchArray($result)) $user_rights |= $row['rights'];
 

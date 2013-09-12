@@ -6,9 +6,9 @@ namespace icway {
 
 		public static function getColumns() {
 			return array(
-				'title'				=> array('type' => 'string'),
+				'title'				=> array('type' => 'string', 'multilang' => true),
 				'url_resolver_id' 	=> array('type' => 'many2one', 'foreign_object' => 'core\UrlResolver'),
-				'content'			=> array('type' => 'text'),
+				'content'			=> array('type' => 'text', 'multilang' => true),
 				'script'			=> array('type' => 'text'),				
 				'html' 				=> array('type' => 'function', 'result_type' => 'string', 'store' => true, 'function' => 'icway\Page::getHtml'),				
 			);

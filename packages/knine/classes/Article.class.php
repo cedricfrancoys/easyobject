@@ -23,7 +23,7 @@ namespace knine {
 				'publications_ids'	=> array('type' => 'many2many', 'foreign_object' => 'knine\Publication', 'foreign_field' => 'articles_ids', 'rel_table' => 'knine_rel_article_publication', 'rel_foreign_key' => 'publication_id', 'rel_local_key' => 'article_id'),
 
 				'parent_id' 		=> array('type' => 'many2one', 'foreign_object' => 'knine\Article'),
-				'children_ids'		=> array('type' => 'one2many', 'foreign_object' => 'knine\Article', 'foreign_field' => 'parent_id'),
+				'children_ids'		=> array('type' => 'one2many', 'foreign_object' => 'knine\Article', 'foreign_field' => 'parent_id', 'order' => 'sequence'),
 				'sequence' 			=> array('type' => 'integer'),
 
 				'references_ids'	=> array('type' => 'one2many', 'foreign_object' => 'knine\Reference', 'foreign_field' => 'article_id'),
@@ -43,12 +43,7 @@ namespace knine {
 					'is_root'	=> function() { return true; }
 			);
 		}
-		
-		public static function getOrder() {
-			return array('sequence');
-		}
-
-		
+			
 		public static function callable_getRootId($om, $uid, $oid, $lang) {
 			while(true) {
 				$root_id = $oid;

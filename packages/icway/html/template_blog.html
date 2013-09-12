@@ -26,9 +26,9 @@
 			<div id="pic"></div>
 			<div id="header-right">
 				<div id="languages">
-					<a href="#"><div>ES</div><label>| mostrar esta página en español</label></a>
-					<a href="#"><div>FR</div><label>| afficher cette page en français</label></a>
-					<a href="#"><div>EN</div><label>| show this page in english</label></a>
+					<a href="&lang=es"><div>ES</div><label>| mostrar esta página en español</label></a>
+					<a href="&lang=fr"><div>FR</div><label>| afficher cette page en français</label></a>
+					<a href="&lang=en"><div>EN</div><label>| show this page in english</label></a>
 				</div>			
 				<div id="search">
 					<form action="" method="get">
@@ -67,7 +67,7 @@
 			<div class="box">							
 				<h1><var id="share_page" translate="yes"></var> »</h1>
 				<ul style="margin-bottom: 30px;">
-					<li style="font-size: 0.8em;">Si vous aimez le contenu de cette page, faites-le savoir !</li>
+					<li style="font-size: 0.8em;"><var id="like_txt" translate="yes"></var></li>
 				</ul>				
 				<ul class="social-likes social-likes_horizontal" counters="no">			
 					<li class="facebook" style="margin-bottom: 10px;">Facebook</li>
@@ -76,7 +76,7 @@
 				</ul>
 			</div>	
 			<div class="box">
-				<h1><label id="recents_articles">Articles récents »</label></h1>
+				<h1><var id="recent_articles_title" translate="yes"></var> »</h1>
 				<ul>
 					<li><a href="#">Un chauffe-eau solaire pour 200 euros</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
 					<li><a href="#">Un petit bâtiment en palettes recyclées</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>					
@@ -90,9 +90,8 @@
 		</div>
 	</div>		
 	<div id="footer">
-		<a href="#">À propos de ICway</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#">Plan du site</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#">Nous contacter</a><br />
+		<a href="#"><var id="about" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#"><var id="sitemap" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#"><var id="contact" translate="yes"></var></a><br />
 		<span style="font-size: 0.9em;"><var id="licence" translate="yes"></var></span>
-	</div>		
-
+	</div>
 </body>
 </html>

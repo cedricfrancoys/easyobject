@@ -267,10 +267,11 @@ body {
 	padding: 0;
 }
 #article-content h2 {
-	font-size: 1.4em;
+	font: 1.4em Georgia,serif;
 	padding: 13px 0 0px;
 }
 #article-content h3 {
+	font: 1.1em Georgia,serif;
 	font-size: 1.1em;
 	padding: 13px 0 0px;
 }

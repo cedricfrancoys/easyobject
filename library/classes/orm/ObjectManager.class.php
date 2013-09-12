@@ -383,8 +383,10 @@ class ObjectManager {
 									break;
 								case 'one2many':
 									if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'", INVALID_PARAM);
+									if(isset($schema[$field]['order'])) $order = $schema[$field]['order'];
+									else $order = 'id';
 									// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
-				                    $values_array[$object_id][$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], '=', $object_id), array('deleted', '=', '0'))));
+				                    $values_array[$object_id][$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], '=', $object_id), array('deleted', '=', '0'))), $order);
 									break;
 								case 'many2many':
 									if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for many2many field '$field' of class '$object_class'", INVALID_PARAM);
@@ -522,9 +524,9 @@ class ObjectManager {
 			// first pass : list all the names of the simple fields that must be stored
 			foreach($object_fields as $field) {
 				if(in_array($columns[$field]['type'], $this->simple_types)) {
-					// if a field is not multilang, we set it to be stored in the default language, even if a different language is specified
-					if(isset($columns[$field]['multilang']) && $columns[$field]['multilang']) $simple_fields[$lang][] = $field;
-					else $simple_fields[DEFAULT_LANG][] = $field;
+					// non multilang fields cannot be stored in non default lang
+					if($lang != DEFAULT_LANG && (!isset($columns[$field]['multilang']) || !$columns[$field]['multilang'])) continue;
+					$simple_fields[$lang][] = $field;
 				}
 			}
 
@@ -587,7 +589,7 @@ class ObjectManager {
 						$fields_list[] = $field;
 						$values_list[] = array($lang, $object_class, $field, $object_id, $value);
 					}
-					$this->dbConnection->deleteRecords('core_translation', array($object_id), array(array(array('language', '=', $lang), array('object_class', '=', $object_class), array('object_field', 'in', $fields_list), array('object_id', '=', $object_id))));
+					$this->dbConnection->deleteRecords('core_translation', array($object_id), array(array(array('language', '=', $lang), array('object_class', '=', $object_class), array('object_field', 'in', $fields_list))), 'object_id');
 					$this->dbConnection->addRecords('core_translation', array('language', 'object_class', 'object_field', 'object_id', 'value'), $values_list);
 				}
 			}
@@ -883,7 +885,10 @@ class ObjectManager {
 			$result = array();
 			if(!empty($ids) && !is_array($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
 			if(!empty($fields) && !is_array($fields)) throw new Exception("argument is not an array of objects fields : '$fields'", INVALID_PARAM);
-			if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, 'id', 'asc', 0, '', $lang);
+
+			// not sure we should do this as it could take a while
+			// if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, 'id', 'asc', 0, '', $lang);
+        	if(is_null($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
 
 			$object = &$this->getObjectStaticInstance($object_class);
 			$schema = $object->getSchema();
@@ -901,7 +906,7 @@ class ObjectManager {
 			}
 			else {
 				// let's be kind and remove unexisting fields
-				// values from fields must be in keys from schema
+				// values from fields array must be in keys from schema
 				$allowed_fields = array_keys($schema);
 				for($i = 0, $j = count($fields); $i < $j; ++$i) {
 					if(!in_array($fields[$i], $allowed_fields)) unset($fields[$i]);
@@ -919,13 +924,6 @@ class ObjectManager {
 				$this->loadObjectFields($user_id, $object_class, $ids, $fields, $lang);
 			}
 
-			// add order fields if necessary
-			if(method_exists($object, 'getOrder')) {
-				// note: we'll need $order var later
-				$order = $object->getOrder();
-				$fields = array_unique(array_merge($fields, $order));
-			}
-
 			foreach($ids as $object_id) {
 				if($object_id == 0) {
 					// we cannot use getFields here, since it would result in the creation of a new object (which is a behaviour reserved to the 'update' method)
@@ -938,16 +936,7 @@ class ObjectManager {
 					$this->setLog($user_id, R_READ, $object_class, $object_id, $fields, $lang);
 				}
 			}
-// todo : validate this code
-			// This allows us to sort records when browsing (based on fields returned by optional method 'getOrder')
-			if(isset($order)) {
-				foreach($order as $ofield) {
-					uasort($result, function ($a, $b) use($ofield){
-						if ($a[$ofield] == $b[$ofield]) return 0;
-						return ($a[$ofield] < $b[$ofield]) ? -1 : 1;
-					});
-				}
-			}
+
 		}
 		catch(Exception $e) {
 			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
@@ -1264,9 +1253,9 @@ class ObjectManager {
 			// 1) check rights and object schema
 			$object = &$this->getObjectStaticInstance($object_class);
 			$schema = $object->getSchema();
-			
+
 			foreach($ids as $object_id) {
-				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);				
+				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);
 				foreach($schema as $field => $def) {
 // todo : handle other relation types
 					if($def['type'] == 'one2many') {
@@ -1275,7 +1264,7 @@ class ObjectManager {
 					}
 				}
 			}
-			
+
 			// 2) remove object from DB
 			$table_name = $this->getObjectTableName($object_class);
 			if ($permanent) {

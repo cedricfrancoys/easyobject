@@ -59,21 +59,29 @@ $js_packages = function () {
 
 $html->addScript("
 $(document).ready(function() {
+	// init
 	easyObject.init({
 		dialog_width: 900
 	});
 	
 	// vars
 	var packages = {$js_packages()};
+	var languages = ['en', 'fr', 'es'];	
     var selection = $('body');
 
 	// layout
 	$('body')
 	.append($('<div/>').attr('id', 'menu').css({'height': $(window).height()+'px', 'float':'left', 'width':'200px'})
-			.append($('<label/>').css({'margin': '4px', 'font-weight': 'bold', 'display': 'block'}).html('Package: '))
-			.append($('<select/>').attr('id', 'package').css({'margin': '4px'}))
 			.append($('<div/>')
-				.append($('<label/>').css({'margin': '4px', 'font-weight': 'normal'}).html('recylce bin'))
+				.append($('<label/>').css({'margin': '4px', 'float': 'left', 'width': '80px', 'font-weight': 'bold'}).html('Lang: '))	
+				.append($('<select/>').attr('id', 'lang').css({'margin': '4px'}))	
+			)
+			.append($('<div/>')
+				.append($('<label/>').css({'margin': '4px', 'float': 'left', 'width': '80px', 'font-weight': 'bold'}).html('Package: '))
+				.append($('<select/>').attr('id', 'package').css({'margin': '4px'}))
+			)
+			.append($('<div/>')
+				.append($('<label/>').css({'margin': '4px', 'float': 'left', 'width': '80px', 'font-weight': 'bold'}).html('Recylce bin: '))
 				.append($('<input type=\"checkbox\"/>').attr('id', 'recycle').css({'margin': '4px'}))
 			)
 			.append($('<label/>').css({'margin': '4px', 'font-weight': 'bold', 'display': 'block'}).html('Classes: '))
@@ -82,16 +90,22 @@ $(document).ready(function() {
     .append($('<div/>').attr('id', 'main').css({'display': 'table', 'background-color': 'white', 'height': $(window).height()+'px', 'float':'left', 'width': ($(window).width()-240)+'px', 'padding': '10px'}));
 
 	// feed
+	$.each(languages, function(i,item){
+		$('#lang').append($('<option/>').val(item).html(item));
+	});
 	$.each(packages, function(i,item){
 		$('#package').append($('<option/>').val(item).html(item));
-	});
+	});	
 
 	// events
 	$('#package').on('change', function() {
 		$.getJSON('index.php?get=core_packages_listing&package='+$(this).val(), function (json_data) {
+				var sel = selection.attr('id');
 				$('#classes').empty();
+				$('#main').empty();
+				selection = $('body');
 				$.each(json_data, function(i, item){
-					$('#classes').append($('<span/>').css({'display': 'block', 'cursor': 'pointer'}).append(item)
+					$('#classes').append($('<span/>').attr('id', item).css({'display': 'block', 'cursor': 'pointer'}).append(item)
 						.click(function() {
 							selection.removeClass('selected');
 							selection = $(this);
@@ -111,8 +125,16 @@ $(document).ready(function() {
 						})
 					);
 				});
+				if(sel != undefined) $('span#'+sel).trigger('click');
 		});
+	});	
+	$('#lang').on('change', function() {	
+		easyObject.init({
+			content_lang: $('#lang').val()
+		});		
+		$('#package').trigger('change');	
 	});
+	
 	// init
 	$('#package').trigger('change');
 });

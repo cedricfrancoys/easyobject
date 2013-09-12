@@ -31,7 +31,7 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 
 // force silent mode
-//set_silent(true);
+set_silent(true);
 
 
 check_params(array('article_id'));
@@ -124,7 +124,7 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 }
 
 // We display the content of the specified article (at specified level).
-// This could be done fully dynamic client-side (JS) but then content would not be indexed by search engines
+// This could be done client-side (JS) but then content would not be indexed by search engines
 $frame->add(get_article_html($params['article_id'], '', 0, $params['level']));
 
 

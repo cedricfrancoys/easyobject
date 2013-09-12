@@ -58,11 +58,9 @@ var easyObject = {
 		conf: {
 				user_id: 0,
 				user_key: 0,
-				// user_lang is the language in which the UI is displayed (set once and for all)
-				user_lang: 'en',
-				// content_lang is the language in which multilang fields values are displayed (on demand)
-				content_lang: 'en',
-				auto_save_delay: 5,				// auto-save delay in minutes
+				user_lang: 'en',		// language in which the UI is displayed (set once and for all)	
+				content_lang: 'en',		// language in which multilang fields values are displayed (on demand)
+				auto_save_delay: 5,		// auto-save delay in minutes
 				dialog_width: 700
 		},
 		/* objects data handlers */
@@ -71,7 +69,7 @@ var easyObject = {
 		views: [],
 		fields: [],
 		error_codes: {0: "unknown error(s)", 1: "invalid parameter(s) or wrong value(s)", 2: "SQL error(s)", 4: "unknown class or object", 8: "action not allowed : action violates some rule or you don't have permission to execute it"},
-		simple_types: ['boolean', 'integer', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one'],
+		simple_types: ['boolean', 'integer', 'float', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one'],
 
 		init: function(conf) {
 				$.extend(this.conf, conf);
@@ -516,9 +514,10 @@ var easyObject = {
 				grid: function(conf) {
 					return $('<div/>')
 					.grid($.extend(true, {
+						lang: easyObject.conf.content_lang,
 						edit: {
 							func: function($grid, ids) {
-								var $form = easyObject.UI.form({class_name: conf.class_name, object_id: ids[0], view_name: 'form.default', lang: conf.lang});
+								var $form = easyObject.UI.form({class_name: conf.class_name, object_id: ids[0], view_name: 'form.default', lang: easyObject.conf.content_lang});
 								var $dia = easyObject.UI.dialog({
 										content: $form,
 										title: 'Object edition - ' + conf.class_name,
@@ -536,7 +535,7 @@ var easyObject = {
 						},
 						add: {
 							func: function($grid) {
-								var $dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: conf.lang}), title: 'New object - '+conf.class_name, width: easyObject.conf.dialog_width, height: 'auto'});
+								var $dia = easyObject.UI.dialog({content: easyObject.UI.form({class_name: conf.class_name, lang: easyObject.conf.content_lang}), title: 'New object - '+conf.class_name, width: easyObject.conf.dialog_width, height: 'auto'});
 								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $(this).dialog('destroy');}});
 							}
 						}
