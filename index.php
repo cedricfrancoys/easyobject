@@ -37,6 +37,7 @@ defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 /**
 * Define the context
 */
+
 // prevent vars initialization from generating output
 set_silent(true);
 
@@ -52,14 +53,20 @@ if(!defined('SESSION_ID')) define('SESSION_ID', session_id());
 // set the languages in which UI and content must be displayed
 
 // UI items : UI language is the one defined in the user's settings (core/User object)
-define('SESSION_LANG_UI', user_lang());
+if(!isset($_SESSION['LANG_UI'])) $_SESSION['LANG_UI'] = user_lang();
 
 // Content items :
-//	- for unidentified users, language is DEFAULT_LANG
-//	- for identified users language is the one defined in the user's settings
-//	- if a parameter lang is defined in the HTTP request, it overrides user's language
-$params = get_params(array('lang'=>DEFAULT_LANG));
-define('SESSION_LANG', $params['lang']);
+//		- for unidentified users, language is DEFAULT_LANG
+//		- for identified users language is the one defined in the user's settings
+//		- if a parameter lang is defined in the HTTP request, it overrides user's language
+if(!isset($_SESSION['LANG'])) $_SESSION['LANG'] = $_SESSION['LANG_UI'];
+$params = get_params(array('lang'=>$_SESSION['LANG']));
+$_SESSION['LANG'] = $params['lang'];
+
+// store session values into constants (so they can be used as default parameter in functions/methods definitions)
+define('SESSION_LANG_UI', $_SESSION['LANG_UI']);
+define('SESSION_LANG', $_SESSION['LANG']);
+
 
 // from now on, we let the script decide whether or not to output error messages if any
 set_silent(false);
@@ -71,7 +78,7 @@ if (get_magic_quotes_gpc()) {
 		}
         $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 }
-// add keys from $_FILES to the superglobal $_REQUEST array (we do this in order to let the manager know when binary fields are present)
+// add keys from $_FILES to the superglobal $_REQUEST array (in order to let the manager know when binary fields are present)
 $_REQUEST = array_merge($_REQUEST, array_fill_keys(array_keys($_FILES), ''));
 
 
@@ -81,9 +88,9 @@ $_REQUEST = array_merge($_REQUEST, array_fill_keys(array_keys($_FILES), ''));
 */
 
 $accepted_requests = array(
-							'do'	=> array('type' => 'action', 'dir' => 'actions'),		// do something server-side
-							'get'	=> array('type' => 'data provider', 'dir' => 'data'), 	// return some data (json)
-							'show'	=> array('type' => 'application', 'dir' => 'apps')		// output rendering information (html/js)
+						'do'	=> array('type' => 'action', 'dir' => 'actions'),		// do something server-side
+						'get'	=> array('type' => 'data provider', 'dir' => 'data'), 	// return some data (json)
+						'show'	=> array('type' => 'application', 'dir' => 'apps')		// output rendering information (html/js)
 					);
 
 $request_found = false;
@@ -93,11 +100,12 @@ foreach($accepted_requests as $request_key => $request_conf) {
 		$filename = 'packages/'.array_shift($parts).'/'.$request_conf['dir'].'/'.implode('/', $parts).'.php';
 		is_file($filename) or die ("'{$_REQUEST[$request_key]}' is not a valid {$request_conf['type']}.");
 		include($filename);
-		$request_found = true;		
+		$request_found = true;
 		break;
 	}
 }
 
+// if no script was specified and config.ini.php specifies a default application, let's display that one
 if(!$request_found && defined('DEFAULT_APP')) {
 	$parts = explode('_', DEFAULT_APP);
 	$filename = 'packages/'.array_shift($parts).'/apps/'.implode('/', $parts).'.php';

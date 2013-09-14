@@ -23,7 +23,7 @@
 *	FC library defines a set of functions whose purpose is to ease php scripting for :
 *	- classes and files inclusion (especially for cascading inclusions)
 *		load_class($class_path)
-*		include_file($file_name) : file that defines functions or constants (in order to use variables one must use the global keyword)
+*		include_file($file_name) : file that defines functions or constants (in order to use variables, one must use the global keyword)
 *	- extracting and checking presence of HTTP data (GET / POST/ COOKIE)
 *		check_params()
 *		get_params($params, $default_values)
@@ -46,7 +46,7 @@
 */
 
 
-define('__FC_LIB', true) or die('unable to define or __FC_LIB already defined');
+define('__FC_LIB', true) or die('either __FC_LIB is already defined or it cannot be defined');
 
 
 class FClib {
@@ -133,7 +133,7 @@ class FClib {
 	* Gets the complete URL (uniform resource locator)
 	*
 	* @static
-	* @param	boolean $server_port	display server port (if different from 80)
+	* @param	boolean $server_port	display server port (required when differs from 80)
 	* @param	boolean	$query_string	display query_string (i.e.: script.php?...&...&...)
 	* @return	string
 	*/
@@ -243,7 +243,7 @@ class FClib {
 
 
 /**
-* Stand-alone functions defintions to relieve the user from the scope resolution operator notation
+* Stand-alone functions defintions (we export those methods to the global scope in order to relieve the user from the scope resolution operator notation)
 *
 */
 

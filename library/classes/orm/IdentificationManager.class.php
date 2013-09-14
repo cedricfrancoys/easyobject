@@ -149,11 +149,12 @@ class IdentificationManager {
 
 	public function user_lang($session_id) {
 		$user_id = $this->user_id($session_id);
-		$lang = DEFAULT_LANG;
-		if($user_id != GUEST_USER_ID) {
+		if($user_id == GUEST_USER_ID) $lang = GUEST_USER_LANG;
+		else {
+			$lang = DEFAULT_LANG;
 			$om = &ObjectManager::getInstance();
 			$values = &$om->browse(ROOT_USER_ID, 'core\user', array($user_id), array('language'));
-			if(!empty($values[$user_id]['lang'])) $lang = $values[$user_id]['lang'];
+			if(!empty($values[$user_id]['language'])) $lang = $values[$user_id]['language'];
 		}
 		return $lang;
 	}

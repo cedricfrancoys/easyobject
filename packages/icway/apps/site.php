@@ -10,8 +10,9 @@ include('parser.inc.php');
 // force silent mode
 set_silent(true);
 
-$params = get_params(array('page_id'=>1, 'lang'=>'fr', 'label_id'=>null));
+// note: remember to set GUEST_USER_LANG to 'fr' in config.inc.php	
 
+$params = get_params(array('page_id'=>1, 'lang'=>SESSION_LANG, 'label_id'=>null));
 
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'), $params['lang']);
 
@@ -20,6 +21,9 @@ $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 
 * (i.e. translate the 'var' tags from the template)
 */
 $renderer = array(
+	'page_url'		=>	function () {
+							return FClib::get_url();
+						},
 	'page_id'		=>	function () use ($params) {
 							return $params['page_id'];
 						},
@@ -37,9 +41,16 @@ $renderer = array(
 							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('in_menu', '=', '1'))), 'sequence', 'desc');
 							if(!count($ids)) break;
 							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'), $params['lang']);
-							foreach($sections_values as $section_values) {
-								$title = mb_strtoupper($section_values['title'], 'UTF-8');
-								$html .= "<li><a href=\"index.php?show=icway_site&page_id={$section_values['page_id']}\">$title</a></li>";
+							$pages_ids = array_reduce($sections_values, function($a, $b) { $a[] = $b['page_id']; return $a;}, array());
+							$pages_values = &browse('icway\Page', $pages_ids, array('title', 'url_resolver_id'));
+							foreach($pages_values as $id => $page) {
+								$title = mb_strtoupper($page['title'], 'UTF-8');
+								if($page['url_resolver_id'] > 0) {
+									$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
+									$human_url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
+									$html .= "<li><a href=\"$human_url\">".$title."</a></li>";
+								}
+								else $html .= "<li><a href=\"index.php?show=icway_site&page_id={$id}\">$title</a></li>";
 							}
 							$html .= "</ul>";
 							return $html;
@@ -249,4 +260,5 @@ $get_html = function ($attributes) use ($renderer, $params) {
 };
 
 // output html
-if(!is_null($params['page_id']) && file_exists('packages/icway/html/template_site.html')) print(decorate_template(file_get_contents('packages/icway/html/template_site.html'), $get_html));
+$template = 'packages/icway/html/template_site.html';
+if(!is_null($params['page_id']) && file_exists($template)) print(decorate_template(file_get_contents($template), $get_html));

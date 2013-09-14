@@ -10,7 +10,7 @@ include('parser.inc.php');
 // force silent mode
 set_silent(true);
 
-$params = get_params(array('post_id'=>1, 'lang'=>'fr'));
+$params = get_params(array('post_id'=>1, 'lang'=>SESSION_LANG));
 
 
 $values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'content', 'tips_ids'));
@@ -20,6 +20,9 @@ $values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 
 * (i.e. translate the 'var' tags from the template)
 */
 $renderer = array(
+	'page_url'		=>	function () {
+							return FClib::get_url();
+						},
 	'post_id'		=>	function () use ($params) {
 							return $params['post_id'];
 						},
@@ -120,4 +123,5 @@ $get_html = function ($attributes) use ($renderer, $params) {
 };
 
 // output html
-if(!is_null($params['post_id']) && file_exists('packages/icway/html/template_blog.html')) print(decorate_template(file_get_contents('packages/icway/html/template_blog.html'), $get_html));
+$template = 'packages/icway/html/template_blog.html';
+if(!is_null($params['post_id']) && file_exists($template)) print(decorate_template(file_get_contents($template), $get_html));

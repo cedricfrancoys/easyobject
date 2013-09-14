@@ -32,19 +32,18 @@ namespace knine {
 				'authors_ids'		=> array('type' => 'many2many', 'foreign_object' => 'knine\User', 'foreign_field' => 'articles_ids', 'rel_table' => 'knine_rel_article_user', 'rel_foreign_key' => 'user_id', 'rel_local_key' => 'article_id'),
 				'labels_ids'		=> array('type' => 'many2many', 'foreign_object' => 'knine\Label', 'foreign_field' => 'articles_ids', 'rel_table' => 'knine_rel_article_label', 'rel_foreign_key' => 'label_id', 'rel_local_key' => 'article_id'),
 
-				'root_id' 			=> array('type' => 'function', 'result_type' => 'integer', 'function' => 'knine\Article::callable_getRootId'),
-				'is_root' 			=> array('type' => 'function', 'result_type' => 'boolean', 'store' => true, 'function' => 'knine\Article::callable_isRoot'),
+				'root_id' 			=> array('type' => 'function', 'result_type' => 'integer', 'function' => 'knine\Article::getRootId'),
+				'is_root' 			=> array('type' => 'function', 'result_type' => 'boolean', 'store' => true, 'function' => 'knine\Article::isRoot'),
 			);
 		}
 
 		public static function getDefaults() {
 			return array(
-					'title'		=> function() { return 'new article'; },
-					'is_root'	=> function() { return true; }
+					'title'		=> function() { return 'new article'; }
 			);
 		}
 			
-		public static function callable_getRootId($om, $uid, $oid, $lang) {
+		public static function getRootId($om, $uid, $oid, $lang) {
 			while(true) {
 				$root_id = $oid;
 				$res = $om->browse($uid, 'knine\Article', array($oid), array('parent_id'), $lang);
@@ -54,7 +53,7 @@ namespace knine {
 			return $root_id;
 		}
 
- 		public static function callable_isRoot($om, $uid, $oid, $lang) {
+ 		public static function isRoot($om, $uid, $oid, $lang) {
 			$res = $om->browse($uid, 'knine\Article', array($oid), array('parent_id'), $lang);
 			return empty($res[$oid]['parent_id']);
 		}

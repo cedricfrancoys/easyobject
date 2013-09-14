@@ -75,7 +75,7 @@ class ObjectManager {
 		$object_id = 0;
 		$object_table = $this->getObjectTableName($object_class);
 		// list ids of records having no modifier set (i.e. : records created but not stored since then)
-		$ids = $this->search($user_id, $object_class, array(array(array('modifier', '=', 0),array('created', '<', date("Y-m-d H:i:s", time()-(3600*24*DRAFT_VALIDITY))))), 'id', 'asc');
+		$ids = $this->search($user_id, $object_class, array(array(array('modifier', '=', '0'),array('created', '<', date("Y-m-d H:i:s", time()-(3600*24*DRAFT_VALIDITY))))), 'id', 'asc');
 		if(count($ids)) $object_id = $ids[0];
 		$creation_array = array('created' => date("Y-m-d H:i:s"), 'creator' => $user_id);
 		if($object_id  > 0) {
@@ -523,11 +523,7 @@ class ObjectManager {
 
 			// first pass : list all the names of the simple fields that must be stored
 			foreach($object_fields as $field) {
-				if(in_array($columns[$field]['type'], $this->simple_types)) {
-					// non multilang fields cannot be stored in non default lang
-					if($lang != DEFAULT_LANG && (!isset($columns[$field]['multilang']) || !$columns[$field]['multilang'])) continue;
-					$simple_fields[$lang][] = $field;
-				}
+				if(in_array($columns[$field]['type'], $this->simple_types)) $simple_fields[$lang][] = $field;
 			}
 
 			// second pass : store complex fields one by one
@@ -683,7 +679,7 @@ class ObjectManager {
 						}
 						else throw new Exception("binary data not received or cannot be retrieved", UNKNOWN_ERROR);
 						break;
-					case 'one2many':
+ 					case 'one2many':
 					case 'many2many':
 						if(strlen($value)) $fields_values[$field] = explode(',', $value);
 						break;

@@ -216,10 +216,12 @@
 							break;
 						case 'one2many':
 							// display a tree if recursion is found (i.e. : destination class is the same that the one of the current object), use dropdown list otherwise
+/*							
 							if(conf.parent_class == conf.class_name) {
 								$this.tree(conf);
 							}
 							else {
+*/							
 								$this.append($('<input type="hidden"/>')
 												.attr({id: conf.name, name: conf.name})
 												.on('change', conf.onchange)
@@ -234,7 +236,7 @@
 									}
 									$('#'+conf.name).val(value);
 								});
-							}
+//							}
 							break;
 						case 'many2many':
 							$this.append($('<input type="hidden"/>')

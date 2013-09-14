@@ -85,6 +85,32 @@ class Object {
     	}
 	}
 
+
+// todo: not  finished (nor used)
+	// sepcify fields type, mandatory attributes (and more?)
+	// would be better to define this here rather than in ObjectManager
+	public final static function getAttributes() {
+		return array(
+			'boolean'		=> array('type' => 'integer'),
+			'integer'		=> array('type' => 'integer'),
+			'float'			=> array('type' => 'integer'),
+			'string'		=> array('type' => 'integer'),
+			'short_text'	=> array('type' => 'integer'),
+			'text'			=> array('type' => 'integer'),
+			'date'			=> array('type' => 'integer'),
+			'time'			=> array('type' => 'integer'),
+			'datetime'		=> array('type' => 'integer'),
+			'timestamp'		=> array('type' => 'integer'),
+			'selection'		=> array('type' => 'integer'),
+			'binary'		=> array('type' => 'integer'),
+			'many2one'		=> array('type' => 'integer'),
+			'one2many'		=> array('type' => 'integer'),
+			'many2many'		=> array('type' => 'integer'),
+			'related'		=> array('type' => 'integer'),
+			'function'		=> array('type' => 'integer')
+		);
+	}
+
 	public final static function getSpecialFields() {
 		return array(
 			'id'		=> array('type' => 'integer'),
@@ -194,7 +220,9 @@ class Object {
 		$result_array = array();
 		if(is_null($fields)) $fields = array_keys($this->schema);
 		foreach($fields as $field) {
-			if(isset($this->fields_values[$lang]) && isset($this->fields_values[$lang][$field])) $result_array[$field] = $this->fields_values[$lang][$field];
+    		$f_lang = DEFAULT_LANG;
+			if(isset($this->schema[$field]['multilang']) && $this->schema[$field]['multilang']) $f_lang = $lang;
+			if(isset($this->fields_values[$f_lang]) && isset($this->fields_values[$f_lang][$field])) $result_array[$field] = $this->fields_values[$f_lang][$field];
 			else $result_array[$field] = null;
 		}
 		return $result_array;
@@ -221,18 +249,20 @@ class Object {
 		}
 		foreach($keys as $field) {
 			if(in_array($field, $schema)) {
+	    		$f_lang = DEFAULT_LANG;
+				if(isset($this->schema[$field]['multilang']) && $this->schema[$field]['multilang']) $f_lang = $lang;
 				// if it has not yet been modified, set the field to its new value
-				if(!isset($this->modified_fields[$lang][$field])) {
-					$this->fields_values[$lang][$field] = $values[$field];
+				if(!isset($this->modified_fields[$f_lang][$field])) {
+					$this->fields_values[$f_lang][$field] = $values[$field];
 					if($mark_as_modified) {
 						// id is always set in DB (even for new objects)
 						if($field != 'id') {
-							$this->modified_fields[$lang][$field] = true;
+							$this->modified_fields[$f_lang][$field] = true;
 							// modifier is the id of the last user who have made changes to the object
-							$this->fields_values[$lang]['modified'] = date("Y-m-d H:i:s");
-							$this->fields_values[$lang]['modifier'] = $user_id;
-							$this->modified_fields[$lang]['modified'] = $this->loaded_fields[$lang]['modified'] = true;
-							$this->modified_fields[$lang]['modifier'] = $this->loaded_fields[$lang]['modifier'] = true;
+							$this->fields_values[DEFAULT_LANG]['modified'] = date("Y-m-d H:i:s");
+							$this->fields_values[DEFAULT_LANG]['modifier'] = $user_id;
+							$this->modified_fields[$f_lang]['modified'] = $this->loaded_fields[$f_lang]['modified'] = true;
+							$this->modified_fields[$f_lang]['modifier'] = $this->loaded_fields[$f_lang]['modifier'] = true;
 						}
 					}
 				}
@@ -250,7 +280,7 @@ class Object {
 	* @param string $name
 	* @param array $arguments
 	*/
-	public function __call ($name, $arguments) {
+	public function __call($name, $arguments) {
 		// get the parts of the virtual method invoked
 		$method	= strtolower(substr($name, 0, 3));
 		$field	= strtolower(substr($name, 3));

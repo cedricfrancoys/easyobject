@@ -148,6 +148,8 @@
 						$view.append($('<button type="button" />').css('display', 'none').attr('name', 'autosave').attr('action', 'draft'));
 				}
 				$form.append(transform_html($view));
+				// if 'domain' attribute is set, we store it in the conf object
+				conf.domain = $view.attr('domain');
 			},
 
 			/**
@@ -271,7 +273,7 @@
 								break;
 							case 'one2many':
 								var class_name = schemaObj[field]['foreign_object'];
-
+/*
 								if(config.parent_class == class_name) {
 									// recursive tree
 									// obtain listiew for target object and generate grid config (col_model & url)
@@ -324,67 +326,67 @@
 									});
 
 								}
-								else {
-									// obtain listiew for target object and generate grid config (col_model & url)
-									$.extend(config, easyObject.get_grid_config({
-											class_name: class_name,
-											view_name: (attr_view != undefined)?attr_view:'list.default',
-											domain: [[[ schemaObj[field]['foreign_field'], '=', conf.object_id]]]
-									}));
+*/								
+								// obtain listiew for target object and generate grid config (col_model & url)
+								$.extend(config, easyObject.get_grid_config({
+										class_name: class_name,
+										view_name: (attr_view != undefined)?attr_view:'list.default',
+										domain: [[[ schemaObj[field]['foreign_field'], '=', conf.object_id]]]
+								}));
 // todo : use attr_domain : conf.domain.push(...)
 // todo : make this part compatible for all widgets
-									$.extend(config, {
-										del: {
-											func: function($ddlist) {
-												var conf = $ddlist.data('conf');
-												var id = $ddlist.dropdownlist('selection');
-												conf.less = add_value(conf.less, id);
-												conf.more = remove_value(conf.more, id);
-												// force grid to refresh its content
-												$ddlist.trigger('reload');
-												// update the value of the widget
-												$ddlist.trigger('change');
-											}
-										},
-										add: {
-											func: function($ddlist) {
-												// we pass pre-defined value in the edition form (that will be stored whether field is displayed or not)
-												var predefined = {};
-												predefined[schemaObj[field]['foreign_field']] = conf.object_id;
-												$dia = easyObject.UI.dialog({
-															content: easyObject.UI.form({
-																			class_name: class_name,
-																			object_id: 0, 
-																			lang: conf.lang,
-																			predefined: predefined
-																	}),
-															title: 'New object - '+class_name
-															});
+								$.extend(config, {
+									del: {
+										func: function($ddlist) {
+											var conf = $ddlist.data('conf');
+											var id = $ddlist.dropdownlist('selection');
+											conf.less = add_value(conf.less, id);
+											conf.more = remove_value(conf.more, id);
+											// force grid to refresh its content
+											$ddlist.trigger('reload');
+											// update the value of the widget
+											$ddlist.trigger('change');
+										}
+									},
+									add: {
+										func: function($ddlist) {
+											// we pass pre-defined value in the edition form (that will be stored whether field is displayed or not)
+											var predefined = {};
+											predefined[schemaObj[field]['foreign_field']] = conf.object_id;
+											$dia = easyObject.UI.dialog({
+														content: easyObject.UI.form({
+																		class_name: class_name,
+																		object_id: 0, 
+																		lang: conf.lang,
+																		predefined: predefined
+																}),
+														title: 'New object - '+class_name
+														});
 
-												$dia.dialog({close: function(event, ui) {
-																// force grid to refresh its content
-																$ddlist.trigger('reload');
-																// update the value of the widget
-																$ddlist.trigger('change');
-																$(this).dialog('destroy');
-															}
-												});
-											}
-										},
-										edit: {
-											func: function($ddlist) {		
-												var id = $ddlist.dropdownlist('selection');
-												$subform = easyObject.UI.form({class_name: class_name, object_id: id, view_name: 'form.default'});
-												$dia = easyObject.UI.dialog({
-														content: $subform,
-														title: 'Object edition - '+class_name
-												});
-												$dia.dialog({close: function(event, ui) { $ddlist.trigger('reload'); $subform.trigger('destroy'); $(this).dialog('destroy');}});
+											$dia.dialog({close: function(event, ui) {
+															// force grid to refresh its content
+															$ddlist.trigger('reload');
+															// update the value of the widget
+															$ddlist.trigger('change');
+															$(this).dialog('destroy');
+														}
+											});
+										}
+									},
+									edit: {
+										func: function($ddlist) {		
+											var id = $ddlist.dropdownlist('selection');
+											$subform = easyObject.UI.form({class_name: class_name, object_id: id, view_name: 'form.default'});
+											$dia = easyObject.UI.dialog({
+													content: $subform,
+													title: 'Object edition - '+class_name
+											});
+											$dia.dialog({close: function(event, ui) { $ddlist.trigger('reload'); $subform.trigger('destroy'); $(this).dialog('destroy');}});
 
-											}
-										}										
-									});
-								}
+										}
+									}										
+								});
+
 								break;
 							case 'many2many':
 								var class_name = schemaObj[field]['foreign_object'];

@@ -420,8 +420,9 @@ var easyObject = {
 				var domain_str = $view.attr('domain');
 				if(domain_str != undefined) {
 // todo : check syntax validity using reg exp
-					var domain = eval(domain_str);
-					result.domain.push(domain[0]);
+					// var domain = eval(domain_str);
+					// result.domain.push(domain[0]);
+					result.domain = eval(domain_str);
 				}
 				// create a jquery object by appending raw html to a temporary div
 				$view.find('li').each(function() {

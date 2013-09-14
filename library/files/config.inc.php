@@ -19,6 +19,10 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+// todo : make a distinction between mandatory constants and optional constants (that should be defined either in a second config file or in a config file specific to the current app's package)
+
+
 /**
 * Database parameters
 */
@@ -35,10 +39,11 @@
 * Language parameters
 */
 
-	// UI lang is set in SESSION_LANG_UI (in the dispatcher), via method user_lang(), that uses DEFAULT_LANG for GUEST_USER_ID and 'lang' field of core\User object for other users
+	// UI lang is set in SESSION_LANG_UI (in the dispatcher), via method user_lang(), that uses GUEST_USER_LANG for GUEST_USER_ID and 'language' field of core\User object for other users
 	// thus, the UI language can only be changed by modifying user's preferences
 	// the language in which the content of the objects is to be displayed is set in SESSION_LANG (in the dispatcher), if no value is given in the URL (as 'lang' parameter) DEFAULT_LANG is given as default value
     define('DEFAULT_LANG', 'en');
+    define('GUEST_USER_LANG', 'en');
 
 
 /**
@@ -128,7 +133,6 @@
 /**
 * Users, groups and permissions
 */
-
 	// permissions that can be granted to a user or a group
 	define('R_CREATE',	1);
 	define('R_READ',	2);
@@ -172,7 +176,6 @@
 /**
 * Operation mode
 */
-
 	define('OPERATION_MODE', 'standalone');
 	//define('OPERATION_MODE', 'client-server');
 	// note : in addition to OPERATION_MODE, a constant OPERATION_SIDE must be defined in every main entry-point script
@@ -191,7 +194,6 @@
 /**
 * Draft & Versioning
 */
-
 	// draft validity in days
 	// define('DRAFT_VALIDITY', 10);
 	define('DRAFT_VALIDITY', 0);
@@ -199,7 +201,6 @@
 /**
 * Date formatting
 */
-
 	define('DATE_FORMAT', 'd/m/Y');
 
 
@@ -217,4 +218,4 @@
 */
 	
 	// Application to redirect to if nothing is specified in the url (typically while accessing root folder)
-	define('DEFAULT_APP', 'linnetts_home');
+	define('DEFAULT_APP', 'core_manage');
