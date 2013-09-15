@@ -274,6 +274,7 @@
 							case 'one2many':
 								var class_name = schemaObj[field]['foreign_object'];
 /*
+// this is prototype... not sure it is wise to use it (in addition, edit/add/remove buttons are still missing)
 								if(config.parent_class == class_name) {
 									// recursive tree
 									// obtain listiew for target object and generate grid config (col_model & url)
@@ -391,11 +392,12 @@
 							case 'many2many':
 								var class_name = schemaObj[field]['foreign_object'];
 
-// todo : use attr_domain (not easy: can be related to a sublist...)
+
 
 								// obtain listiew for target object and generate grid config (col_model & url)
 								var domain = [[[schemaObj[field]['foreign_field'], 'contains', [conf.object_id]]]];
-// tod: deal with this 								
+
+// todo : use attr_domain (not easy: can be related to a sublist...)
 								// if(attr_domain != undefined) domain[0].push(eval(attr_domain));
 
 								$.extend(config, easyObject.get_grid_config({
@@ -403,11 +405,11 @@
 										view_name: (attr_view != undefined)?attr_view:'list.default',
 										domain: domain
 								}));
-
 								$.extend(config, {
 									edit: {
 										func: function($grid, ids) {
-											$subform = easyObject.UI.form({class_name: class_name, object_id: ids[0], view_name: 'form.default'});
+											var grid_conf = $grid.data('conf');										
+											$subform = easyObject.UI.form({class_name: class_name, object_id: ids[0], view_name: grid_conf.views.edit});
 											$dia = easyObject.UI.dialog({
 													content: $subform,
 													title: 'Object edition - '+ class_name
@@ -432,7 +434,8 @@
 										func: function($grid) {
 // todo : display only items not already present in relation
 // todo: attr_domain is here too											
-											var config = {class_name: class_name, view_name: 'list.default', lang: conf.lang};
+											var grid_conf = $grid.data('conf');
+											var config = {class_name: class_name, view_name: grid_conf.views.add, lang: conf.lang};
 											if(attr_domain != undefined) {
 												var domain = eval(attr_domain);											
 												config = $.extend(true, config, {domain: domain});

@@ -85,32 +85,6 @@ class Object {
     	}
 	}
 
-
-// todo: not  finished (nor used)
-	// sepcify fields type, mandatory attributes (and more?)
-	// would be better to define this here rather than in ObjectManager
-	public final static function getAttributes() {
-		return array(
-			'boolean'		=> array('type' => 'integer'),
-			'integer'		=> array('type' => 'integer'),
-			'float'			=> array('type' => 'integer'),
-			'string'		=> array('type' => 'integer'),
-			'short_text'	=> array('type' => 'integer'),
-			'text'			=> array('type' => 'integer'),
-			'date'			=> array('type' => 'integer'),
-			'time'			=> array('type' => 'integer'),
-			'datetime'		=> array('type' => 'integer'),
-			'timestamp'		=> array('type' => 'integer'),
-			'selection'		=> array('type' => 'integer'),
-			'binary'		=> array('type' => 'integer'),
-			'many2one'		=> array('type' => 'integer'),
-			'one2many'		=> array('type' => 'integer'),
-			'many2many'		=> array('type' => 'integer'),
-			'related'		=> array('type' => 'integer'),
-			'function'		=> array('type' => 'integer')
-		);
-	}
-
 	public final static function getSpecialFields() {
 		return array(
 			'id'		=> array('type' => 'integer'),

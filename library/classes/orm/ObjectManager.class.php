@@ -43,9 +43,48 @@ class ObjectManager {
 	private $objectsArray;
 	private $dbConnection;
 
-	public $simple_types	= array('boolean', 'integer', 'float', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one');
-	public $complex_types	= array('one2many', 'many2many', 'related', 'function');
+	public static $simple_types	= array('boolean', 'integer', 'float', 'string', 'short_text', 'text', 'date', 'time', 'datetime', 'timestamp', 'selection', 'binary', 'many2one');
+	public static $complex_types = array('one2many', 'many2many', 'related', 'function');
 
+	public static $valid_attributes = array(
+			'boolean'		=> array('type', 'label', 'help', 'onchange', 'search'),
+			'integer'		=> array('type', 'label', 'help', 'onchange', 'search'),
+			'float'			=> array('type', 'label', 'help', 'onchange', 'search'),
+			'string'		=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
+			'short_text'	=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
+			'text'			=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
+			'date'			=> array('type', 'label', 'help', 'onchange', 'search'),
+			'time'			=> array('type', 'label', 'help', 'onchange', 'search'),
+			'datetime'		=> array('type', 'label', 'help', 'onchange', 'search'),
+			'timestamp'		=> array('type', 'label', 'help', 'onchange', 'search'),
+			'selection'		=> array('type', 'label', 'help', 'onchange', 'selection'),
+			'binary'		=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
+			'many2one'		=> array('type', 'foreign_object', 'label', 'help', 'onchange', 'search'),
+			'one2many'		=> array('type', 'foreign_object', 'foreign_field', 'label', 'help', 'onchange'),
+			'many2many'		=> array('type', 'foreign_object', 'foreign_field', 'rel_table', 'rel_local_key', 'rel_foreign_key', 'label', 'help', 'onchange'),
+			'related'		=> array('type', 'foreign_object', 'result_type', 'path', 'label', 'help', 'onchange', 'store'),
+			'function'		=> array('type', 'result_type', 'function', 'label', 'help', 'onchange', 'store')
+	);
+
+	public static $mandatory_attributes = array(
+			'boolean'		=> array('type'),
+			'integer'		=> array('type'),
+			'float'			=> array('type'),
+			'string'		=> array('type'),
+			'short_text'	=> array('type'),
+			'text'			=> array('type'),
+			'date'			=> array('type'),
+			'time'			=> array('type'),
+			'datetime'		=> array('type'),
+			'timestamp'		=> array('type'),
+			'selection'		=> array('type', 'selection'),
+			'binary'		=> array('type'),
+			'many2one'		=> array('type', 'foreign_object'),
+			'one2many'		=> array('type', 'foreign_object', 'foreign_field'),
+			'many2many'		=> array('type', 'foreign_object', 'foreign_field', 'rel_table', 'rel_local_key', 'rel_foreign_key'),
+			'related'		=> array('type', 'foreign_object', 'result_type', 'path'),
+			'function'		=> array('type', 'result_type', 'function')
+	);
 
 // Private methods
 
@@ -233,13 +272,14 @@ class ObjectManager {
 	/**
 	* Checks if all the given attributes are defined in the specified schema for the given field.
 	*
-	* @param array $attributes
+	* @param array $check_array
 	* @param array $schema
 	* @param string $field
 	* @return bool
 	*/
-	private function checkFieldAttributes($attributes, $schema, $field) {
+	public static function checkFieldAttributes($check_array, $schema, $field) {
 		if (!isset($schema) || !isset($schema[$field])) throw new Exception("empty schema or unknown field name '$field'");
+		$attributes = $check_array[$schema[$field]['type']];
 		return !(count(array_intersect($attributes, array_keys($schema[$field]))) < count($attributes));
 	}
 
@@ -304,7 +344,7 @@ class ObjectManager {
 				$path_schema = $this->getObjectSchema($path_object_class);
 			}
 			// 3) retrieve result
-			if(in_array($schema[$field]['result_type'], $this->simple_types)) $result = $path_objects_ids[0];
+			if(in_array($schema[$field]['result_type'], self::$simple_types)) $result = $path_objects_ids[0];
 			else $result = $path_objects_ids;
 		}
 		catch(Exception $e) {
@@ -345,7 +385,7 @@ class ObjectManager {
 			foreach($object_fields as $field) {
 				if(!isset($schema[$field]) || ! isset($schema[$field]['type'])) throw new Exception("unknown field or missing mandatory data for field '$field' of class '$object_class'", INVALID_PARAM);
 				// remember simple fields for delayed loading
-				if(in_array($schema[$field]['type'], $this->simple_types)) {
+				if(in_array($schema[$field]['type'], self::$simple_types)) {
 					// multilang fields must be loaded from the translation table
 					if($lang != DEFAULT_LANG && isset($schema[$field]['multilang']) && $schema[$field]['multilang']) $simple_fields_multilang[] = $field;
 					// remember simple fields (that are not multilang)
@@ -353,9 +393,11 @@ class ObjectManager {
 				}
 				// complex fields are loaded at once (for each object specified by the $ids array)
 				else {
-					// functional field with store attribute set to true
+					// check schema validity
+					if(!self::checkFieldAttributes(self::$mandatory_attributes, $schema, $field)) throw new Exception("missing at least one mandatory attribute for field '$field' of class '$object_class'", INVALID_PARAM);
+					// check if we need to fetch something from DB for functional fields having store attribute set to true
                 	if(in_array($schema[$field]['type'], array('related', 'function')) && isset($schema[$field]['store']) && $schema[$field]['store']) {
-                		if(in_array($schema[$field]['result_type'], $this->simple_types)) $simple_fields[] = $field;
+                		if(in_array($schema[$field]['result_type'], self::$simple_types)) $simple_fields[] = $field;
 // todo: following code has not been tested yet (for now, only simple fields are stored)
                 		else {
 							$result = $this->dbConnection->getRecords(array($table_name), array($field), $ids);
@@ -370,26 +412,21 @@ class ObjectManager {
 							$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 							// if field is already loaded and/or has been modified, there is nothing to do
 				   			if(in_array($field, array_keys($object->getLoadedFields($lang)))) continue;
-
 							switch($schema[$field]['type']) {
 								case 'related':
-									if(!$this->checkFieldAttributes(array('result_type', 'foreign_object', 'path'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
                                 	$values_array[$object_id][$field] = $this->loadRelatedField($user_id, $object_class, $object_id, $field, $lang);
 									break;
 								case 'function':
-									if(!$this->checkFieldAttributes(array('function', 'result_type'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for function field '$field' of class '$object_class'", INVALID_PARAM);
 									if(!is_callable($schema[$field]['function'])) throw new Exception("error in schema parameter for function field '$field' of class '$object_class' : function cannot be called");
 									$values_array[$object_id][$field] = call_user_func($schema[$field]['function'], $this, $user_id, $object_id, $lang);
 									break;
 								case 'one2many':
-									if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for one2many field '$field' of class '$object_class'", INVALID_PARAM);
 									if(isset($schema[$field]['order'])) $order = $schema[$field]['order'];
 									else $order = 'id';
 									// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
 				                    $values_array[$object_id][$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], '=', $object_id), array('deleted', '=', '0'))), $order);
 									break;
 								case 'many2many':
-									if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory attribute for many2many field '$field' of class '$object_class'", INVALID_PARAM);
 									// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
 				                    $values_array[$object_id][$field] = $this->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], 'contains', $object_id))));
 									break;
@@ -519,22 +556,21 @@ class ObjectManager {
 			if($lang != DEFAULT_LANG) $simple_fields[$lang] = array();
 
 			// if no fields have been specified, we store every simple fields of the object
-			if(empty($object_fields)) $object_fields = $object->getFieldsNames($this->simple_types);
+			if(empty($object_fields)) $object_fields = $object->getFieldsNames(self::$simple_types);
 
 			// first pass : list all the names of the simple fields that must be stored
 			foreach($object_fields as $field) {
-				if(in_array($columns[$field]['type'], $this->simple_types)) $simple_fields[$lang][] = $field;
+				if(in_array($columns[$field]['type'], self::$simple_types)) $simple_fields[$lang][] = $field;
 			}
 
 			// second pass : store complex fields one by one
 			foreach($object_fields as $field) {
+				if(!self::checkFieldAttributes(self::$mandatory_attributes, $columns, $field)) throw new Exception("missing at least one mandatory parameter for field '$field' of class '$object_class'", INVALID_PARAM);
 				$fields_values = $object->getValues(array($field));
 				$field_value = $fields_values[$field];
 				switch($columns[$field]['type']) {
 					case 'one2many':
 						if(!is_array($field_value)) throw new Exception("wrong value for field '$field' of class '$object_class', should be an array");
-						$mandatory_keys = array('foreign_object', 'foreign_field');
-						if(!$this->checkFieldAttributes($mandatory_keys, $columns, $field)) throw new Exception("missing at least one mandatory parameter for field '$field' of class '$object_class', mandatory parameters are ".implode(', ', $mandatory_keys));
 						$ids_to_remove = array();
 						$ids_to_add = array();
 						foreach($field_value as $id_value) {
@@ -550,8 +586,6 @@ class ObjectManager {
 						break;
 					case 'many2many':
 						if(!is_array($field_value)) throw new Exception("wrong value for field '$field' of class '$object_class', should be an array");
-						$mandatory_keys = array('rel_table', 'rel_foreign_key', 'rel_local_key', 'foreign_object', 'foreign_field');
-						if(!$this->checkFieldAttributes($mandatory_keys, $columns, $field)) throw new Exception("missing at least one mandatory parameter for field '$field' of class '$object_class', mandatory parameters are ".implode(', ', $mandatory_keys));
 						$ids_to_remove = array();
 						$values_array = array();
 						foreach($field_value as $id_value) {
@@ -612,7 +646,7 @@ class ObjectManager {
  			// get the associated instance
 			$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 			// if no fields have been defined, then we will return every simple fields of the object
- 			if(empty($object_fields)) $object_fields = $object->getFieldsNames($this->simple_types);
+ 			if(empty($object_fields)) $object_fields = $object->getFieldsNames(self::$simple_types);
  			// otherwise, we ensure that there is no duplicate
  			else $object_fields = array_unique($object_fields);
 			// first, determine which fields (among the requested ones) have not yet been loaded (or modified)
@@ -894,9 +928,9 @@ class ObjectManager {
 			if(empty($fields)) {
 				$fields = array();
 				foreach($schema as $field => $def) {
-//					if(in_array($def['type'], $this->simple_types) || (isset($def['store']) && $def['store'] && in_array($def['result_type'], $this->simple_types)))
+//					if(in_array($def['type'], self::$simple_types) || (isset($def['store']) && $def['store'] && in_array($def['result_type'], self::$simple_types)))
 // todo: to validate (this could slow the process when listing lots of objects with computed fields, since they must be computed each time)
-					if(in_array($def['type'], $this->simple_types) || ($def['type'] == 'function' && isset($def['result_type']) && in_array($def['result_type'], $this->simple_types)))
+					if(in_array($def['type'], self::$simple_types) || ($def['type'] == 'function' && isset($def['result_type']) && in_array($def['result_type'], self::$simple_types)))
 						$fields[] = $field;
 				}
 			}
@@ -1017,6 +1051,9 @@ class ObjectManager {
 						$operator	= strtolower($domain[$j][$i][1]);
 						$value		= $domain[$j][$i][2];
 						$type 		= $schema[$field]['type'];
+
+						if(!self::checkFieldAttributes(self::$mandatory_attributes, $schema, $field)) throw new Exception("missing at least one mandatory parameter for field '$field' of class '$object_class'", INVALID_PARAM);
+
 						if(in_array($type, array('function', 'related'))) $type = $schema[$field]['result_type'];
 
 						// check the validity of the field name and the operator
@@ -1032,7 +1069,6 @@ class ObjectManager {
 								if($operator == 'contains') $operator = '=';
 								break;
 							case 'one2many':
-								if(!$this->checkFieldAttributes(array('foreign_object','foreign_field'), $schema, $field)) throw new Exception("missing at least one mandatory parameter for one2many field '$field' of class '$object_class'", INVALID_PARAM);
 								// add foreign table to sql query
 								$foreign_table_alias =  $add_table($this->getObjectTableName($schema[$field]['foreign_object']));
 								// add the join condition
@@ -1044,7 +1080,6 @@ class ObjectManager {
 								$operator = 'in';
 								break;
 							case 'many2many':
-								if(!$this->checkFieldAttributes(array('foreign_object', 'rel_table','rel_local_key','rel_foreign_key'), $schema, $field)) throw new Exception("missing at least one mandatory parameter for many2many field '$field' of class '$object_class'", INVALID_PARAM);
 								// add related table to sql query
 								$rel_table_alias = $add_table($schema[$field]['rel_table']);
 								// if the relation points out to objects of the same class

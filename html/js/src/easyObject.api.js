@@ -424,6 +424,13 @@ var easyObject = {
 					// result.domain.push(domain[0]);
 					result.domain = eval(domain_str);
 				}
+				var views_str = $view.attr('views');
+				if(views_str != undefined) {
+// todo : check syntax validity (should be json)
+					result.views = eval('('+ views_str + ')');
+				}
+				else result.views = { edit: 'form.default', add: 'list.default'};
+				
 				// create a jquery object by appending raw html to a temporary div
 				$view.find('li').each(function() {
 					// extract the fields from the view and generate the columns model
