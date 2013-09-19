@@ -11,6 +11,7 @@
 			values: {},
 			level: '',
 			depth: 0,
+			autonum: true,
 			lang: 'en',
 			lang_summary: 'Summarize', 
 			lang_details: 'Read more'			
@@ -71,8 +72,11 @@
 					conf.values = result[conf.article_id];
 				}
 				// 1) First, we build article DOM structure
-				var $article = $('<div/>').addClass('article').attr('id', conf.article_id).append($('<div/>').addClass('level').text(conf.level))
-				var $title = $('<div/>').addClass('title').text(conf.level + ' ' + conf.values['title']).appendTo($article);	
+				var $article = $('<div/>').addClass('article').attr('id', conf.article_id)
+				if(conf.autonum) $article.append($('<div/>').addClass('level').text(conf.level));
+				var $title = $('<div/>').addClass('title').appendTo($article);	
+				if(conf.autonum) $title.text(conf.level + ' ' + conf.values['title']);
+				else $title.text(conf.values['title']);
 				var $summary = $('<div/>').addClass('summary').html(conf.values['summary']).appendTo($article);
 				var $content = $('<div/>').addClass('content').appendTo($article);
 

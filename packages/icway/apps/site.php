@@ -10,9 +10,12 @@ include('parser.inc.php');
 // force silent mode
 set_silent(true);
 
-// note: remember to set GUEST_USER_LANG to 'fr' in config.inc.php	
+// set 'fr' as default language
+if(!isset($_SESSION['icway'])) {
+	$_SESSION['icway'] = $_SESSION['LANG'] = 'fr';
+}
 
-$params = get_params(array('page_id'=>1, 'lang'=>SESSION_LANG, 'label_id'=>null));
+$params = get_params(array('page_id'=>1, 'lang'=>$_SESSION['LANG'], 'label_id'=>null));
 
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'), $params['lang']);
 

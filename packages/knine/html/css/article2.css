@@ -3,6 +3,7 @@ html, body {
 	margin: 0;
 	padding: 0;
 	background-color: #f4f2f4;
+	font: 400 1em Arial,Helvetica,sans-serif;
 }
 
 table, tbody, tr, td {
@@ -32,25 +33,13 @@ table, tbody, tr, td {
 .loaded {}
 
 .article {
-	font-family: "Times New Roman", Times, sans-serif;
-	font-size: 14px;
+	font: 12.6px Arial,Helvetica,sans-serif;
+	color: #333333;
 	margin-left: 5px;
 	padding-right: 15px;
 	text-align: justify;
 	border-left: 3px solid #E0E0E0;
     padding-left: 5px;	
-}
-
-.article table, .article tbody, .article tr, .article td {
-	font-family: "Times New Roman", Times, sans-serif;
-	font-size: 14px;
-	text-align: justify;
-}
-
-.article td {
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-bottom: 10px;
 }
 
 .article .details_link, .article .summary_link, .article .option_link {
@@ -77,6 +66,7 @@ table, tbody, tr, td {
 }
 
 .article .title {
+	font: 1.9em Georgia,serif;
 	position: relative;
 	font-size: 24px;
 	margin-bottom: 5px;
