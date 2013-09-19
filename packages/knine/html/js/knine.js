@@ -66,7 +66,7 @@
 			load: function($elem, conf) {
 				// load article (or get it from conf)
 				if($.isEmptyObject(conf.values)) {
-					var result = browse('knine\\Article', [conf.article_id], ['id', 'created', 'title', 'summary', 'content', 'children_ids'], conf.lang);
+					var result = browse('knine\\Article', [conf.article_id], ['id', 'modified', 'title', 'summary', 'content', 'children_ids'], conf.lang);
 					// check that the article does actualy exist						
 					if(typeof result[conf.article_id] == 'undefined') return; 
 					conf.values = result[conf.article_id];
@@ -85,15 +85,20 @@
 					var result = browse('knine\\Article', [conf.article_id], ['authors_ids'], conf.lang);
 					result = browse('knine\\User', result[conf.article_id]['authors_ids'], ['firstname','lastname'], conf.lang);
 					var authors = '';
-					$.each(result, function(i, item) {
-						if(authors.length) authors += ',';
+					var res_len = Object.keys(result).length, j = 0;
+					$.each(result, function(id, item) {
+						if(authors.length) { 
+							if(j == res_len-1) authors += ' et ';
+							else authors += ', ';
+						}
 						authors += item.firstname+' '+item.lastname;
+						++j;
 					});
 					var date = new Date();
-					date.setFullYear(conf.values['created'].substring(0,4));
-					date.setMonth(conf.values['created'].substring(5,7));	
-					date.setDate(conf.values['created'].substring(8,10));
-					$title.html($title.html()+'<br />&nbsp;&nbsp;<span style="font-size: 12px;">par '+authors+'&nbsp;('+date.toLocaleDateString()+')</span>');
+					date.setFullYear(conf.values['modified'].substring(0,4));
+					date.setMonth(conf.values['modified'].substring(5,7));	
+					date.setDate(conf.values['modified'].substring(8,10));
+					$title.html($title.html()+'<p style="font-size: 12px;">&nbsp;&nbsp; par '+authors+'</p><p style="font-size: 12px;">&nbsp;('+date.toLocaleDateString()+')</p>');
 					$title.addClass('main');						
 				}
 				//add show/hide links
