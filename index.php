@@ -25,6 +25,7 @@
 *
 */
 
+
 /**
 * Include dependencies
 */
@@ -48,25 +49,20 @@ define('OPERATION_SIDE', 'client');
 if(!strlen(session_id())) session_start() or die(__FILE__.', line '.__LINE__.", unable to start session.");
 
 // store current session_id into a constant (required as default parameter of several functions defined in easyobject library)
-if(!defined('SESSION_ID')) define('SESSION_ID', session_id());
+defined('SESSION_ID') or define('SESSION_ID', session_id());
 
 // set the languages in which UI and content must be displayed
 
 // UI items : UI language is the one defined in the user's settings (core/User object)
-if(!isset($_SESSION['LANG_UI'])) $_SESSION['LANG_UI'] = user_lang();
+isset($_SESSION['LANG_UI']) or $_SESSION['LANG_UI'] = user_lang();
 
 // Content items :
 //		- for unidentified users, language is DEFAULT_LANG
 //		- for identified users language is the one defined in the user's settings
 //		- if a parameter lang is defined in the HTTP request, it overrides user's language
-if(!isset($_SESSION['LANG'])) $_SESSION['LANG'] = $_SESSION['LANG_UI'];
+isset($_SESSION['LANG']) or $_SESSION['LANG'] = $_SESSION['LANG_UI'];
 $params = get_params(array('lang'=>$_SESSION['LANG']));
 $_SESSION['LANG'] = $params['lang'];
-
-// store session values into constants (so they can be used as default parameter in functions/methods definitions)
-define('SESSION_LANG_UI', $_SESSION['LANG_UI']);
-define('SESSION_LANG', $_SESSION['LANG']);
-
 
 // from now on, we let the script decide whether or not to output error messages if any
 set_silent(false);
@@ -80,7 +76,6 @@ if (get_magic_quotes_gpc()) {
 }
 // add keys from $_FILES to the superglobal $_REQUEST array (in order to let the manager know when binary fields are present)
 $_REQUEST = array_merge($_REQUEST, array_fill_keys(array_keys($_FILES), ''));
-
 
 
 /**

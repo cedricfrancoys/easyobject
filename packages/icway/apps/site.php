@@ -11,11 +11,14 @@ include('parser.inc.php');
 set_silent(true);
 
 // set 'fr' as default language
-if(!isset($_SESSION['icway'])) {
-	$_SESSION['icway'] = $_SESSION['LANG'] = 'fr';
-}
+isset($_SESSION['icway_lang']) or $_SESSION['icway_lang'] = 'fr';
 
-$params = get_params(array('page_id'=>1, 'lang'=>$_SESSION['LANG'], 'label_id'=>null));
+$params = get_params(array('page_id'=>1, 'lang'=>null, 'label_id'=>null));
+
+// lang param was not in the URL: use previously chosen or default
+if(is_null($params['lang'])) $params['lang'] = $_SESSION['LANG'] = $_SESSION['icway_lang'];
+else $_SESSION['icway_lang'] = $params['lang'];
+
 
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'), $params['lang']);
 
@@ -233,6 +236,32 @@ switch($params['page_id']) {
 			return $html;
 		};
 		break;
+	case 11:
+		// page our convictions
+		$renderer['content'] = function() use($params){
+			$html = '';
+			// get children_ids from article 21
+			$articles_values = &browse('knine\Article', array(21), array('title', 'summary', 'children_ids'), DEFAULT_LANG);
+			$html .= '<h1>'.$articles_values[21]['title'].'</h1>';
+			$html .= $articles_values[21]['summary'];
+			$articles_values = &browse('knine\Article', $articles_values[21]['children_ids'], array('title'), DEFAULT_LANG);
+			foreach($articles_values as $id => $values) {
+				$html .= '<h2 class="knine" id="'.$id.'"><a href="#">'.$values['title'].'</a></h2>';
+			}
+			return $html;
+		};
+		$renderer['script'] = function () use ($params, $values) {
+			$i18n = I18n::getInstance();
+			$lang_details = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'more', 'field_attr' => 'label'));
+			$lang_summary = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'less', 'field_attr' => 'label'));
+		
+			$script = '';
+			$script .= "var LANG_DETAILS = '{$lang_details}';\n";
+			$script .= "var LANG_SUMMARY = '{$lang_summary}';\n";	
+			$script .= $values[$params['page_id']]['script'];
+			return $script;
+		};
+		break;		
 	case 14:
 		// page sitemap
 		break;

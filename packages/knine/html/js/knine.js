@@ -96,7 +96,7 @@
 					});
 					var date = new Date();
 					date.setFullYear(conf.values['modified'].substring(0,4));
-					date.setMonth(conf.values['modified'].substring(5,7));	
+					date.setMonth(conf.values['modified'].substring(5,7)-1);	
 					date.setDate(conf.values['modified'].substring(8,10));
 					$title.html($title.html()+'<p style="font-size: 12px;">&nbsp;&nbsp; par '+authors+'</p><p style="font-size: 12px;">&nbsp;('+date.toLocaleDateString()+')</p>');
 					$title.addClass('main');						

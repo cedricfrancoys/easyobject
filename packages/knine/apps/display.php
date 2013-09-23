@@ -57,75 +57,18 @@ $html->add($content = new HtmlBlock('content', 'div'));
 $content->add($outer = new HtmlBlock('outer_frame', 'div'));
 $outer->add($frame = new HtmlBlock('frame', 'div', null, array('class'=>'loaded')));
 
-/**
-* Returns the html code corresponding to the specified article at the specified level of detail
-*
-* @param integer $article_id
-* @param string $level
-* @param integer $depth
-* @param integer $max_depth
-*/
-function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
-	global $lang_details, $lang_summary;
-	$html = '';
-	$objectsManager = &ObjectManager::getInstance();
 
-	$values = browse('knine\Article', array($article_id), array('created', 'creator', 'title', 'is_root', 'children_ids', 'summary', 'content'));
-	$article = $values[$article_id];
-
-	if(strlen($level)) $article['title'] = $level.'.&nbsp;'.$article['title'];
-
-	$values = browse('knine\User', array($article['creator']), array('firstname', 'lastname'));
-	$creator_name	= $values[$article['creator']]['firstname'].' '.$values[$article['creator']]['lastname'];
-
-	$class_name = 'title';
-	$title_details = '';
-
-	if($article['is_root']) {
-		$class_name .= ' main';
-		$articleDate = new DateFormatter();
-		$articleDate->setDate($article['created'], DATE_TIME_SQL);
-		$article_date = $articleDate->getDate(DATE_STRING);
-		$title_details	= '<br />&nbsp;&nbsp;<span style="font-size: 12px;">par '.$creator_name.'&nbsp;('.$article_date.')</span>';
-	}
-
-	if($depth >= $max_depth) {
-		$html .= '<div class="article" id="'.$article_id.'">';
-		$html .= '	<div class="level">'.$level.'</div>';
-		$html .= '	<div class="'.$class_name.'">'.$article['title'].$title_details.'</div>';
-		$html .= '	<div class="summary">'.$article['summary'].'</div>';
-		$html .= '	<div class="content" style="display: none;"></div>';
-		$html .= '  <div class="display_button"><a class="summary_link" style="display: none;" href="javascript:void(null);">'.$lang_summary.'</a><a class="details_link" href="javascript:void(null);">'.$lang_details.'</a></div>';
-		$html .= '</div>';
-	}
-	else {
-		$html .= '<div class="article" id="'.$article_id.'">';
-		$html .= '	<div class="level">'.$level.'</div>';
-		$html .= '	<div class="'.$class_name.'">'.$article['title'].$title_details.'</div>';
-		$html .= '	<div class="summary" style="display: none;">'.$article['summary'].'</div>';
-		$html .= '	<div class="content loaded">';
-		if(count($article['children_ids']) > 0) {
-			$i = 1;
-			foreach($article['children_ids'] as $sub_article_id) {
-	            $next_level = $i;
-				if(strlen($level)) $next_level = '.'.$next_level;
-				$html .= get_article_html($sub_article_id, $level.$next_level, $depth+1, $max_depth);
-				++$i;
-			}
-		}
-		else {
-			$html .= $article['content'];
-		}
-		$html .= '	</div>';
-		$html .= '  <div class="display_button"><a class="summary_link" href="javascript:void(null);">'.$lang_summary.'</a><a class="details_link" style="display: none;" href="javascript:void(null);">'.$lang_details.'</a></div>';
-		$html .= '</div>';
-	}
-	return $html;
+function get_article() {
+	ob_start();	
+	include('packages/knine/data/article.php');
+	$data = ob_get_contents();
+	ob_end_clean();
+	return $data;
 }
 
 // We display the content of the specified article (at specified level).
 // This could be done client-side (JS) but then content would not be indexed by search engines
-$frame->add(get_article_html($params['article_id'], '', 0, $params['level']));
+$frame->add(get_article());
 
 
 $html->addScript("
