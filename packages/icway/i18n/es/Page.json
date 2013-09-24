@@ -1,9 +1,10 @@
 {
 	"model": {
-		"label":{"label":"Libellé"}
 	},
 	"view": {
+		"go_back":{"label":"Atrás"},	
 		"share_page":{"label":"Partager cette page"},	
+		"like_txt":{"label":"Si vous aimez le contenu de cette page, faites-le savoir !"},	
 		"recent_articles_title":{"label":"Articles récents"},			
 		"latest_docs_title":{"label":"Derniers documents"},				
 		"about":{"label":"À propos de ICway"},

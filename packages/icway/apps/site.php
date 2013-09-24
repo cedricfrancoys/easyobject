@@ -243,7 +243,7 @@ switch($params['page_id']) {
 			// get children_ids from article 21
 			$articles_values = &browse('knine\Article', array(21), array('title', 'summary', 'children_ids'), DEFAULT_LANG);
 			$html .= '<h1>'.$articles_values[21]['title'].'</h1>';
-			$html .= $articles_values[21]['summary'];
+			$html .= '<div>'.$articles_values[21]['summary'].'</div>';
 			$articles_values = &browse('knine\Article', $articles_values[21]['children_ids'], array('title'), DEFAULT_LANG);
 			foreach($articles_values as $id => $values) {
 				$html .= '<h2 class="knine" id="'.$id.'"><a href="#">'.$values['title'].'</a></h2>';
@@ -254,10 +254,12 @@ switch($params['page_id']) {
 			$i18n = I18n::getInstance();
 			$lang_details = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'more', 'field_attr' => 'label'));
 			$lang_summary = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'less', 'field_attr' => 'label'));
-		
+			$lang_back = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'icway\Page', 'object_part' => 'view', 'object_field' => 'go_back', 'field_attr' => 'label'));
+	
 			$script = '';
 			$script .= "var LANG_DETAILS = '{$lang_details}';\n";
 			$script .= "var LANG_SUMMARY = '{$lang_summary}';\n";	
+			$script .= "var LANG_BACK = '{$lang_back}';\n";				
 			$script .= $values[$params['page_id']]['script'];
 			return $script;
 		};
