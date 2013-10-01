@@ -43,6 +43,7 @@
 	font-size: 35px;
 	padding: 20px 0px 20px 10px;
 	text-align: center;
+	margin-top: 0;	
 }
 
 .article .content, .article .summary {

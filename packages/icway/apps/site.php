@@ -1,91 +1,34 @@
 <?php
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
-load_class('orm/I18n');
-load_class('utils/DateFormatter');
-
-include('parser.inc.php');
-
-
 // force silent mode
 set_silent(true);
 
-// set 'fr' as default language
-isset($_SESSION['icway_lang']) or $_SESSION['icway_lang'] = 'fr';
+include('parser.inc.php');
+include('common.inc.php');
 
-$params = get_params(array('page_id'=>1, 'lang'=>null, 'label_id'=>null));
-
-// lang param was not in the URL: use previously chosen or default
-if(is_null($params['lang'])) $params['lang'] = $_SESSION['LANG'] = $_SESSION['icway_lang'];
-else $_SESSION['icway_lang'] = $params['lang'];
-
-
+$template = 'packages/icway/html/template_site.html';
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'), $params['lang']);
 
 /**
-* This array holds the methods to use for rendering the page
+* Extend renderer array with functions specific to this app
 * (i.e. translate the 'var' tags from the template)
 */
-$renderer = array(
-	'page_url'		=>	function () {
-							return FClib::get_url();
-						},
-	'page_id'		=>	function () use ($params) {
-							return $params['page_id'];
-						},
-	'title'			=>	function () use ($params, $values) {
-							return $values[$params['page_id']]['title'];
-						},
-	'content'		=>	function () use ($params, $values) {
-							return $values[$params['page_id']]['content'];
-						},
-	'script'		=>	function () use ($params, $values) {
+$renderer = array_merge($renderer, array(
+	'script'		=>	function ($params) use ($values) {
 							return $values[$params['page_id']]['script'];
 						},
-	'top_menu'		=>	function () use ($params) {
-							$html = "<ul>";
-							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('in_menu', '=', '1'))), 'sequence', 'desc');
-							if(!count($ids)) break;
-							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'), $params['lang']);
-							$pages_ids = array_reduce($sections_values, function($a, $b) { $a[] = $b['page_id']; return $a;}, array());
-							$pages_values = &browse('icway\Page', $pages_ids, array('title', 'url_resolver_id'));
-							foreach($pages_values as $id => $page) {
-								$title = mb_strtoupper($page['title'], 'UTF-8');
-								if($page['url_resolver_id'] > 0) {
-									$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
-									$human_url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
-									$html .= "<li><a href=\"$human_url\">".$title."</a></li>";
-								}
-								else $html .= "<li><a href=\"index.php?show=icway_site&page_id={$id}\">$title</a></li>";
-							}
-							$html .= "</ul>";
-							return $html;
+	'title'			=>	function ($params) use ($values) {
+							return $values[$params['page_id']]['title'];
 						},
-	'localizator'	=>	function () use ($params){
-							$path = array();
-							// recurse to the root section
-							$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));
-							while(count($sections_ids)) {
-								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'), $params['lang']);
-								foreach($sections_values as $section_id => $section_values) {
-									array_unshift($path, array($section_values['page_id'] => $section_values['title']));
-									$sections_ids = array($section_values['parent_id']);
-									if($section_values['parent_id'] == 0) break 2;
-								}
-							}
-							$html = '<ul>';
-							for($i = 0, $j = count($path); $i < $j; $i++) {
-								foreach($path[$i] as $page_id => $page_title) {
-									$html .= '<li><a href="index.php?show=icway_site&page_id='.$page_id.'">'.$page_title.'</a></li>';
-								}
-							}
-							$html .= '</ul>';
-							return $html;
+	'content'		=>	function ($params) use ($values) {
+							return $values[$params['page_id']]['content'];
 						},
-	'left_column'	=>	function () use ($params){
+	'left_column'	=>	function ($params) {
 							// find level-2 section of current page
 							$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));
 							$selected_id = null;
+							// find root section
 							while(count($sections_ids)) {
 								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id'), $params['lang']);
 								foreach($sections_values as $section_id => $section_values) {
@@ -96,10 +39,10 @@ $renderer = array(
 							}
 							// no match found
 							if(is_null($selected_id)) $selected_id = 1;
-							$sections_values = &browse('icway\Section', array($selected_id), array('title', 'sections_ids'), $params['lang']);
+							$sections_values = &browse('icway\Section', array($selected_id), array('page_id', 'title', 'sections_ids'), $params['lang']);
 							// note: this is a loop but we only have one item
 							foreach($sections_values as $section_id => $section_values) {
-								$html = '<h1>'.$section_values['title'].'</h1>';
+								$html = '<h1 style="cursor: pointer;" onclick="window.location.href=\'index.php?show=icway_site&page_id='.$section_values['page_id'].'\';">'.$section_values['title'].'</h1>';
 								$html .= '<ul>';
 								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'), $params['lang']);
 								foreach($subsections_values as $subsection_values) {
@@ -111,39 +54,18 @@ $renderer = array(
 								$html .= '</ul>';
 							}
 							return $html;
-						},
-	'latest_docs'	=>	function () use ($params) {
-							$html = "<ul>";
-							// sort resources by title (inside the current category)
-							$resources_ids = search('icway\Resource', array(array(array())), 'modified', 'desc', 0, 3);
-							$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'), $params['lang']);
-							foreach($resources_values as $resource_values) {
-								$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);
-								// we use Google doc viewer for other stuff than images
-								list($mode, $type) = explode('/', $resource_values['type']);
-								$html .= '<li>';
-								$html .= '  <a href="ressources#'.$resource_values['id'].'">'.$resource_values['title'].'</a>';
-								$html .= '  <span class="details">&nbsp;&nbsp'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko</span>';
-								$html .= '</li>';
-							}
-							$html .= "</ul>";
-							return $html;
-						},
-	'latest_posts'	=>	function () {
-	
 						}
-);
+));
 
-
-
-
-// For special pages (i.e. pages that require a dynamic content),
-// we replace renderer entries with other methods
+/**
+* For special pages (i.e. pages that require a dynamic content),
+* we replace renderer entries with other methods
+*/
 switch($params['page_id']) {
 	case 5:
 		// page 'blog'		
 		if(isset($params['label_id'])) {
-			$renderer['content'] = function() use ($params) {
+			$renderer['content'] = function($params) {
 				$html = '<h1>'.'Bienvenue sur notre blog'.'</h1>';
 				$result = browse('icway\Label', array($params['label_id']), array('posts_ids'), $params['lang']);
 				$posts_ids = $result[$params['label_id']]['posts_ids'];
@@ -156,7 +78,7 @@ switch($params['page_id']) {
 			};
 		}
 		else {
-			$renderer['script'] = function() use ($params){
+			$renderer['script'] = function($params) {
 				return "
 					$(document).ready(function(){
 						$.getScript('html/js/easyObject.api.min.js')
@@ -181,11 +103,12 @@ switch($params['page_id']) {
 			};
 		}
 		
-		$renderer['left_column'] = function() use ($params) {
+		$renderer['left_column'] = function($params) {
 			// list of categories
 			$html = '';
 			$labels_ids = search('icway\Label', array(array(array())));
 			$labels_values = &browse('icway\Label', $labels_ids, array('id', 'name'), $params['lang']);
+// todo: translate
 			$html = '<h1>'.'Cat&eacute;gories'.'</h1>';							
 			$html .= '<ul>';							
 			foreach($labels_values as $label_values) {				
@@ -197,12 +120,11 @@ switch($params['page_id']) {
 			$html .= '</ul>';														
 			return $html;			
 		};
-		
-// todo: check if we received a albel_id param (in which case we have to display the associated posts in the content pane)
 		break;
 	case 7:
 		// page 'resources'
-		$renderer['content'] = function() {
+		$renderer['content'] = function($params) {
+// todo: translate
 			$html = '<h1>'.'Ressources'.'</h1>';
 			$html .= '<div class="file_cabinet">';
 
@@ -235,10 +157,22 @@ switch($params['page_id']) {
 			$html .= '</div>';
 			return $html;
 		};
+		$renderer['script'] = function($params) {
+			return "
+				$(document).ready(function(){
+					var href = window.location.href;
+					var pos = href.indexOf('#');
+					if(pos > 0) {
+						var res_id = href.slice(pos+1);
+						$(\"a[name='\"+res_id+\"']\").css({'background-color': '#FCFE7C'});
+					}
+				});
+			";
+		};
 		break;
 	case 11:
 		// page our convictions
-		$renderer['content'] = function() use($params){
+		$renderer['content'] = function($params) {
 			$html = '';
 			// get children_ids from article 21
 			$articles_values = &browse('knine\Article', array(21), array('title', 'summary', 'children_ids'), DEFAULT_LANG);
@@ -250,7 +184,7 @@ switch($params['page_id']) {
 			}
 			return $html;
 		};
-		$renderer['script'] = function () use ($params, $values) {
+		$renderer['script'] = function ($params) use ($params, $values) {
 			$i18n = I18n::getInstance();
 			$lang_details = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'more', 'field_attr' => 'label'));
 			$lang_summary = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'less', 'field_attr' => 'label'));
@@ -266,33 +200,49 @@ switch($params['page_id']) {
 		break;		
 	case 14:
 		// page sitemap
+		$renderer['content'] = function($params) {
+			function get_pages_list($section_id) {
+				global $params;
+				$html = '';
+				$get_page_url = function ($page_id) {
+					$url = '';
+					$pages_values = &browse('icway\Page', array($page_id), array('url_resolver_id'));
+					foreach($pages_values as $id => $page) {
+						if($page['url_resolver_id'] > 0) {
+							$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
+							$url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
+						}
+						else $url = "index.php?show=icway_site&page_id={$id}";
+					}
+					return $url;
+				};				
+				$sections_values = &browse('icway\Section', array($section_id), array('sections_ids', 'page_id', 'title'), $params['lang']);
+				foreach($sections_values as $section_id => $section_values) {
+					$url = $get_page_url($section_values['page_id']);
+					$html .= '<a href="#" onclick="javascript:select_page(\''.$url.'\');">'.$section_values['title'].'</a>';
+					$html .= '<ul>';
+					$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('id', 'sections_ids', 'page_id', 'title'), $params['lang']);
+					foreach($subsections_values as $subsection_values) {
+						$html .= '<li>';
+						if(!empty($subsection_values['sections_ids'])) $html .= get_pages_list($subsection_values['id']);
+						else { 
+							$url = $get_page_url($subsection_values['page_id']);
+							$html .= '<a href="#" onclick="javascript:select_page(\''.$url.'\');">'.$subsection_values['title'].'</a>';
+						}
+						$html .= '</li>';
+					}
+					$html .= '</ul>';
+				}
+				return $html;
+			};
+//todo: translate			
+			$html = '<h1>'.'Plan du site'.'</h1>';	
+			$html .= get_pages_list(1);
+			return $html;
+		};
 		break;
 }
 
-/**
-* Returns html part specified by $attributes (from a 'var' tag) and associated with current post id
-* (here come the calls to easyObject API)
-*
-* @param array $attributes
-*/
-$get_html = function ($attributes) use ($renderer, $params) {
-
-		if(isset($renderer[$attributes['id']])) return $renderer[$attributes['id']]();
-		else {
-			$html = '';
-			if(isset($attributes['translate']) && in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) {
-				$i18n = I18n::getInstance();
-				$html = $i18n->getClassTranslationValue($params['lang'], array(
-													'object_class'	=> 'icway\Page',
-													'object_part'	=> 'view',
-													'object_field'	=> $attributes['id'],
-													'field_attr'	=> 'label')
-												);
-			}
-			return $html;
-		}
-};
 
 // output html
-$template = 'packages/icway/html/template_site.html';
-if(!is_null($params['page_id']) && file_exists($template)) print(decorate_template(file_get_contents($template), $get_html));
+if(!is_null($params['page_id']) && file_exists($template)) print(decorate_template(file_get_contents($template), get_html));

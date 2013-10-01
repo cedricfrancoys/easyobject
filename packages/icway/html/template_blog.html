@@ -3,25 +3,25 @@
 <head>
 	<title>ICway</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8">
-	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/blog.css" />	
-	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/social-likes.css" />		
+	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/blog.css" />
+	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/social-likes.css" />
 
 	<!--[if lte IE 8]>
 	  <style type="text/css">
 	  #loc-bg {
-		filter:progid:DXImageTransform.Microsoft.Shadow(color='#505050', Direction=180, Strength=17), Alpha(Opacity=30);		
-	  } 
+		filter:progid:DXImageTransform.Microsoft.Shadow(color='#505050', Direction=180, Strength=17), Alpha(Opacity=30);
+	  }
 	  </style>
 	<![endif]-->
-	
+
 	<script language="javascript" type="text/javascript" src="html/js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="packages/icway/html/js/social-likes.min.js"></script>		
+	<script type="text/javascript" src="packages/icway/html/js/social-likes.min.js"></script>
 </head>
 
 <body>
 	<div id="header">
-		<div id="loc-bg"></div>			
-		<div id="header-inner">	
+		<div id="loc-bg"></div>
+		<div id="header-inner">
 			<div id="logo"></div>
 			<div id="pic"></div>
 			<div id="header-right">
@@ -29,68 +29,86 @@
 					<a href="&lang=es"><div>ES</div><label>| mostrar esta página en español</label></a>
 					<a href="&lang=fr"><div>FR</div><label>| afficher cette page en français</label></a>
 					<a href="&lang=en"><div>EN</div><label>| show this page in english</label></a>
-				</div>			
+				</div>
 				<div id="search">
 					<form action="" method="get">
 						<input class="search-query" type="text" placeholder="Rechercher" title="Rechercher" name="q">
 						<input class="search-submit" type="image" value="" src="packages/icway/html/css/img/search.png">
 					</form>
-				</div>				
-			</div>			
+				</div>
+			</div>
 			<div id="menu-bg">
 				<var id="top_menu"></var>
-			</div>			
+			</div>
 			<div id="menu">
 				<var id="top_menu"></var>
-			</div>					
-			<div id="localizator">
-				<var id="localizator"></var>			
 			</div>
-		</div>			
+			<div id="localizator">
+				<var id="localizator"></var>
+			</div>
+		</div>
 	</div>
 	<div id="page">
 		<div id="main-column">
 			<div id="left-column">
-				<var id="left_column"></var>			
+				<var id="left_column"></var>
 			</div>
 			<div id="article-content">
 				<var id="content"></var>
+				<p class="comments">
+					<span class="comments-link">Commentaires</span>
+					<ul class="commentlist">
+						<li>
+							<span><a style="cursor: pointer;" href="javascript:void(0)" onclick="$('#add_comment').toggle();$('#author').focus();$(this).toggle();">Ajouter un commentaire</a></span>
+							<div id="add_comment" style="display: none;">
+								<iframe name="submission_frame" style="display: none;"></iframe>
+								<form target="submission_frame" method="get" action="index.php" onsubmit="setTimeout(function(){window.location = window.location.href;}, 2000);">
+									<label for="author">Nom*</label><br/><input type="text" id="author" name="author" /><br/>
+									<label for="email">E-mail</label><br/><input type="text" id="email" name="email" /><br/>
+									<label for="message">Commentaire*</label><textarea id="message" name="content"></textarea>
+									<textarea style="display: none;" name="post_id"><var id="post_id"></var></textarea>
+									<input type="hidden" name="object_class" value="icway\Comment" />
+									<input type="hidden" name="ids[]" value="0" />
+									<input type="hidden" name="do" value="core_objects_update" />
+									<button type="submit">Envoyer</button>
+								</form>
+							</div>
+						</li>
+						<var id="comments"></var>
+					</ul>
+				</p>
 			</div>
-		</div>					
+		</div>
 		<div id="sidebar">
 			<var id="tips"></var>
-		</div>							
+		</div>
 	</div>
 	<div id="bottom">
 		<div id="bottom-bg"></div>
-		<div id="bottom-inner">				
-			<div class="box">							
+		<div id="bottom-inner">
+			<div class="box">
 				<h1><var id="share_page" translate="yes"></var> »</h1>
 				<ul style="margin-bottom: 30px;">
 					<li style="font-size: 0.8em;"><var id="like_txt" translate="yes"></var></li>
-				</ul>				
-				<ul class="social-likes social-likes_horizontal" counters="no">			
+				</ul>
+				<ul class="social-likes social-likes_horizontal" counters="no">
 					<li class="facebook" style="margin-bottom: 10px;">Facebook</li>
-					<li class="plusone" style="margin-bottom: 10px;">Google+</li>	
+					<li class="plusone" style="margin-bottom: 10px;">Google+</li>
 					<li class="twitter" style="margin-bottom: 10px;">Twitter</li>
 				</ul>
-			</div>	
+			</div>
 			<div class="box">
 				<h1><var id="recent_articles_title" translate="yes"></var> »</h1>
-				<ul>
-					<li><a href="#">Un chauffe-eau solaire pour 200 euros</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
-					<li><a href="#">Un petit bâtiment en palettes recyclées</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>					
-					<li><a href="#">L'autonomie énergétique pour 2500 euros</a><span>&nbsp;&nbsp;|&nbsp;&nbsp;janvier&nbsp;2013</span></li>
-				</ul>
-			</div>			
-			<div class="box">				
+				<var id="latest_posts"></var>
+			</div>
+			<div class="box">
 				<h1><var id="latest_docs_title" translate="yes"></var> »</h1>
 				<var id="latest_docs"></var>
-			</div>	
+			</div>
 		</div>
-	</div>		
+	</div>
 	<div id="footer">
-		<a href="#"><var id="about" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#"><var id="sitemap" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="#"><var id="contact" translate="yes"></var></a><br />
+		<a href="index.php?show=icway_site&page_id=8"><var id="about" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="index.php?show=icway_site&page_id=14"><var id="sitemap" translate="yes"></var></a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;<a href="index.php?show=icway_site&page_id=13"><var id="contact" translate="yes"></var></a><br />
 		<span style="font-size: 0.9em;"><var id="licence" translate="yes"></var></span>
 	</div>
 </body>

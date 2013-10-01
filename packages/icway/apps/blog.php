@@ -1,38 +1,27 @@
 <?php
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
-load_class('orm/I18n');
-load_class('utils/DateFormatter');
-
-include('parser.inc.php');
-
-
 // force silent mode
 set_silent(true);
 
-$params = get_params(array('post_id'=>1, 'lang'=>SESSION_LANG));
+include('parser.inc.php');
+include('common.inc.php');
 
-
-$values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'content', 'tips_ids'));
+$template = 'packages/icway/html/template_blog.html';
+$values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'content', 'tips_ids', 'comments_ids'));
 
 /**
-* This array holds the methods to use for rendering the page
+* Extend renderer array with functions specific to this app
 * (i.e. translate the 'var' tags from the template)
 */
-$renderer = array(
-	'page_url'		=>	function () {
-							return FClib::get_url();
-						},
-	'post_id'		=>	function () use ($params) {
-							return $params['post_id'];
-						},
-	'title'			=>	function () use ($params, $values) {
+$renderer = array_merge($renderer, array(
+	'title'			=>	function ($params) use ($values) {
 							return $values[$params['post_id']]['title'];
 						},
-	'content'		=>	function () use ($params, $values) {
+	'content'		=>	function ($params) use ($values) {
 							return '<h1>'.$values[$params['post_id']]['title'].'</h1>'.$values[$params['post_id']]['content'];
 						},
-	'tips'			=>	function () use ($params, $values) {
+	'tips'			=>	function ($params) use ($values) {
 							$html = '';
 							$tips_values = &browse('icway\Tip', $values[$params['post_id']]['tips_ids'], array('content'));
 							foreach($tips_values as $tip_values) {
@@ -40,20 +29,21 @@ $renderer = array(
 							}
 							return $html;
 						},
-	'top_menu'		=>	function () {
-							$html = "<ul>";
-							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('in_menu', '=', '1'))), 'sequence', 'desc');
-							if(!count($ids)) break;
-							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'));
-							foreach($sections_values as $section_values) {
-								$title = mb_strtoupper($section_values['title'], 'UTF-8');
-								$html .= "<li><a href=\"index.php?show=icway_site&page_id={$section_values['page_id']}\">$title</a></li>";
+	'comments'		=>	function ($params) use ($values) {
+							$html = '';	
+							$comments_values = &browse('icway\Comment', $values[$params['post_id']]['comments_ids']);
+							$dateFormatter = new DateFormatter();
+							foreach($comments_values as $comment) {
+								$author = $comment['author'];
+								$content = str_replace("\n", "<br />", $comment['content']);
+								$dateFormatter->setDate($comment['created'], DATE_TIME_SQL);
+								$date = $dateFormatter->getDate(DATE_STRING);
+								$html .= "<li><span>par $author ($date):</span><p>$content</p></li>";
 							}
-							$html .= "</ul>";
 							return $html;
 						},
-	'localizator'	=>	function () use ($params){
-// todo : manage translations here
+	'localizator'	=>	function ($params) {
+// todo : translate
 							$path = array(1 => 'Accueil', 5 => 'Blog');
 							$html = '<ul>';
 							foreach($path as $page_id => $page_title) {
@@ -62,11 +52,12 @@ $renderer = array(
 							$html .= '</ul>';
 							return $html;
 						},
-	'left_column'	=>	function () use ($params){
+	'left_column'	=>	function ($params) {
 							// display posts categories (labels)
 							$html = '';
 							$labels_ids = search('icway\Label', array(array(array())));
 							$labels_values = &browse('icway\Label', $labels_ids, array('id', 'name'));
+// todo : translate							
 							$html = '<h1>'.'Cat&eacute;gories'.'</h1>';							
 							$html .= '<ul>';							
 							foreach($labels_values as $label_values) {
@@ -77,51 +68,7 @@ $renderer = array(
 							$html .= '</ul>';														
 							return $html;
 						},
-	'latest_docs'	=>	function () {
-							$html = "<ul>";
-							// sort resources by title (inside the current category)
-							$resources_ids = search('icway\Resource', array(array(array())), 'modified', 'desc', 0, 3);
-							$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'));
-							foreach($resources_values as $resource_values) {
-								$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);
-								// we use Google doc viewer for other stuff than images
-								list($mode, $type) = explode('/', $resource_values['type']);
-								$html .= '<li>';
-								$html .= '  <a href="">'.$resource_values['title'].'</a>';
-								$html .= '  <span class="details">&nbsp;&nbsp'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko</span>';
-								$html .= '</li>';
-							}
-							$html .= "</ul>";
-							return $html;
-						}
-);
-
-
-
-/**
-* Returns html part specified by $attributes (from a 'var' tag) and associated with current post id
-* (here come the calls to easyObject API)
-*
-* @param array $attributes
-*/
-$get_html = function ($attributes) use ($renderer, $params) {
-
-		if(isset($renderer[$attributes['id']])) return $renderer[$attributes['id']]();
-		else {
-			$html = '';
-			if(isset($attributes['translate']) && in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) {
-				$i18n = I18n::getInstance();
-				$html = $i18n->getClassTranslationValue($params['lang'], array(
-													'object_class'	=> 'icway\Page',
-													'object_part'	=> 'view',
-													'object_field'	=> $attributes['id'],
-													'field_attr'	=> 'label')
-												);
-			}
-			return $html;
-		}
-};
+));
 
 // output html
-$template = 'packages/icway/html/template_blog.html';
-if(!is_null($params['post_id']) && file_exists($template)) print(decorate_template(file_get_contents($template), $get_html));
+if(!is_null($params['page_id']) && file_exists($template)) print(decorate_template(file_get_contents($template), get_html));
