@@ -2,14 +2,14 @@
 	"model": {
 	},
 	"view": {
-		"go_back":{"label":"Atrás"},	
-		"share_page":{"label":"Partager cette page"},	
-		"like_txt":{"label":"Si vous aimez le contenu de cette page, faites-le savoir !"},	
-		"recent_articles_title":{"label":"Articles récents"},			
-		"latest_docs_title":{"label":"Derniers documents"},				
-		"about":{"label":"À propos de ICway"},
-		"sitemap":{"label":"Plan du site"},
-		"contact":{"label":"Nous contacter"},
-		"licence":{"label":"Le contenu de ce site est sous licence <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/be/\">Creative Commons BY-SA-NC</a> pour pouvoir l'utiliser et le diffuser librement !"}
+		"go_back":{"label":"Atrás"},
+		"share_page":{"label":"Compartir esta página"},
+		"like_txt":{"label":"Si le gusta el contenido de esta página, digalo !"},
+		"recent_articles_title":{"label":"Artículos recientes"},
+		"latest_docs_title":{"label":"Ultimos documentos"},
+		"about":{"label":"A propósito de ICway"},
+		"sitemap":{"label":"Mapa del sitio"},
+		"contact":{"label":"Contactar con nosotros"},
+		"licence":{"label":"El contenido de esta página esta publicado con licencia <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/es/\">Creative Commons BY-SA-NC</a> para que pueda ser libremente utilizado y difundido!"}
 	}
 }

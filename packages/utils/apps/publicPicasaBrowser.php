@@ -17,14 +17,13 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 
 check_params(array('CKEditorFuncNum'));
-$params = get_params(array('CKEditorFuncNum'=>null, 'album'=>null));
+$params = get_params(array('CKEditorFuncNum'=>null, 'album'=>null, 'username'=>'cedricfrancoys@gmail.com'));
 
 load_class('utils/HtmlWrapper');
 load_class('Zend_Gdata_Photos');
 load_class('Zend_Gdata_Photos_UserQuery');
 
-$username = 'cedricfrancoys@gmail.com';
-$page = "http://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?show=utils_picasa&CKEditorFuncNum=".$_GET['CKEditorFuncNum'];
+$page = "http://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?show=utils_picasa&CKEditorFuncNum=".$params['CKEditorFuncNum'];
 
 $html = new HtmlWrapper();
 $html->addStyle("
@@ -60,7 +59,7 @@ $html->addStyle("
 
 $html->addScript("
 	function select_image(imagePath) {
-		var CKEditorFuncNum = {$_GET['CKEditorFuncNum']};
+		var CKEditorFuncNum = {$params['CKEditorFuncNum']};
 		window.parent.opener.CKEDITOR.tools.callFunction( CKEditorFuncNum, imagePath, '' );
 		// self.close();
 	}
@@ -70,10 +69,10 @@ $html->addScript("
 
 $service = new Zend_Gdata_Photos();
 
-if(!isset($_GET['album'])) {
+if(is_null($params['album'])) {
 	try {
 		$query = new Zend_Gdata_Photos_UserQuery();
-		$query->setUser($username);
+		$query->setUser($params['username']);
 		$query->setAccess("public");	
 		$userFeed = $service->getUserFeed(null, $query);
 		foreach ($userFeed as $entry) {
@@ -100,8 +99,8 @@ if(!isset($_GET['album'])) {
 else {
 	try {
 		$query = $service->newAlbumQuery();
-		$query->setUser($username);
-		$query->setAlbumId($_GET['album']);
+		$query->setUser($params['username']);
+		$query->setAlbumId($params['album']);
 		$query->setImgMax("d");
 		$query->setThumbsize(160);
 		$albumFeed = $service->getAlbumFeed($query);

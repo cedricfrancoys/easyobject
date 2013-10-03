@@ -295,6 +295,9 @@ body {
     font-family: Georgia,Times,"Times New Roman",serif;
     font-style: italic;
 }
+#article-content img {
+	box-shadow:0 10px 15px rgba(0,0,0,.9);-moz-box-shadow:0 10px 15px rgba(0,0,0,.9);-webkit-box-shadow:0 10px 15px rgba(0,0,0,.9);
+}
 #bottom {
 	box-shadow: 0 0 20px rgba(0,0,0,.9);-moz-box-shadow:0 0 20px rgba(0,0,0,.9);-webkit-box-shadow:0 0 20px rgba(0,0,0,.9);			
 	clear: both;

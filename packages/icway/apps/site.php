@@ -37,7 +37,7 @@ $renderer = array_merge($renderer, array(
 									$sections_ids = array($section_values['parent_id']);
 								}
 							}
-							// no match found
+							// if no match found, display default section 
 							if(is_null($selected_id)) $selected_id = 1;
 							$sections_values = &browse('icway\Section', array($selected_id), array('page_id', 'title', 'sections_ids'), $params['lang']);
 							// note: this is a loop but we only have one item
@@ -45,7 +45,9 @@ $renderer = array_merge($renderer, array(
 								$html = '<h1 style="cursor: pointer;" onclick="window.location.href=\'index.php?show=icway_site&page_id='.$section_values['page_id'].'\';">'.$section_values['title'].'</h1>';
 								$html .= '<ul>';
 								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'), $params['lang']);
-								foreach($subsections_values as $subsection_values) {
+								foreach($subsections_values as $subsection_id => $subsection_values) {
+// todo: to remove when project page will be defined
+if($subsection_id == 3) continue;								
 									if($subsection_values['page_id'] == $params['page_id']) $html .= '<li class="current">';
 									else $html .= '<li>';
 									$html .= '<a href="index.php?show=icway_site&page_id='.$subsection_values['page_id'].'">'.$subsection_values['title'].'</a>';
@@ -184,7 +186,7 @@ switch($params['page_id']) {
 			}
 			return $html;
 		};
-		$renderer['script'] = function ($params) use ($params, $values) {
+		$renderer['script'] = function ($params) {
 			$i18n = I18n::getInstance();
 			$lang_details = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'more', 'field_attr' => 'label'));
 			$lang_summary = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'less', 'field_attr' => 'label'));
@@ -194,8 +196,50 @@ switch($params['page_id']) {
 			$script .= "var LANG_DETAILS = '{$lang_details}';\n";
 			$script .= "var LANG_SUMMARY = '{$lang_summary}';\n";	
 			$script .= "var LANG_BACK = '{$lang_back}';\n";				
-			$script .= $values[$params['page_id']]['script'];
+			$script .= "
+				$(document).ready(function(){
+					$.getScript('html/js/src/easyobject.api.js')    
+					.done(function() {
+						$.getScript('packages/knine/html/js/knine.js')
+						.done(function() {
+							$('h2.knine').on('click', function() {
+								var \$content = $('#article-content').children().detach();
+								var \$loader = $('<div />').addClass('loader').text('Loading ...');
+								$('#article-content').append(\$loader).append($('<div />').attr('id', 'content_knine'));
+								$('#content_knine').knine({
+									article_id: $(this).attr('id'),
+									depth: 1,
+									lang_summary: LANG_SUMMARY, 
+									lang_details: LANG_DETAILS,                    
+									autonum: false
+								});
+								$('#article-content').prepend($('<a href=\"#\" />').css({'display': 'block', 'padding': '10px'}).text(LANG_BACK)
+								.on('click', function() {
+										$('#article-content').empty().append(\$content);
+								}));
+								\$loader.toggle();
+							});            
+						});
+					})
+					.fail(function(jqxhr, settings, exception) {
+						console.log(exception);
+					});
+				});
+			";
 			return $script;
+		};
+		break;
+	case 13:
+		// contact us
+		$renderer['script'] = function ($params) {
+			return "		
+				function submit_form() {
+					var response = $.post('index.php?do=icway_add-subscriber', $('#submit_form').serialize(), function () {});
+					setTimeout(function(){
+						alert(\"Votre demande d'inscription à notre newsletter a bien été prise en compte.\\nVous recevrez prochainement un email de confirmation.\\n\\nMerci pour votre intérêt,\\nCédric et Isabelle\");
+					}, 500);
+				}			
+			";
 		};
 		break;		
 	case 14:
@@ -239,6 +283,40 @@ switch($params['page_id']) {
 			$html = '<h1>'.'Plan du site'.'</h1>';	
 			$html .= get_pages_list(1);
 			return $html;
+		};
+		break;
+	case 17:
+		// search page
+		$renderer['script'] = function ($params) {
+			return "		
+				$(document).ready(function(){
+					// google custom search	
+					$.getScript('http://www.google.com/cse/cse.js?cx='+ '004967614553816060821:aqmxxfj88ue')
+					.done(function() {})
+					.fail(function() {});    
+				});
+			";
+		};
+		break;	
+	case 19:
+		// albums gallery
+		$renderer['script'] = function ($params) {
+			return "		
+				$(document).ready(function(){
+					$.getScript('packages/icway/html/js/jquery.picasagallery.js')
+					.done(function() {
+						$('<div />').picasagallery({
+							username:'cedricfrancoys',
+							title: 'Liste des albums',
+							inline: true,
+							hide_albums: ['Photos du profil', 'Scrapbook', 'Présentation projet']
+						}).appendTo($('#article-content'));
+					})
+					.fail(function(jqxhr, settings, exception) {
+						console.log(exception);
+					});
+				});		
+			";
 		};
 		break;
 }

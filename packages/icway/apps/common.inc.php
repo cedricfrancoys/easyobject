@@ -62,7 +62,9 @@ function get_html($attributes) {
 */
 $renderer = array(
 	'page_url'		=>	function ($params) {
-							return FClib::get_url();
+							$url = FClib::get_url();
+							$url = str_replace("&lang=".$params['lang'], '', $url);
+							return $url;
 						},
 	'page_id'		=>	function ($params) {
 							return $params['page_id'];
@@ -76,7 +78,7 @@ $renderer = array(
 							if(!count($ids)) break;
 							$sections_values = &browse('icway\Section', $ids, array('title', 'page_id'), $params['lang']);
 							$pages_ids = array_reduce($sections_values, function($a, $b) { $a[] = $b['page_id']; return $a;}, array());
-							$pages_values = &browse('icway\Page', $pages_ids, array('title', 'url_resolver_id'));
+							$pages_values = &browse('icway\Page', $pages_ids, array('title', 'url_resolver_id'), $params['lang']);
 							foreach($pages_values as $id => $page) {
 								$title = mb_strtoupper($page['title'], 'UTF-8');
 								if($page['url_resolver_id'] > 0) {
@@ -120,7 +122,7 @@ $renderer = array(
 								// we use Google doc viewer for other stuff than images
 								list($mode, $type) = explode('/', $resource_values['type']);
 								$html .= '<li>';
-								$html .= '  <a href="index.php?show=icway_site&page_id=7#'.$resource_values['id'].'">'.$resource_values['title'].'</a><br />';
+								$html .= '  <a href="index.php?show=icway_site&page_id=7#'.$resource_values['id'].'">'.$resource_values['title'].'</a>';
 								$html .= '  <span class="details">'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko</span>';
 								$html .= '</li>';
 							}
@@ -133,9 +135,9 @@ $renderer = array(
 							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'modified', 'title'), $params['lang']);
 							foreach($posts_values as $post_values) {
 								$dateFormatter = new DateFormatter($post_values['modified'], DATE_TIME_SQL);								
-								$date = mb_convert_encoding(ucfirst(strftime("%B %Y", $dateFormatter->getTimestamp())), "UTF-8");
+								$date = mb_convert_encoding(ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp())), "UTF-8");
 								$html .= '<li>';
-								$html .= '  <a href="index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a></br >';
+								$html .= '  <a href="index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a>';
 								$html .= '  <span class="details">'.$date.'</span>';
 								$html .= '</li>';
 							}

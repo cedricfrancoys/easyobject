@@ -37,8 +37,6 @@ $html->addScript("
 		var dialog = window.opener.CKEDITOR.dialog.getCurrent();
         dialog.setValueOf('info','url',URL);  
         dialog.setValueOf('info','protocol','');
-		// $('input.cke_dialog_ui_input_text', window.parent.opener.document).val(URL);
-		// $('select.cke_dialog_ui_input_select', window.parent.opener.document).val('');		
 		self.close();
 	}
 ");
@@ -49,11 +47,15 @@ function get_page_url($page_id) {
 	$url = '';
 	$pages_values = &browse('icway\Page', array($page_id), array('url_resolver_id'));
 	foreach($pages_values as $id => $page) {
+		$url = "index.php?show=icway_site&page_id={$id}";
+/*
+// note: UrlResolver could be change and therefore make the link invalid	
 		if($page['url_resolver_id'] > 0) {
 			$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
 			$url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
 		}
 		else $url = "index.php?show=icway_site&page_id={$id}";
+*/		
 	}
 	return $url;
 }
