@@ -138,11 +138,11 @@ class DateFormatter {
 		return date('Y', $this->dateTime->getTimestamp());
 	}
 
-	public function getMonthsNames() {
+	public static function getMonthsNames() {
 		return self::$months_names;
 	}
 
-	public function getDaysNames($order='iso') {
+	public static function getDaysNames($order='iso') {
 		$days_names = array();
 		foreach(self::$days_order[$order] as $index) {
         	$days_names[] = self::$days_names[$index];
