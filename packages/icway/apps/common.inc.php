@@ -27,9 +27,9 @@ switch($params['lang']) {
 	case 'es':
 		setlocale(LC_ALL, 'es', 'es_ES', 'es_ES.UTF-8');
 		break;
-	case 'fr':	
+	case 'fr':
 		setlocale(LC_ALL, 'fr', 'fr_FR', 'fr_FR.UTF-8');
-		break;	
+		break;
 }
 /**
 * This function returns the translation value (if defined) of the specified term
@@ -55,7 +55,7 @@ function get_translation($term, $lang) {
 function get_html($attributes) {
 	global $params, $renderer;
 	if(isset($renderer[$attributes['id']])) return $renderer[$attributes['id']]($params);
-	else {	
+	else {
 		if(!isset($attributes['translate']) || !in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) $html = '';
 		else $html = get_translation($attributes['id'], $params['lang']);
 		return $html;
@@ -68,8 +68,21 @@ function get_html($attributes) {
 */
 $renderer = array(
 	'page_url'		=>	function ($params) {
-							$url = FClib::get_url();
-							$url = str_replace("&lang=".$params['lang'], '', $url);
+							return FClib::get_url();
+						},
+	'to_fr'		=>	function ($params) {
+							$url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
+							$url .= (strpos($url, '?'))? '&lang=fr': '?lang=fr';
+							return $url;
+						},
+	'to_en'		=>	function ($params) {
+							$url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
+							$url .= (strpos($url, '?'))? '&lang=en': '?lang=en';
+							return $url;
+						},
+	'to_es'		=>	function ($params) {
+							$url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
+							$url .= (strpos($url, '?'))? '&lang=es': '?lang=es';
 							return $url;
 						},
 	'page_id'		=>	function ($params) {
@@ -77,7 +90,7 @@ $renderer = array(
 						},
 	'post_id'		=>	function ($params) use ($values) {
 							return $params['post_id'];
-						},						
+						},
 	'top_menu'		=>	function ($params) {
 							$html = "<ul>";
 							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('in_menu', '=', '1'))), 'sequence', 'desc');
@@ -140,7 +153,7 @@ $renderer = array(
 							$posts_ids = search('icway\Post', array(array(array())), 'modified', 'desc', 0, 3);
 							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'modified', 'title'), $params['lang']);
 							foreach($posts_values as $post_values) {
-								$dateFormatter = new DateFormatter($post_values['modified'], DATE_TIME_SQL);								
+								$dateFormatter = new DateFormatter($post_values['modified'], DATE_TIME_SQL);
 								$date = mb_convert_encoding(ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp())), "UTF-8");
 								$html .= '<li>';
 								$html .= '  <a href="index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a>';
@@ -148,6 +161,6 @@ $renderer = array(
 								$html .= '</li>';
 							}
 							$html .= "</ul>";
-							return $html;	
+							return $html;
 						}
 );

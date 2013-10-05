@@ -17,7 +17,7 @@ function decorate_template($template, $decorator) {
 		foreach($args as $arg) {
 			if(!strlen($arg)) continue;
 			list($attribute, $value) = explode('=', $arg);
-			$attributes[$attribute] = str_replace('"', '', $value);
+			$attributes[$attribute] = str_replace(array("'", '"'), '', $value);
 		}
 		// 2) get content pointed by var tag, replace tag with content and build resulting html
 		$pos = $matches[0][$i][1];

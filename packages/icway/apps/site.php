@@ -192,7 +192,7 @@ switch($params['page_id']) {
 			$script .= "var LANG_BACK = '{$lang_back}';\n";
 			$script .= "
 				$(document).ready(function(){
-					$.getScript('html/js/src/easyobject.api.js')
+					$.getScript('html/js/src/easyObject.api.js')
 					.done(function() {
 						$.getScript('packages/knine/html/js/knine.js')
 						.done(function() {
