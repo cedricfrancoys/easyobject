@@ -3,6 +3,8 @@
 	},
 	"view": {
 		"go_back":{"label":"Retour"},
+		"categories":{"label":"Catégories"},
+		"resources":{"label":"Ressources"},
 		"share_page":{"label":"Partager cette page"},
 		"like_txt":{"label":"Si vous aimez le contenu de cette page, faites-le savoir !"},
 		"recent_articles_title":{"label":"Articles récents"},
@@ -10,6 +12,7 @@
 		"about":{"label":"À propos de ICway"},
 		"sitemap":{"label":"Plan du site"},
 		"contact":{"label":"Nous contacter"},
+		"subscribe_confirm":{"label":"Votre demande d'inscription à notre newsletter a bien été prise en compte.\nVous recevrez prochainement un email de confirmation.\n\nMerci pour votre intérêt,\nCédric et Isabelle"},	
 		"licence":{"label":"Le contenu de ce site est sous licence <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/be/\">Creative Commons BY-SA-NC</a> pour pouvoir être utilisé et diffusé librement !"}
 	}
 }

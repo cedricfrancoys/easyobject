@@ -31,7 +31,21 @@ switch($params['lang']) {
 		setlocale(LC_ALL, 'fr', 'fr_FR', 'fr_FR.UTF-8');
 		break;	
 }
-
+/**
+* This function returns the translation value (if defined) of the specified term
+* *
+* @param string $term
+* @param string $lang
+*/
+function get_translation($term, $lang) {
+	$i18n = I18n::getInstance();
+	return $i18n->getClassTranslationValue($lang, array(
+												'object_class'	=> 'icway\Page',
+												'object_part'	=> 'view',
+												'object_field'	=> $term,
+												'field_attr'	=> 'label')
+											);
+}
 /**
 * This function returns html part specified by $attributes (from a 'var' tag) and associated with current post id
 * (here come the calls to easyObject API)
@@ -41,17 +55,9 @@ switch($params['lang']) {
 function get_html($attributes) {
 	global $params, $renderer;
 	if(isset($renderer[$attributes['id']])) return $renderer[$attributes['id']]($params);
-	else {
-		$html = '';
-		if(isset($attributes['translate']) && in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) {
-			$i18n = I18n::getInstance();
-			$html = $i18n->getClassTranslationValue($params['lang'], array(
-												'object_class'	=> 'icway\Page',
-												'object_part'	=> 'view',
-												'object_field'	=> $attributes['id'],
-												'field_attr'	=> 'label')
-											);
-		}
+	else {	
+		if(!isset($attributes['translate']) || !in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) $html = '';
+		else $html = get_translation($attributes['id'], $params['lang']);
 		return $html;
 	}
 };
@@ -86,7 +92,7 @@ $renderer = array(
 									$human_url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
 									$html .= "<li><a href=\"$human_url\">".$title."</a></li>";
 								}
-								else $html .= "<li><a href=\"index.php?show=icway_site&page_id={$id}\">$title</a></li>";
+								else $html .= "<li><a href=\"index.php?show=icway_site&page_id={$id}&lang={$params['lang']}\">$title</a></li>";
 							}
 							$html .= "</ul>";
 							return $html;
@@ -106,7 +112,7 @@ $renderer = array(
 							$html = '<ul>';
 							for($i = 0, $j = count($path); $i < $j; $i++) {
 								foreach($path[$i] as $page_id => $page_title) {
-									$html .= '<li><a href="index.php?show=icway_site&page_id='.$page_id.'">'.$page_title.'</a></li>';
+									$html .= '<li><a href="index.php?show=icway_site&page_id='.$page_id.'&lang='.$params['lang'].'">'.$page_title.'</a></li>';
 								}
 							}
 							$html .= '</ul>';

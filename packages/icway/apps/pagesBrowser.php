@@ -43,11 +43,11 @@ $html->addScript("
 
 
 
-function get_page_url($page_id) {
+function get_page_url($page_id, $lang) {
 	$url = '';
 	$pages_values = &browse('icway\Page', array($page_id), array('url_resolver_id'));
 	foreach($pages_values as $id => $page) {
-		$url = "index.php?show=icway_site&page_id={$id}";
+		$url = "index.php?show=icway_site&page_id={$id}&lang={$lang}";
 /*
 // note: UrlResolver could be change and therefore make the link invalid	
 		if($page['url_resolver_id'] > 0) {
@@ -73,7 +73,7 @@ function get_pages_list($section_id) {
 			$html .= '<li>';
 			if(!empty($subsection_values['sections_ids'])) $html .= get_pages_list($subsection_values['id']);
 			else { 
-				$url = get_page_url($subsection_values['page_id']);
+				$url = get_page_url($subsection_values['page_id'], $params['lang']);
 				$html .= '<a href="#" onclick="javascript:select_page(\''.$url.'\');">'.$subsection_values['title'].'</a>';
 			}
 			$html .= '</li>';

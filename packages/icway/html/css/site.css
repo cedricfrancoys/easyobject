@@ -136,7 +136,7 @@ body {
 	display: block;
 	text-decoration: none;
 	font: 400 0.8em arial, sans-serif;
-	text-shadow: 1px 1px 0px rgba(0,0,0,1);
+	text-shadow: 1px 1px 1px rgba(0,0,0,1);
 	color: #fff;			
 }
 #languages a:hover {

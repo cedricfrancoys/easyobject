@@ -37,20 +37,20 @@ $renderer = array_merge($renderer, array(
 									$sections_ids = array($section_values['parent_id']);
 								}
 							}
-							// if no match found, display default section 
+							// if no match found, display default section
 							if(is_null($selected_id)) $selected_id = 1;
 							$sections_values = &browse('icway\Section', array($selected_id), array('page_id', 'title', 'sections_ids'), $params['lang']);
 							// note: this is a loop but we only have one item
 							foreach($sections_values as $section_id => $section_values) {
-								$html = '<h1 style="cursor: pointer;" onclick="window.location.href=\'index.php?show=icway_site&page_id='.$section_values['page_id'].'\';">'.$section_values['title'].'</h1>';
+								$html = '<h1 style="cursor: pointer;" onclick="window.location.href=\'index.php?show=icway_site&page_id='.$section_values['page_id'].'&lang='.$params['lang'].'\';">'.$section_values['title'].'</h1>';
 								$html .= '<ul>';
 								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'), $params['lang']);
 								foreach($subsections_values as $subsection_id => $subsection_values) {
 // todo: to remove when project page will be defined
-if($subsection_id == 3) continue;								
+if($subsection_id == 3) continue;
 									if($subsection_values['page_id'] == $params['page_id']) $html .= '<li class="current">';
 									else $html .= '<li>';
-									$html .= '<a href="index.php?show=icway_site&page_id='.$subsection_values['page_id'].'">'.$subsection_values['title'].'</a>';
+									$html .= '<a href="index.php?show=icway_site&page_id='.$subsection_values['page_id'].'&lang='.$params['lang'].'">'.$subsection_values['title'].'</a>';
 									$html .= '</li>';
 								}
 								$html .= '</ul>';
@@ -65,17 +65,17 @@ if($subsection_id == 3) continue;
 */
 switch($params['page_id']) {
 	case 5:
-		// page 'blog'		
+		// page 'blog'
 		if(isset($params['label_id'])) {
 			$renderer['content'] = function($params) {
 				$html = '<h1>'.'Bienvenue sur notre blog'.'</h1>';
 				$result = browse('icway\Label', array($params['label_id']), array('posts_ids'), $params['lang']);
 				$posts_ids = $result[$params['label_id']]['posts_ids'];
 				$posts_values = browse('icway\Post', $posts_ids, array('id', 'title', 'modified'), $params['lang']);
-				// obtain related posts 
+				// obtain related posts
 				foreach($posts_values as $id => $values) {
 					$html .= '<div>'.'<a href="index.php?show=icway_blog&post_id='.$id.'">'.$values['title'].'</a>'.'</div>';
-				}				
+				}
 				return $html;
 			};
 		}
@@ -89,12 +89,12 @@ switch($params['page_id']) {
 								var label_id = $(this).attr('id');
 								var posts_ids = (browse('icway\\\\Label', [label_id], ['posts_ids'], '{$params['lang']}'))[label_id]['posts_ids'];
 								var posts_values = browse('icway\\\\Post', posts_ids, ['id', 'title', 'modified'], '{$params['lang']}');
-								// obtain related posts 
+								// obtain related posts
 								var title = $('#article-content > h1').detach();
 								$('#article-content').empty().append(title);
 								$.each(posts_values, function(id, values) {
 									$('#article-content').append($('<div />').append($('<a />').attr('href', 'index.php?show=icway_blog&post_id='+id).append(values['title'])));
-								});							
+								});
 							});
 						})
 						.fail(function(jqxhr, settings, exception) {
@@ -104,35 +104,31 @@ switch($params['page_id']) {
 				";
 			};
 		}
-		
+
 		$renderer['left_column'] = function($params) {
 			// list of categories
 			$html = '';
 			$labels_ids = search('icway\Label', array(array(array())));
 			$labels_values = &browse('icway\Label', $labels_ids, array('id', 'name'), $params['lang']);
-// todo: translate
-			$html = '<h1>'.'Cat&eacute;gories'.'</h1>';							
-			$html .= '<ul>';							
-			foreach($labels_values as $label_values) {				
+			$html = '<h1>'.get_translation('categories', $params['lang']).'</h1>';
+			$html .= '<ul>';
+			foreach($labels_values as $label_values) {
 				if($label_values['id'] == $params['label_id']) $html .= '<li class="current">';
 				else $html .= '<li>';
 				$html .= '<a href="index.php?show=icway_site&page_id=5&label_id='.$label_values['id'].'" class="select_label" id="'.$label_values['id'].'">'.$label_values['name'].'</a>';
 				$html .= '</li>';
 			}
-			$html .= '</ul>';														
-			return $html;			
+			$html .= '</ul>';
+			return $html;
 		};
 		break;
 	case 7:
 		// page 'resources'
 		$renderer['content'] = function($params) {
-// todo: translate
-			$html = '<h1>'.'Ressources'.'</h1>';
+			$html = '<h1>'.get_translation('resources', $params['lang']).'</h1>';
 			$html .= '<div class="file_cabinet">';
-
 			$categories_ids = search('icway\Category');
 			$categories_values = &browse('icway\Category', $categories_ids, array('name'), $params['lang']);
-
 			foreach($categories_ids as $category_id) {
 				// sort resources by title (inside the current category)
 				$resources_ids = search('icway\Resource', array(array(array('category_id','=',$category_id))), 'title');
@@ -143,7 +139,6 @@ switch($params['page_id']) {
 					// we use Google doc viewer for other stuff than images
 					if($resource_values['type'] == 'application/pdf') $view_url = 'http://docs.google.com/viewer?url='.urlencode('http://'.$_SERVER["SERVER_NAME"].$_SERVER['PHP_SELF'].'?get=icway_resource&mode=download&res_id='.$resource_values['id']);
 					else $view_url = 'index.php?get=icway_resource&mode=view&res_id='.$resource_values['id'];
-
 					$html .= '<div class="row">';
 					$html .= '  <div class="name">';
 					$html .= '    <a name="'.$resource_values['id'].'">'.$resource_values['title'].'</a><br />';
@@ -191,14 +186,13 @@ switch($params['page_id']) {
 			$lang_details = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'more', 'field_attr' => 'label'));
 			$lang_summary = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'less', 'field_attr' => 'label'));
 			$lang_back = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'icway\Page', 'object_part' => 'view', 'object_field' => 'go_back', 'field_attr' => 'label'));
-	
 			$script = '';
 			$script .= "var LANG_DETAILS = '{$lang_details}';\n";
-			$script .= "var LANG_SUMMARY = '{$lang_summary}';\n";	
-			$script .= "var LANG_BACK = '{$lang_back}';\n";				
+			$script .= "var LANG_SUMMARY = '{$lang_summary}';\n";
+			$script .= "var LANG_BACK = '{$lang_back}';\n";
 			$script .= "
 				$(document).ready(function(){
-					$.getScript('html/js/src/easyobject.api.js')    
+					$.getScript('html/js/src/easyobject.api.js')
 					.done(function() {
 						$.getScript('packages/knine/html/js/knine.js')
 						.done(function() {
@@ -209,8 +203,8 @@ switch($params['page_id']) {
 								$('#content_knine').knine({
 									article_id: $(this).attr('id'),
 									depth: 1,
-									lang_summary: LANG_SUMMARY, 
-									lang_details: LANG_DETAILS,                    
+									lang_summary: LANG_SUMMARY,
+									lang_details: LANG_DETAILS,
 									autonum: false
 								});
 								$('#article-content').prepend($('<a href=\"#\" />').css({'display': 'block', 'padding': '10px'}).text(LANG_BACK)
@@ -218,7 +212,7 @@ switch($params['page_id']) {
 										$('#article-content').empty().append(\$content);
 								}));
 								\$loader.toggle();
-							});            
+							});
 						});
 					})
 					.fail(function(jqxhr, settings, exception) {
@@ -232,16 +226,17 @@ switch($params['page_id']) {
 	case 13:
 		// contact us
 		$renderer['script'] = function ($params) {
-			return "		
+			$confirm_txt = str_replace("\n", '\n', addslashes(get_translation('subscribe_confirm', $params['lang'])));	
+			return "
 				function submit_form() {
 					var response = $.post('index.php?do=icway_add-subscriber', $('#submit_form').serialize(), function () {});
 					setTimeout(function(){
-						alert(\"Votre demande d'inscription à notre newsletter a bien été prise en compte.\\nVous recevrez prochainement un email de confirmation.\\n\\nMerci pour votre intérêt,\\nCédric et Isabelle\");
+						alert('{$confirm_txt}');
 					}, 500);
-				}			
+				}
 			";
 		};
-		break;		
+		break;
 	case 14:
 		// page sitemap
 		$renderer['content'] = function($params) {
@@ -259,7 +254,7 @@ switch($params['page_id']) {
 						else $url = "index.php?show=icway_site&page_id={$id}";
 					}
 					return $url;
-				};				
+				};
 				$sections_values = &browse('icway\Section', array($section_id), array('sections_ids', 'page_id', 'title'), $params['lang']);
 				foreach($sections_values as $section_id => $section_values) {
 					$url = $get_page_url($section_values['page_id']);
@@ -269,7 +264,7 @@ switch($params['page_id']) {
 					foreach($subsections_values as $subsection_values) {
 						$html .= '<li>';
 						if(!empty($subsection_values['sections_ids'])) $html .= get_pages_list($subsection_values['id']);
-						else { 
+						else {
 							$url = $get_page_url($subsection_values['page_id']);
 							$html .= '<a href="#" onclick="javascript:select_page(\''.$url.'\');">'.$subsection_values['title'].'</a>';
 						}
@@ -279,8 +274,7 @@ switch($params['page_id']) {
 				}
 				return $html;
 			};
-//todo: translate			
-			$html = '<h1>'.'Plan du site'.'</h1>';	
+			$html = '<h1>'.get_translation('sitemap', $params['lang']).'</h1>';
 			$html .= get_pages_list(1);
 			return $html;
 		};
@@ -288,20 +282,20 @@ switch($params['page_id']) {
 	case 17:
 		// search page
 		$renderer['script'] = function ($params) {
-			return "		
+			return "
 				$(document).ready(function(){
-					// google custom search	
+					// google custom search
 					$.getScript('http://www.google.com/cse/cse.js?cx='+ '004967614553816060821:aqmxxfj88ue')
 					.done(function() {})
-					.fail(function() {});    
+					.fail(function() {});
 				});
 			";
 		};
-		break;	
+		break;
 	case 19:
 		// albums gallery
 		$renderer['script'] = function ($params) {
-			return "		
+			return "
 				$(document).ready(function(){
 					$.getScript('packages/icway/html/js/jquery.picasagallery.js')
 					.done(function() {
@@ -315,8 +309,14 @@ switch($params['page_id']) {
 					.fail(function(jqxhr, settings, exception) {
 						console.log(exception);
 					});
-				});		
+				});
 			";
+		};
+		break;
+	case 20:
+		$renderer['content'] = function ($params) {
+			$values = &browse('icway\Page', array(15), array('content'), $params['lang']);
+			return $values[15]['content'];
 		};
 		break;
 }
