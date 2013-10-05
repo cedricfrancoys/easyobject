@@ -530,6 +530,7 @@ var easyObject = {
 										content: $form,
 										title: 'Object edition - ' + conf.class_name,
 										width: easyObject.conf.dialog_width,
+//todo : use form.getHeight here																		
 										height: 'auto'
 								});
 								$dia.dialog({close: function(event, ui) { $grid.trigger('reload'); $form.trigger('destroy'); $(this).dialog('destroy');}});

@@ -98,12 +98,12 @@
 							CKEDITOR.replace($textarea[0], {
 									filebrowserImageBrowseUrl: '?show=utils_publicPicasaBrowser',
 // temporary
-									linkbrowserInternalUrl: '?show=icway_pagesBrowser',
+									linkbrowserInternalUrl: '?show=icway_pagesBrowser&lang='+conf.lang,
 									height: 250,
 									toolbar: [
-										['Maximize'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],
+										['Maximize'],['Source'],['Undo','Redo'],['Cut','Copy','Paste','PasteText','PasteFromWord'],['Bold','Italic','Underline','Strike','-','Subscript','Superscript', '-', 'RemoveFormat', '-', 'TextColor'],
 										'/',
-										['Source'],['Format'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Anchor','Link','Image','Table','SpecialChar']
+										['Format'],['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],['NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote'],['Anchor','Link','Image','Table','SpecialChar']
 									],
 									enterMode: CKEDITOR.ENTER_BR,
 									// change detection : we use the instanceReady event to catch the instance of the editor being created
