@@ -22,13 +22,13 @@ else $_SESSION['icway_lang'] = $params['lang'];
 // set associated locale
 switch($params['lang']) {
 	case 'en':
-		setlocale(LC_ALL, 'en', 'en_EN', 'en_EN.UTF-8');
+		setlocale(LC_ALL, 'en', 'en_EN', 'en_EN.utf8');
 		break;
 	case 'es':
-		setlocale(LC_ALL, 'es', 'es_ES', 'es_ES.UTF-8');
+		setlocale(LC_ALL, 'es', 'es_ES', 'es_ES.utf8');
 		break;
 	case 'fr':
-		setlocale(LC_ALL, 'fr', 'fr_FR', 'fr_FR.UTF-8');
+		setlocale(LC_ALL, 'fr', 'fr_FR', 'fr_FR.utf8');
 		break;
 }
 /**
@@ -153,8 +153,11 @@ $renderer = array(
 							$posts_ids = search('icway\Post', array(array(array())), 'modified', 'desc', 0, 3);
 							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'modified', 'title'), $params['lang']);
 							foreach($posts_values as $post_values) {
-								$dateFormatter = new DateFormatter($post_values['modified'], DATE_TIME_SQL);
-								$date = mb_convert_encoding(ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp())), "UTF-8");
+								$dateFormatter = new DateFormatter($post_values['modified'], DATE_TIME_SQL);						
+								$date = ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp()));
+								mb_detect_order(array('UTF-8', 'ISO-8859-1'));
+								if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
+								// $date = mb_convert_encoding(ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp())), "UTF-8");
 								$html .= '<li>';
 								$html .= '  <a href="index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a>';
 								$html .= '  <span class="details">'.$date.'</span>';

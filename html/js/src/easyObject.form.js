@@ -18,7 +18,7 @@
 	* generates an edition form for the specified object with specified view
 	*
 	*/
-// todo: implement a method 'getHeigh'	(actual height of the form, as accurate as possible)
+// todo: implement a method 'getHeight'	(actual height of the form, as accurate as possible)
 	$.fn.form = function(conf) {
 		var default_conf = {
 // todo : standardize this (object_name or class_name)

@@ -2,7 +2,8 @@
 
 load_class('utils/HtmlWrapper');
 
-include_file('lang/'.user_lang().'.lang.php');
+// force silent mode 
+set_silent(true);
 
 $html = new HtmlWrapper();
 

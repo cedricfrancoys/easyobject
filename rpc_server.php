@@ -7,6 +7,7 @@
 // 		windows : c:\wamp\bin\php\php5.3.0\php.exe rpc_server.php
 
 defined('__FC_LIB') or include_once('fc.lib.php');
+include_once('config.inc.php');
 defined('__EASYOBJECT_LIB') or include_file('easyobject.lib.php');
 
 

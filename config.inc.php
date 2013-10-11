@@ -146,7 +146,7 @@
 	define('GUEST_USER_ID', 1);
 	define('ROOT_USER_ID', 2);
 
-	// built-in default group
+	// built-in default group (all users are members of the default group)
 	// note : make sure that an identical group is set in DB
 	define('DEFAULT_GROUP_ID', 1);
 
@@ -212,9 +212,9 @@
 	define('SMTP_ACCOUNT_PASSWORD', 'password');
 	define('SMTP_ACCOUNT_EMAIL', 'example@gmail.com');
 	
+	
 /**
 * Default App
-*/
-	
-	// Application to redirect to if nothing is specified in the url (typically while accessing root folder)
+*/	
+	// application that will be invoked if nothing is specified in the url (typically while accessing root folder)
 	define('DEFAULT_APP', 'core_manage');

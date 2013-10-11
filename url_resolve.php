@@ -21,6 +21,7 @@
 
 // include main libraries
 defined('__FC_LIB') or include_once('fc.lib.php');
+include_once('config.inc.php');
 defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 
 // prevent undesired output
@@ -37,7 +38,7 @@ $base = '/';
 $path = explode('/', $_SERVER['SCRIPT_NAME']);
 if(($len = count($path)) > 2) for($i = 1, $j = $len-1; $i < $j; ++$i) $base .= $path[$i].'/';
 
-// first look for exact match
+// first, look for exact match
 $ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', str_replace($base, '/', $_SERVER['REQUEST_URI'])))));
 // if no match, look for a resolver having same URL base location
 if(count($ids) <= 0) {
@@ -47,22 +48,31 @@ if(count($ids) <= 0) {
 	else $additional_params = extract_params($_SERVER['REQUEST_URI']);
 }
 
+// handle the result of the search
 if(!$page_found) {
-	// set the header and exit
+	// set the header to HTTP 404 and exit
 	header('HTTP/1.0 404 Not Found');
 	header('Status: 404 Not Found');
 	include_once('html/page_not_found.html');
 	exit();
 }
 else {
-	// set the header
-	header('HTTP/1.0 200 OK');
-	header('Status: 200 OK');
-	// get the complete URL
-	$values = browse('core\UrlResolver', $ids, array('complete_url'));
+	// get the complete URL (we should get only one result)
+	$values = browse('core\UrlResolver', $ids, array('complete_url', 'human_readable_url'));
 	$additional_params = array_merge($additional_params, extract_params($values[$ids[0]]['complete_url']));
- 	// set the global var '$_REQUEST' : if a param is already set, its value is overwritten
-	foreach($additional_params as $key => $value) $_REQUEST[$key] = $value;
- 	// continue as usual
-	include_once('index.php');
+
+	if(substr_count($values[$ids[0]]['human_readable_url'], '/') > 1) {
+		// if human_url is deeper than one level, send a HTTP 302 and redirect to 'complete_url'
+		header("Location: ".$base.ltrim($values[$ids[0]]['complete_url'], '/'), true, 302);
+		exit();
+	}
+	else {
+		// otherwise, set the header to HTTP 200, and output the associated html
+		header('HTTP/1.0 200 OK');
+		header('Status: 200 OK');
+		// set the global var '$_REQUEST' : if a param is already set, its value is overwritten
+		foreach($additional_params as $key => $value) $_REQUEST[$key] = $value;
+		// continue as usual
+		include_once('index.php');
+	}
 }

@@ -48,7 +48,7 @@ class IdentificationManager {
 
 	private static function resolveUserId($login, $password) {
 		$om = &ObjectManager::getInstance();
-		$ids = $om->search(ROOT_USER_ID, 'core\user', array(array(array('validated','=',true), array('login','=',$login), array('password','=',$password))));
+		$ids = $om->search(ROOT_USER_ID, 'core\user', array(array(array('validated','=','1'), array('login','=',$login), array('password','=',$password))));
 		if(count($ids)) return $ids[0];
 		else return 0;
 	}

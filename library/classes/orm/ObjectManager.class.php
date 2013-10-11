@@ -21,8 +21,6 @@
 
 defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 
-include_file('config.inc.php')  or die('unable to load mandatory file config.inc.php');
-
 load_class('db/DBConnection') or die('unable to load mandatory class DBConnection');
 load_class('orm/IdentificationManager') or die('unable to load mandatory class IdentificationManager');
 load_class('orm/ErrorHandler') or die('unable to load mandatory class ErrorHandler');

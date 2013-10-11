@@ -29,8 +29,10 @@
 /**
 * Include dependencies
 */
-
+// FC library allows to include required files and classes
 defined('__FC_LIB') or include_once('fc.lib.php');
+// load configuration data
+include_once('config.inc.php');
 // files are stored in the library/files folder
 defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 

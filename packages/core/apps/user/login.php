@@ -36,16 +36,11 @@ $params = get_params(array('ui'=>user_lang()));
 $user_key = user_key();
 
 $html = new HtmlWrapper();
-
-$html->addCSSFile('html/css/easyobject/base.css');
-$html->addCSSFile('html/css/jquery/base/jquery.ui.easyobject.css');
-
+$html->addCSSFile('html/css/login.css');
 $html->addJSFile('html/js/jquery-1.7.1.min.js');
-$html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
-
-//$html->addJSFile('html/js/easyObject.min.js');
-$html->addJSFile('html/js/easyObject.loader.js');
-
+$html->addJSFile('html/js/src/md5.js');
+$html->addJSFile('html/js/src/easyObject.utils.js');
+$html->addJSFile('html/js/easyObject.api.min.js');
 
 $html->addScript("
 $(document).ready(function() {
@@ -54,26 +49,64 @@ $(document).ready(function() {
 		user_lang: '{$params['ui']}'
 	});
 
-	easyObject.UI.dialog({
-		content:
-			$('<form/>').attr('id', 'login_form').form({
-				class_name: 'core\\\\User',
-				view_name: 'form.login',
-				autosave: false,
-				success_handler: function(json_data) {
-					// if logon was successful get the new user_id
-					if(json_data.result) {
-						easyObject.conf.user_id = 0;
-						user_id();
-						$('#login_form').parent().dialog('close').dialog('destroy');
-					}
+	// customize checkbox
+    $('.login-form span').addClass('checked').children('input').attr('checked', true);
+    $('.login-form span').on('click', function() {
+ 
+        if ($(this).children('input').attr('checked')) {
+            $(this).children('input').attr('checked', false);
+            $(this).removeClass('checked');
+        }
+ 
+        else {
+            $(this).children('input').attr('checked', true);
+            $(this).addClass('checked');
+        }
+    });
+	$('#submit').on('click', function() {
+		$('form').trigger('submit');		
+	});
+
+	$('form').bind('submit', function(event){
+		$('#password').val(lock('$user_key', $('#password_input').val()));
+		$.ajax({
+			type: 'GET',
+			url: 'index.php?do=core_user_login',
+			async: false,
+			dataType: 'json',
+			data: $(this).serialize(),
+			contentType: 'application/json; charset=utf-8',
+			success: function(json_data){
+				if(json_data.result != true) {
+					alert('invalid password or username');
 				}
-		}),
-		title: 'Logon',
-		width: 600,
-		height: 'auto'
+				else window.location.href = json_data.url;
+			},
+			error: function(e){
+			}
+		});
+		return false;
 	});
 });
 ");
+ 
+$html->add(new HtmlBlock(0, 'body', array('background'=>'none repeat scroll 0 0 #646264')));
 
+$src = <<<'EOT'
+<div class="login-form">
+    <h1>Identification</h1>
+    <form> 
+        <input type="text" name="login" placeholder="username">
+        <input type="password" id="password_input" placeholder="password"> 
+		<input type="hidden" id="password" name="password"> 
+        <span>
+            <input type="checkbox" name="checkbox">
+            <label for="checkbox">remember</label>
+        </span>
+        <button id="submit" type="button">log in</button>
+    </form>
+</div>
+EOT;
+
+$html->add($src);
 print($html);

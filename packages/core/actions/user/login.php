@@ -51,9 +51,10 @@ else {
 		$error_message_ids = array_values($validation);
 		$result = INVALID_PARAM;
 	}
-	else
+	else {
 		// values are valid : try to log in
 		$result = (bool) login($params['login'], $params['password']);
+	}
 }
 
 // send json result

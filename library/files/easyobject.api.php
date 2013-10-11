@@ -1,10 +1,6 @@
 <?php
 define('__EASYOBJECT_LIB', true) or die('unable to define or already defined constant __EASYOBJECT_LIB');
-
 defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
-
-// load the configuration data and the required class definition files
-include_file('config.inc.php');
 
 load_class('orm/ObjectManager');
 load_class('orm/IdentificationManager');
@@ -79,8 +75,8 @@ function user_lang($session_id=SESSION_ID) {
 
 function login($login, $password, $session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
-		$um = &IdentificationManager::getInstance();
-		return $um->login($session_id, $login, $password);
+		$im = &IdentificationManager::getInstance();
+		return $im->login($session_id, $login, $password);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = 0;

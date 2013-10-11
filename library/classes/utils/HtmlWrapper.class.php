@@ -177,7 +177,10 @@ class HtmlWrapper {
 
 	function add($html) {
 		if(is_null($this->htmlBody)) {
-			if(is_a($html, 'HtmlTag') && $html->getTagName() == 'body') $this->htmlBody = $html;
+			if(is_a($html, 'HtmlTag') && $html->getTagName() == 'body') {
+				$this->htmlBody = $html;
+				return $this;
+			}
 			else $this->htmlBody = new HtmlBlock(0, 'body');
 		}
 		$this->htmlBody->add($html);
