@@ -13,7 +13,7 @@ isset($_SESSION['icway_lang']) or $_SESSION['icway_lang'] = 'fr';
 * These are the parameters we might receive in the URL
 * (for any application using the current file)
 */
-$params = get_params(array('page_id'=>1, 'post_id'=>1, 'lang'=>null, 'label_id'=>null));
+$params = get_params(array('page_id'=>1, 'post_id'=>1, 'lang'=>null, 'cat_id'=>null));
 
 // lang param was not in the URL: use previously chosen or default
 if(is_null($params['lang'])) $params['lang'] = $_SESSION['LANG'] = $_SESSION['icway_lang'];
@@ -88,7 +88,7 @@ $renderer = array(
 	'page_id'		=>	function ($params) {
 							return $params['page_id'];
 						},
-	'post_id'		=>	function ($params) use ($values) {
+	'post_id'		=>	function ($params) {
 							return $params['post_id'];
 						},
 	'top_menu'		=>	function ($params) {
@@ -131,36 +131,36 @@ $renderer = array(
 							$html .= '</ul>';
 							return $html;
 						},
-	'latest_docs'	=>	function ($params) {
-							$html = "<ul>";
-							// sort resources by title (inside the current category)
-							$resources_ids = search('icway\Resource', array(array(array())), 'modified', 'desc', 0, 3);
-							$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'), $params['lang']);
-							foreach($resources_values as $resource_values) {
-								$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);
-								// we use Google doc viewer for other stuff than images
-								list($mode, $type) = explode('/', $resource_values['type']);
-								$html .= '<li>';
-								$html .= '  <a href="index.php?show=icway_site&page_id=7#'.$resource_values['id'].'">'.$resource_values['title'].'</a>';
-								$html .= '  <span class="details">'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko</span>';
-								$html .= '</li>';
-							}
-							$html .= "</ul>";
-							return $html;
-						},
 	'latest_posts'	=>	function () use($params) {
 							$html = "<ul>";
-							$posts_ids = search('icway\Post', array(array(array())), 'modified', 'desc', 0, 3);
-							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'modified', 'title'), $params['lang']);
+							$posts_ids = search('icway\Post', array(array(array('language','=', $params['lang']))), 'created', 'desc', 0, 3);
+							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'created', 'title'), $params['lang']);
 							foreach($posts_values as $post_values) {
-								$dateFormatter = new DateFormatter($post_values['modified'], DATE_TIME_SQL);						
+								$dateFormatter = new DateFormatter($post_values['created'], DATE_TIME_SQL);						
 								$date = ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp()));
 								mb_detect_order(array('UTF-8', 'ISO-8859-1'));
 								if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
 								// $date = mb_convert_encoding(ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp())), "UTF-8");
 								$html .= '<li>';
 								$html .= '  <a href="index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a>';
-								$html .= '  <span class="details">'.$date.'</span>';
+								$html .= '  <span class="details">'.$date.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+								$html .= '</li>';
+							}
+							$html .= "</ul>";
+							return $html;
+						},						
+	'latest_docs'	=>	function ($params) {
+							$html = "<ul>";
+							// sort resources by title (inside the current category)
+							$resources_ids = search('icway\Resource', array(array(array('language','=', $params['lang']))), 'created', 'desc', 0, 3);
+							$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'created', 'title', 'description', 'size', 'type'), $params['lang']);
+							foreach($resources_values as $resource_values) {
+								$dateFormatter = new DateFormatter($resource_values['created'], DATE_TIME_SQL);
+								// we use Google doc viewer for other stuff than images
+								list($mode, $type) = explode('/', $resource_values['type']);
+								$html .= '<li>';
+								$html .= '  <a href="index.php?show=icway_site&page_id=7#'.$resource_values['id'].'">'.$resource_values['title'].'</a>';
+								$html .= '  <span class="details">'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
 								$html .= '</li>';
 							}
 							$html .= "</ul>";

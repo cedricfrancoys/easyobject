@@ -4,8 +4,8 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode
 set_silent(true);
 
-include('parser.inc.php');
-include('common.inc.php');
+include_once('parser.inc.php');
+include_once('common.inc.php');
 
 $template = 'packages/icway/html/template_site.html';
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'), $params['lang']);
@@ -66,61 +66,54 @@ if($subsection_id == 3) continue;
 switch($params['page_id']) {
 	case 5:
 		// page 'blog'
-		if(isset($params['label_id'])) {
-			$renderer['content'] = function($params) {
-				$html = '<h1>'.'Bienvenue sur notre blog'.'</h1>';
-				$result = browse('icway\Label', array($params['label_id']), array('posts_ids'), $params['lang']);
-				$posts_ids = $result[$params['label_id']]['posts_ids'];
-				$posts_values = browse('icway\Post', $posts_ids, array('id', 'title', 'modified'), $params['lang']);
+		if(isset($params['cat_id'])) {
+			$renderer['content'] = function($params) {				
+				$result = browse('icway\Category', array($params['cat_id']), array('name', 'posts_ids'), $params['lang']);
+				$html = '<h1>'.$result[$params['cat_id']]['name'].'</h1>';
+				$posts_ids = search('icway\Post', array(array(array('id', 'in', $result[$params['cat_id']]['posts_ids']), array('language', '=', $params['lang']))), 'created', 'desc');
+				$posts_values = browse('icway\Post', $posts_ids, array('id', 'title', 'created'), $params['lang']);
 				// obtain related posts
 				foreach($posts_values as $id => $values) {
-					$html .= '<div>'.'<a href="index.php?show=icway_blog&post_id='.$id.'">'.$values['title'].'</a>'.'</div>';
+					$dateFormatter = new DateFormatter($values['created'], DATE_TIME_SQL);						
+					$date = ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp()));
+					mb_detect_order(array('UTF-8', 'ISO-8859-1'));
+					if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
+					$html .= '<div class="blog_entry">'.'<a href="index.php?show=icway_blog&post_id='.$id.'">'.$values['title'].'</a>'.'&nbsp;-&nbsp;<span class="details">'.$date.'</span></div>';
 				}
 				return $html;
 			};
+			$renderer['left_column'] = function($params) {
+				// list of categories
+				$html = '';
+				$categories_ids = search('icway\Category', array(array(array())));
+				$categories_values = &browse('icway\Category', $categories_ids, array('id', 'name', 'posts_ids'), $params['lang']);
+				$html = '<h1>'.get_translation('categories', $params['lang']).'</h1>';
+				$html .= '<ul>';
+				foreach($categories_values as $category_values) {
+					if(count($category_values['posts_ids']) > 0) {
+						if($category_values['id'] == $params['cat_id']) $html .= '<li class="current">';
+						else $html .= '<li>';
+						$html .= '<a href="index.php?show=icway_site&page_id=5&cat_id='.$category_values['id'].'" id="'.$category_values['id'].'">'.$category_values['name'].'</a>';
+						$html .= '</li>';
+					}
+				}
+				$html .= '</ul>';
+				return $html;
+			};
+			
 		}
 		else {
-			$renderer['script'] = function($params) {
-				return "
-					$(document).ready(function(){
-						$.getScript('html/js/easyObject.api.min.js')
-						.done(function() {
-							$('.select_label').on('click', function() {
-								var label_id = $(this).attr('id');
-								var posts_ids = (browse('icway\\\\Label', [label_id], ['posts_ids'], '{$params['lang']}'))[label_id]['posts_ids'];
-								var posts_values = browse('icway\\\\Post', posts_ids, ['id', 'title', 'modified'], '{$params['lang']}');
-								// obtain related posts
-								var title = $('#article-content > h1').detach();
-								$('#article-content').empty().append(title);
-								$.each(posts_values, function(id, values) {
-									$('#article-content').append($('<div />').append($('<a />').attr('href', 'index.php?show=icway_blog&post_id='+id).append(values['title'])));
-								});
-							});
-						})
-						.fail(function(jqxhr, settings, exception) {
-							console.log(exception);
-						});
-					});
-				";
-			};
-		}
-
-		$renderer['left_column'] = function($params) {
-			// list of categories
-			$html = '';
-			$labels_ids = search('icway\Label', array(array(array())));
-			$labels_values = &browse('icway\Label', $labels_ids, array('id', 'name'), $params['lang']);
-			$html = '<h1>'.get_translation('categories', $params['lang']).'</h1>';
-			$html .= '<ul>';
-			foreach($labels_values as $label_values) {
-				if($label_values['id'] == $params['label_id']) $html .= '<li class="current">';
-				else $html .= '<li>';
-				$html .= '<a href="index.php?show=icway_site&page_id=5&label_id='.$label_values['id'].'" class="select_label" id="'.$label_values['id'].'">'.$label_values['name'].'</a>';
-				$html .= '</li>';
+			switch($params['lang']) {
+				case 'en':	$params['post_id'] = 1;		
+					break;
+				case 'es':	$params['post_id'] = 2;
+					break;
+				case 'fr':	$params['post_id'] = 3;			
+					break;				
 			}
-			$html .= '</ul>';
-			return $html;
-		};
+			include('blog.php');
+			die();
+		}		
 		break;
 	case 7:
 		// page 'resources'
@@ -131,7 +124,8 @@ switch($params['page_id']) {
 			$categories_values = &browse('icway\Category', $categories_ids, array('name'), $params['lang']);
 			foreach($categories_ids as $category_id) {
 				// sort resources by title (inside the current category)
-				$resources_ids = search('icway\Resource', array(array(array('category_id','=',$category_id))), 'title');
+				$resources_ids = search('icway\Resource', array(array(array('category_id','=',$category_id), array('language','=', $params['lang']))), 'title');
+				if(!count($resources_ids)) continue;
 				$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'), $params['lang']);
 				$html .= '<div class="header">'.$categories_values[$category_id]['name'].'</div>';
 				foreach($resources_values as $resource_values) {

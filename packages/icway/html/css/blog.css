@@ -301,10 +301,19 @@ body {
 #article-content h1 {
 	font: 1.9em Georgia,serif;
 	padding: 0 0 2px;
+	margin: 0;
+	margin-top: 16px;
 }
 #article-content h2 {
-	font-size: 1.3em;
-	padding: 13px 0 0px;
+	width: auto;
+	text-align: right;
+	font-style: italic;
+	font-size: 1.2em;
+	font-weight: 400;
+	color: #646264;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 20px;
 }
 #article-content h3 {
 	font-size: 1.1em;
@@ -348,7 +357,7 @@ body {
 	margin-right: 10px;
 	margin-left: 20px;
 	-moz-border-radius-: 8px; -webkit-border-radius: 8px; -khtml-border-radius: 8px; border-radius: 8px;
-	min-height: 210px;
+	min-height: 235px;
 	max-height: 300px;	
 	overflow : hidden;
 }
@@ -400,6 +409,7 @@ p.comments {
 	font-size:14px;
 	border-bottom:#ccc 1px dotted;
 	color:#999;
+	margin-top: 40px;
 	margin-left:5px;
 	padding-left:20px;
 	background:url(img/icon_comments.gif) no-repeat left center;
@@ -435,7 +445,7 @@ p.comments a {
 .commentlist textarea {
     border: 3px solid #DDDDDD;
     border-radius: 4px 4px 4px 4px;
-    font: 1em Georgia,serif;
+    color: #777777;	
     height: 15em;
     padding: 5px;
     width: 95%;

@@ -239,6 +239,7 @@
 								var class_name = schemaObj[field]['foreign_object'];
 								// we use the get_grid_config although we'll generate a 'choice' widget
 								$.extend(config, easyObject.get_grid_config({
+										rp: 100,
 										class_name: class_name,
 										view_name: (attr_view != undefined)?attr_view:'list.default',
 										domain: [[[ 'id', '=', object_values[field] ]]]

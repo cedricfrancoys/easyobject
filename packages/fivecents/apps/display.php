@@ -119,7 +119,7 @@ $get_html = function ($attributes) {
 				$content = str_replace("\n", "<br />", $comment['content']);
 				$dateFormatter->setDate($comment['created'], DATE_TIME_SQL);
 				$date = $dateFormatter->getDate(DATE_STRING);
-				$html .= "<li><span>par $author ($date):</span><p>$content</p></li>";
+				$html .= "<li><span style='font-weight: bold;'>par $author ($date):</span><p>$content</p></li>";
 			}
 			break;
 	}

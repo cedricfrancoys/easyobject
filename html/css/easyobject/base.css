@@ -80,6 +80,8 @@ button {
 }
 td.label {
 	width: 5%;
+	vertical-align: top;
+	padding-top: 3px;
 	padding-right: 5px;	
 	padding-bottom: 5px;
 	white-space: nowrap;

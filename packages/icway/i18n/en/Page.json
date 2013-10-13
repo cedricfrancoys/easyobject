@@ -2,6 +2,7 @@
 	"model": {
 	},
 	"view": {
+		"Home":{"label":"Home"},
 		"go_back":{"label":"Back"},	
 		"categories":{"label":"Categories"},
 		"resources":{"label":"Resources"},

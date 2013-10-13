@@ -118,7 +118,7 @@
 
     define('UNKNOWN_ERROR',		 0);	// something went wrong (that requires to check the logs)
     define('INVALID_PARAM',		 1);	// one or more parameters have invalid or incompatible value
-    define('SQL_ERROR',			 2);	// error while building SQL query or processing it
+    define('SQL_ERROR',			 2);	// error while building SQL query or processing it (check that object class matches DB schema)
     define('UNKNOWN_OBJECT',	 4);	// unknown class or object
     define('NOT_ALLOWED',		 8);	// action violates some rule or user don't have required permissions
 
