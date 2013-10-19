@@ -19,6 +19,9 @@ $params = get_params(array('page_id'=>1, 'post_id'=>1, 'lang'=>null, 'cat_id'=>n
 if(is_null($params['lang'])) $params['lang'] = $_SESSION['LANG'] = $_SESSION['icway_lang'];
 else $_SESSION['icway_lang'] = $params['lang'];
 
+// set order for auto-detect string fomat (for windows/linux compatibilty)
+mb_detect_order(array('UTF-8', 'ISO-8859-1'));
+
 // set associated locale
 switch($params['lang']) {
 	case 'en':
@@ -138,7 +141,6 @@ $renderer = array(
 							foreach($posts_values as $post_values) {
 								$dateFormatter = new DateFormatter($post_values['created'], DATE_TIME_SQL);						
 								$date = ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp()));
-								mb_detect_order(array('UTF-8', 'ISO-8859-1'));
 								if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
 								// $date = mb_convert_encoding(ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp())), "UTF-8");
 								$html .= '<li>';

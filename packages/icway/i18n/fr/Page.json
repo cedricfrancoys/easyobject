@@ -14,6 +14,12 @@
 		"sitemap":{"label":"Plan du site"},
 		"contact":{"label":"Nous contacter"},
 		"subscribe_confirm":{"label":"Votre demande d'inscription à notre newsletter a bien été prise en compte.\nVous recevrez prochainement un email de confirmation.\n\nMerci pour votre intérêt,\nCédric et Isabelle"},	
-		"licence":{"label":"Le contenu de ce site est sous licence <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/be/\">Creative Commons BY-SA-NC</a> pour pouvoir être utilisé et diffusé librement !"}
+		"licence":{"label":"Le contenu de ce site est sous licence <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/be/\">Creative Commons BY-SA-NC</a> pour pouvoir être utilisé et diffusé librement !"},
+		"comments_title":{"label":"Commentaires"},
+		"add_comment":{"label":"Ajouter un commentaire"},
+		"comment":{"label":"Commentaire"},	
+		"name":{"label":"Nom"},
+		"email":{"label":"E-mail"},
+		"send":{"label":"Envoyer"}		
 	}
 }

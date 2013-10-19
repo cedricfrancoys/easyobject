@@ -45,12 +45,19 @@ $renderer = array_merge($renderer, array(
 								$html = '<h1 style="cursor: pointer;" onclick="window.location.href=\'index.php?show=icway_site&page_id='.$section_values['page_id'].'&lang='.$params['lang'].'\';">'.$section_values['title'].'</h1>';
 								$html .= '<ul>';
 								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'), $params['lang']);
-								foreach($subsections_values as $subsection_id => $subsection_values) {
-// todo: to remove when project page will be defined
-if($subsection_id == 3) continue;
-									if($subsection_values['page_id'] == $params['page_id']) $html .= '<li class="current">';
+								$pages_ids = array_reduce($subsections_values, function($a, $b) { $a[] = $b['page_id']; return $a;}, array());
+								$pages_values = &browse('icway\Page', $pages_ids, array('title', 'url_resolver_id'), $params['lang']);
+								foreach($pages_values as $id => $page) {
+// todo: to remove when project page will be defined	
+if($id == 3) continue;
+									if($id == $params['page_id']) $html .= '<li class="current">';
 									else $html .= '<li>';
-									$html .= '<a href="index.php?show=icway_site&page_id='.$subsection_values['page_id'].'&lang='.$params['lang'].'">'.$subsection_values['title'].'</a>';
+									if($page['url_resolver_id'] > 0) {
+										$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
+										$url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
+									}
+									else $url = "index.php?show=icway_site&page_id={$id}&lang={$params['lang']}";
+									$html .= '<a href="'.$url.'">'.$page['title'].'</a>';
 									$html .= '</li>';
 								}
 								$html .= '</ul>';

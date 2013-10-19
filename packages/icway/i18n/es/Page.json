@@ -13,6 +13,13 @@
 		"about":{"label":"A propósito de ICway"},
 		"sitemap":{"label":"Mapa del sitio"},
 		"contact":{"label":"Contactar con nosotros"},
-		"licence":{"label":"El contenido de esta página esta publicado con licencia <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/es/\">Creative Commons BY-SA-NC</a> para que pueda ser libremente utilizado y difundido!"}
+		"subscribe_confirm":{"label":"Su pedido de inscripcion a nuestro boletin de informacion a sido enviado bien.\nRecibiera un mensaje de confirmacion de aqui a pronto.\n\nGracias pro su interes,\nCédric e Isabelle"},
+		"licence":{"label":"El contenido de esta página esta publicado con licencia <a href=\"http://creativecommons.org/licenses/by-nc-sa/2.0/es/\">Creative Commons BY-SA-NC</a> para que pueda ser libremente utilizado y difundido!"},
+		"comments_title":{"label":"Commentarios"},
+		"add_comment":{"label":"Añadir un commentario"},
+		"comment":{"label":"Commentario"},	
+		"name":{"label":"Nombre"},
+		"email":{"label":"E-mail"},
+		"send":{"label":"Enviar"}		
 	}
 }

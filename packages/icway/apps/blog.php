@@ -26,7 +26,6 @@ $renderer = array_merge($renderer, array(
 							$html = '<h1>'.$values[$params['post_id']]['title'].'</h1>';
 							$dateFormatter = new DateFormatter($values[$params['post_id']]['created'], DATE_TIME_SQL);
 							$date = ucfirst(strftime("%d %B %Y", $dateFormatter->getTimestamp()));
-							mb_detect_order(array('UTF-8', 'ISO-8859-1'));
 							if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
 							$html .= '<h2>'.$date.'</h2>';
 							$html .= $values[$params['post_id']]['content'];
@@ -34,9 +33,26 @@ $renderer = array_merge($renderer, array(
 						},
 	'tips'			=>	function ($params) use ($values) {
 							$html = '';
+							// display tips, if any
 							$tips_values = &browse('icway\Tip', $values[$params['post_id']]['tips_ids'], array('content'), $params['lang']);
 							foreach($tips_values as $tip_values) {
 								$html .= "<div>{$tip_values['content']}</div>";
+							}
+							// publications history
+							$posts_ids = search('icway\Post', array(array(array('language', '=', $params['lang']))), 'created', 'desc', 0, 25);
+							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'created', 'title'), $params['lang']);
+							$current_month ='';
+							foreach($posts_values as $post_values){
+								$dateFormatter = new DateFormatter($post_values['created'], DATE_TIME_SQL);
+								$post_month = $dateFormatter->getDate('Ym');
+								if($post_month != $current_month) {
+									if(strlen($current_month) > 0) $html .= '</span>';
+									$date = ucfirst(strftime("%B %Y", $dateFormatter->getTimestamp()));
+									if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
+									$html .= '<span><b>'.$date.'</b><br />';
+									$current_month = $post_month;									
+								}								
+								$html .= '<a class="tip" href="index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a><br />';
 							}
 							return $html;
 						},

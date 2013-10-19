@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>ICway</title>
+	<title><var id="title"></var></title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8">
 	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/blog.css" />
 	<link media="all" rel="stylesheet" type="text/css" href="packages/icway/html/css/social-likes.css" />
@@ -17,7 +17,6 @@
 	<script language="javascript" type="text/javascript" src="html/js/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="packages/icway/html/js/social-likes.min.js"></script>
 	<script type="text/javascript">
-/*	
 	  var _gaq = _gaq || [];
 	  _gaq.push(['_setAccount', 'UA-17146149-1']);
 	  _gaq.push(['_trackPageview']);
@@ -27,7 +26,6 @@
 		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	  })();
-*/
 	</script>	
 </head>
 
@@ -68,22 +66,22 @@
 			</div>
 			<div id="article-content">
 				<var id="content"></var>
-				<p class="comments">
-					<span class="comments-link">Commentaires</span>
+				<p class="comments">				
+					<span class="comments-link"><var id="comments_title" translate="yes"></var></span>
 					<ul class="commentlist">
 						<li style="margin-bottom: 30px;">
-							<span><a style="cursor: pointer;" href="javascript:void(0)" onclick="$('#add_comment').toggle();$('#author').focus();$(this).toggle();">Ajouter un commentaire</a></span>
+							<span><a style="cursor: pointer;" href="javascript:void(0)" onclick="$('#add_comment').toggle();$('#author').focus();$(this).toggle();"><var id="add_comment" translate="yes"></var></a></span>
 							<div id="add_comment" style="display: none;">
 								<iframe name="submission_frame" style="display: none;"></iframe>
 								<form target="submission_frame" method="get" action="index.php" onsubmit="setTimeout(function(){window.location = window.location.href;}, 2000);">
-									<label for="author">Nom*</label><br/><input type="text" id="author" name="author" placeholder="votre nom ou pseudo" /><br/>
-									<label for="email">E-mail</label><br/><input type="text" id="email" name="email" placeholder="user@mail.com (facultatif)" /><br/>
-									<label for="message">Commentaire*</label><textarea id="message" name="content" placeholder="indiquez votre message ici"></textarea>
+									<label for="author"><var id="name" translate="yes"></var>*</label><br/><input type="text" id="author" name="author" /><br/>
+									<label for="email"><var id="email" translate="yes"></var></label><br/><input type="text" id="email" name="email" /><br/>
+									<label for="message"><var id="comment" translate="yes"></var>*</label><textarea id="message" name="content"></textarea>
 									<textarea style="display: none;" name="post_id"><var id="post_id"></var></textarea>
 									<input type="hidden" name="object_class" value="icway\Comment" />
 									<input type="hidden" name="ids[]" value="0" />
 									<input type="hidden" name="do" value="core_objects_update" />
-									<button type="submit">Envoyer</button>
+									<button type="submit"><var id="send" translate="yes"></var></button>
 								</form>
 							</div>
 						</li>
@@ -104,7 +102,7 @@
 				<ul style="margin-bottom: 30px;">
 					<li style="font-size: 0.8em;"><var id="like_txt" translate="yes"></var></li>
 				</ul>
-				<ul class="social-likes social-likes_horizontal" counters="no">
+				<ul class="social-likes social-likes_horizontal" data-counters="no">
 					<li class="facebook" style="margin-bottom: 10px;">Facebook</li>
 					<li class="plusone" style="margin-bottom: 10px;">Google+</li>
 					<li class="twitter" style="margin-bottom: 10px;">Twitter</li>

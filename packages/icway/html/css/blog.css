@@ -236,7 +236,6 @@ body {
 	color: #1b59c2;
 	font: 400 0.88em arial, sans-serif;
 }
-
 #sidebar a, #sidebar a:hover {
 	display: block;
 	font: 400 0.85em arial, sans-serif;
@@ -245,6 +244,16 @@ body {
 	text-decoration: none;
 }
 #sidebar a:hover {
+	text-decoration: underline;
+}
+#sidebar a.tip, #sidebar a.tip:hover {
+	display: inline;
+	font: 400 0.88em arial, sans-serif;
+	font-style: normal;		
+	color: #4c8efc;
+	text-decoration: none;
+}
+#sidebar a.tip:hover {
 	text-decoration: underline;
 }
 #left-column:after {
