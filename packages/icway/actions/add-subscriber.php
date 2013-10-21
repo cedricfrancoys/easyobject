@@ -32,5 +32,5 @@ $mail->setFrom(SMTP_ACCOUNT_EMAIL, 'icway');
 $mail->addTo('isaced@gmail.com', 'isaced');
 $mail->setSubject("ICway - Demande d'inscription a la newsletter");
 $mail->setBodyText('e-mail: '.$params['email']."\n".'langue: '.$params['lang']);
-
+// Send email
 $mail->send($transport);

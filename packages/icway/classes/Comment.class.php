@@ -32,10 +32,10 @@ namespace icway {
 			//Create email
 			$mail = new \Zend_Mail();
 			$mail->setFrom(SMTP_ACCOUNT_EMAIL, 'icway');
-			$mail->addTo(SMTP_ACCOUNT_EMAIL, SMTP_ACCOUNT_USERNAME);
-			$mail->setSubject('Commentaire sur le post '.$res[$oid]['post_id']);
+			$mail->addTo('isaced@gmail.com', 'isaced');			
+			$mail->setSubject('ICway - Commentaire sur le post '.$res[$oid]['post_id']);
 			$mail->setBodyText($res[$oid]['content']);
-
+			// Send email
 			$mail->send($transport);
 		}
 

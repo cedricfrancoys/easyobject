@@ -8,15 +8,21 @@ include_once('parser.inc.php');
 include_once('common.inc.php');
 
 $template = 'packages/icway/html/template_site.html';
-$values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'script', 'tips_ids'), $params['lang']);
+$values = &browse('icway\Page', array($params['page_id']), array('id', 'title', 'content', 'tips_ids'), $params['lang']);
 
 /**
 * Extend renderer array with functions specific to this app
 * (i.e. translate the 'var' tags from the template)
 */
 $renderer = array_merge($renderer, array(
-	'script'		=>	function ($params) use ($values) {
-							return $values[$params['page_id']]['script'];
+	'styles'		=>	function ($params) use ($values) {
+							return '';
+						},
+	'scripts'		=>	function ($params) use ($values) {
+							return '';
+						},
+	'inline_script'	=>	function ($params) use ($values) {
+							return '';
 						},
 	'title'			=>	function ($params) use ($values) {
 							return $values[$params['page_id']]['title'];
@@ -48,7 +54,7 @@ $renderer = array_merge($renderer, array(
 								$pages_ids = array_reduce($subsections_values, function($a, $b) { $a[] = $b['page_id']; return $a;}, array());
 								$pages_values = &browse('icway\Page', $pages_ids, array('title', 'url_resolver_id'), $params['lang']);
 								foreach($pages_values as $id => $page) {
-// todo: to remove when project page will be defined	
+// todo: to remove when project page will be defined
 if($id == 3) continue;
 									if($id == $params['page_id']) $html .= '<li class="current">';
 									else $html .= '<li>';
@@ -74,14 +80,14 @@ switch($params['page_id']) {
 	case 5:
 		// page 'blog'
 		if(isset($params['cat_id'])) {
-			$renderer['content'] = function($params) {				
+			$renderer['content'] = function($params) {
 				$result = browse('icway\Category', array($params['cat_id']), array('name', 'posts_ids'), $params['lang']);
 				$html = '<h1>'.$result[$params['cat_id']]['name'].'</h1>';
 				$posts_ids = search('icway\Post', array(array(array('id', 'in', $result[$params['cat_id']]['posts_ids']), array('language', '=', $params['lang']))), 'created', 'desc');
 				$posts_values = browse('icway\Post', $posts_ids, array('id', 'title', 'created'), $params['lang']);
 				// obtain related posts
 				foreach($posts_values as $id => $values) {
-					$dateFormatter = new DateFormatter($values['created'], DATE_TIME_SQL);						
+					$dateFormatter = new DateFormatter($values['created'], DATE_TIME_SQL);
 					$date = ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp()));
 					mb_detect_order(array('UTF-8', 'ISO-8859-1'));
 					if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
@@ -107,23 +113,31 @@ switch($params['page_id']) {
 				$html .= '</ul>';
 				return $html;
 			};
-			
+
 		}
 		else {
 			switch($params['lang']) {
-				case 'en':	$params['post_id'] = 1;		
+				case 'en':	$params['post_id'] = 1;
 					break;
 				case 'es':	$params['post_id'] = 2;
 					break;
-				case 'fr':	$params['post_id'] = 3;			
-					break;				
+				case 'fr':	$params['post_id'] = 3;
+					break;
 			}
 			include('blog.php');
 			die();
-		}		
+		}
 		break;
 	case 7:
 		// page 'resources'
+		$renderer['styles'] = function($params) {
+			$html = '';		
+			$styles = array('packages/icway/html/css/file_cabinet.css');
+			foreach($styles as $style) {
+				$html .= '<link media="all" rel="stylesheet" type="text/css" href="'.$style.'" />';
+			}
+			return $html;
+		};				
 		$renderer['content'] = function($params) {
 			$html = '<h1>'.get_translation('resources', $params['lang']).'</h1>';
 			$html .= '<div class="file_cabinet">';
@@ -155,7 +169,7 @@ switch($params['page_id']) {
 			$html .= '</div>';
 			return $html;
 		};
-		$renderer['script'] = function($params) {
+		$renderer['inline_script'] = function($params) {
 			return "
 				$(document).ready(function(){
 					var href = window.location.href;
@@ -170,6 +184,14 @@ switch($params['page_id']) {
 		break;
 	case 11:
 		// page our convictions
+		$renderer['styles'] = function($params) {
+			$html = '';		
+			$styles = array('packages/icway/html/css/article.css');
+			foreach($styles as $style) {
+				$html .= '<link media="all" rel="stylesheet" type="text/css" href="'.$style.'" />'."\n";
+			}
+			return $html;
+		};		
 		$renderer['content'] = function($params) {
 			$html = '';
 			// get children_ids from article 21
@@ -182,7 +204,7 @@ switch($params['page_id']) {
 			}
 			return $html;
 		};
-		$renderer['script'] = function ($params) {
+		$renderer['inline_script'] = function ($params) {
 			$i18n = I18n::getInstance();
 			$lang_details = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'more', 'field_attr' => 'label'));
 			$lang_summary = $i18n->getClassTranslationValue($params['lang'], array('object_class' => 'knine\Article', 'object_part' => 'view', 'object_field' => 'less', 'field_attr' => 'label'));
@@ -226,8 +248,8 @@ switch($params['page_id']) {
 		break;
 	case 13:
 		// contact us
-		$renderer['script'] = function ($params) {
-			$confirm_txt = str_replace("\n", '\n', addslashes(get_translation('subscribe_confirm', $params['lang'])));	
+		$renderer['inline_script'] = function ($params) {
+			$confirm_txt = str_replace("\n", '\n', addslashes(get_translation('subscribe_confirm', $params['lang'])));
 			return "
 				function submit_form() {
 					var response = $.post('index.php?do=icway_add-subscriber', $('#submit_form').serialize(), function () {});
@@ -282,7 +304,7 @@ switch($params['page_id']) {
 		break;
 	case 17:
 		// search page
-		$renderer['script'] = function ($params) {
+		$renderer['inline_script'] = function ($params) {
 			return "
 				$(document).ready(function(){
 					// google custom search
@@ -295,7 +317,23 @@ switch($params['page_id']) {
 		break;
 	case 19:
 		// albums gallery
-		$renderer['script'] = function ($params) {
+		$renderer['styles'] = function($params) {
+			$html = '';		
+			$styles = array('packages/icway/html/css/picasagallery.css', 'packages/icway/html/css/fancybox.css');
+			foreach($styles as $style) {
+				$html .= '<link media="all" rel="stylesheet" type="text/css" href="'.$style.'" />'."\n";
+			}
+			return $html;
+		};						
+		$renderer['scripts'] = function($params) {
+			$html = '';		
+			$scripts = array('packages/icway/html/js/jquery.fancybox.min.js', 'packages/icway/html/js/jquery.fancybox.thumbs.js');
+			foreach($scripts as $script) {
+				$html .= '<script type="text/javascript" src="'.$script.'"></script>'."\n";
+			}
+			return $html;
+		};								
+		$renderer['inline_script'] = function ($params) {
 			return "
 				$(document).ready(function(){
 					$.getScript('packages/icway/html/js/jquery.picasagallery.js')
@@ -303,7 +341,10 @@ switch($params['page_id']) {
 						$('<div />').picasagallery({
 							username:'cedricfrancoys',
 							title: 'Liste des albums',
-							inline: true,
+							thumbnail_width: '160',
+							inline: false,
+							link_to_picasa: false,
+							auto_open: false,
 							hide_albums: ['Photos du profil', 'Scrapbook', 'Présentation projet']
 						}).appendTo($('#article-content'));
 					})
