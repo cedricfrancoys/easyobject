@@ -13,13 +13,25 @@ namespace icway {
 			);
 		}
 
-		public static function onchange_content($om, $uid, $oid, $lang) {
+		public static function getConstraints() {
+			return array(
+				'post_id'	=> array(
+									'error_message_id' => '',
+									'function' => function ($post_id) {
+											return (bool) ($post_id);
+										}
+									),
+			);
+		}		
+		
+		public static function onchange_content($om, $uid, $oid, $lang) {			
 			load_class('Zend_Mail');
-			load_class('Zend_Mail_Transport_Smtp');
+			load_class('Zend_Mail_Transport_Smtp');			
+			$res = $om->browse($uid, 'icway\Comment', array($oid), array('author', 'post_id', 'content'), $lang);				
 			
-			$res = $om->browse($uid, 'icway\Comment', array($oid), array('author', 'post_id', 'content'), $lang);	
+			if($res[$oid]['post_id'] <= 0) return;
 			
-			//SMTP server configuration
+			// SMTP server configuration
 			$transport = new \Zend_Mail_Transport_Smtp(SMTP_HOST, array(
 																	'auth' => 'login',
 																	'ssl' => 'ssl',
@@ -28,14 +40,13 @@ namespace icway {
 																	'password' => SMTP_ACCOUNT_PASSWORD
 																)
 			);
-
-			//Create email
+			// create email
 			$mail = new \Zend_Mail();
 			$mail->setFrom(SMTP_ACCOUNT_EMAIL, 'icway');
 			$mail->addTo('isaced@gmail.com', 'isaced');			
 			$mail->setSubject('ICway - Commentaire sur le post '.$res[$oid]['post_id']);
 			$mail->setBodyText($res[$oid]['content']);
-			// Send email
+			// send email
 			$mail->send($transport);
 		}
 

@@ -40,9 +40,9 @@ $renderer = array_merge($renderer, array(
 							}
 							// publications history
 							$posts_ids = search('icway\Post', array(array(array('language', '=', $params['lang']))), 'created', 'desc', 0, 25);
-							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'created', 'title'), $params['lang']);
+							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'created', 'title', 'url_resolver_id'), $params['lang']);							
 							$current_month ='';
-							foreach($posts_values as $post_values){
+							foreach($posts_values as $id => $post_values){
 								$dateFormatter = new DateFormatter($post_values['created'], DATE_TIME_SQL);
 								$post_month = $dateFormatter->getDate('Ym');
 								if($post_month != $current_month) {
@@ -51,8 +51,13 @@ $renderer = array_merge($renderer, array(
 									if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
 									$html .= '<span><b>'.$date.'</b><br />';
 									$current_month = $post_month;									
-								}								
-								$html .= '<a class="tip" href="index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a><br />';
+								}
+								if($post_values['url_resolver_id'] > 0) {
+									$url_values = &browse('core\UrlResolver', array($post_values['url_resolver_id']), array('human_readable_url'));
+									$url = ltrim($url_values[$post_values['url_resolver_id']]['human_readable_url'], '/');
+								}
+								else $url = "index.php?show=icway_blog&post_id={$id}&lang={$params['lang']}";								
+								$html .= '<a class="tip" href="'.$url.'">'.$post_values['title'].'</a><br />';
 							}
 							return $html;
 						},

@@ -84,14 +84,19 @@ switch($params['page_id']) {
 				$result = browse('icway\Category', array($params['cat_id']), array('name', 'posts_ids'), $params['lang']);
 				$html = '<h1>'.$result[$params['cat_id']]['name'].'</h1>';
 				$posts_ids = search('icway\Post', array(array(array('id', 'in', $result[$params['cat_id']]['posts_ids']), array('language', '=', $params['lang']))), 'created', 'desc');
-				$posts_values = browse('icway\Post', $posts_ids, array('id', 'title', 'created'), $params['lang']);
+				$posts_values = &browse('icway\Post', $posts_ids, array('id', 'title', 'created', 'url_resolver_id'), $params['lang']);
 				// obtain related posts
 				foreach($posts_values as $id => $values) {
 					$dateFormatter = new DateFormatter($values['created'], DATE_TIME_SQL);
 					$date = ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp()));
 					mb_detect_order(array('UTF-8', 'ISO-8859-1'));
-					if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
-					$html .= '<div class="blog_entry">'.'<a href="index.php?show=icway_blog&post_id='.$id.'">'.$values['title'].'</a>'.'&nbsp;-&nbsp;<span class="details">'.$date.'</span></div>';
+					if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');					
+					if($values['url_resolver_id'] > 0) {
+						$url_values = &browse('core\UrlResolver', array($values['url_resolver_id']), array('human_readable_url'));
+						$url = ltrim($url_values[$values['url_resolver_id']]['human_readable_url'], '/');
+					}
+					else $url = "index.php?show=icway_blog&post_id={$id}&lang={$params['lang']}";					
+					$html .= '<div class="blog_entry"><a href="'.$url.'">'.$values['title'].'</a>'.'&nbsp;-&nbsp;<span class="details">'.$date.'</span></div>';
 				}
 				return $html;
 			};
@@ -148,7 +153,7 @@ switch($params['page_id']) {
 				$resources_ids = search('icway\Resource', array(array(array('category_id','=',$category_id), array('language','=', $params['lang']))), 'title');
 				if(!count($resources_ids)) continue;
 				$resources_values = &browse('icway\Resource', $resources_ids, array('id', 'modified', 'title', 'description', 'size', 'type'), $params['lang']);
-				$html .= '<div class="header">'.$categories_values[$category_id]['name'].'</div>';
+				$html .= '<div class="header"><a name="cat_'.$category_id.'"></a>'.$categories_values[$category_id]['name'].'</div>';
 				foreach($resources_values as $resource_values) {
 					$dateFormatter = new DateFormatter($resource_values['modified'], DATE_TIME_SQL);
 					// we use Google doc viewer for other stuff than images
