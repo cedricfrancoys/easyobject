@@ -39,7 +39,13 @@ set_silent(true);
 check_params(array('object_class', 'ids'));
 
 // assign values with the received parameters
-$params = get_params(array('object_class'=>null, 'ids'=>null, 'lang'=>DEFAULT_LANG));
+$params = get_params(array('object_class'=>null, 'ids'=>null, 'lang'=>DEFAULT_LANG, 'public_code'=>null));
+
+// additional check for public objects (i.e. that can be creatd or modified by guest users)
+if(in_array($params['object_class'], unserialize(PUBLIC_OBJECTS))) {
+	// this is a public object, so we check if public_code is given and if it matches the current session code
+	if(is_null($params['public_code']) || $params['public_code'] != SESSION_ID) die();
+}
 
 // first we check the validation of the posted content
 $error_message_ids = array();

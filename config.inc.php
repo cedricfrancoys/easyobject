@@ -218,3 +218,9 @@
 */	
 	// application that will be invoked if nothing is specified in the url (typically while accessing root folder)
 	define('DEFAULT_APP', 'core_manage');
+	
+/**
+* Public objects (for SPAM protection mechanism)
+*/	
+	define ("PUBLIC_OBJECTS", serialize (array ('icway\Comment')));
+	

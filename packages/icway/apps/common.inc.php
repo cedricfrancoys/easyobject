@@ -94,6 +94,9 @@ $renderer = array(
 	'post_id'		=>	function ($params) {
 							return $params['post_id'];
 						},
+	'public_code'	=>	function ($params) {
+							return SESSION_ID;
+						},
 	'top_menu'		=>	function ($params) {
 							$html = "<ul>";
 							$ids = search('icway\Section', array(array(array('parent_id', '=', '1'), array('in_menu', '=', '1'))), 'sequence', 'desc');
