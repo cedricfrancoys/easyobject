@@ -58,11 +58,16 @@ $renderer = array_merge($renderer, array(
 if($id == 3) continue;
 									if($id == $params['page_id']) $html .= '<li class="current">';
 									else $html .= '<li>';
+// UrlResolver objects have no distinction between languages (but lang param may be present in complete_url) so doing as below may result in inconsistent switch between languages
+/*									
 									if($page['url_resolver_id'] > 0) {
 										$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
 										$url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
 									}
 									else $url = "index.php?show=icway_site&page_id={$id}&lang={$params['lang']}";
+*/									
+									// for now, let's do it with full link
+									$url = "index.php?show=icway_site&page_id={$id}&lang={$params['lang']}";
 									$html .= '<a href="'.$url.'">'.$page['title'].'</a>';
 									$html .= '</li>';
 								}
