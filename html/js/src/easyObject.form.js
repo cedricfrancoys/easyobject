@@ -237,18 +237,40 @@
 								break;
 							case 'many2one':
 								var class_name = schemaObj[field]['foreign_object'];
+								var view_name = (attr_view != undefined)?attr_view:'list.default';								
 								// we use the get_grid_config although we'll generate a 'choice' widget
 								$.extend(config, easyObject.get_grid_config({
 										rp: 100,
 										class_name: class_name,
-										view_name: (attr_view != undefined)?attr_view:'list.default',
+										view_name: view_name,
 										domain: [[[ 'id', '=', object_values[field] ]]]
 								}));
 
 								$.extend(config, {
 									choose: {
 										func: function($choice, id) {
-											$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
+											// predictive search
+											var selection_domain = [[[]]];
+											var input_value = $('.choice_input', $choice).val();
+											if(input_value.length > 0) {
+												// generate a search request with input mask on that field											
+												// use first field of the view as criteria
+// todo : check how we shoud select the field for criteria
+												var ids = search(class_name, [[[config.fields[0], 'ilike', '%' + input_value + '%']]], '', 'asc', 0, 2, config.lang);
+												var results = 0;
+												$.each(ids, function(i, id){ ++results; });
+												if(results == 1) {
+													var conf = $choice.data('conf');
+													conf.domain = [[[ 'id', '=', ids[0] ]]];
+													$choice.trigger('reload');												
+													return;
+												}
+												else {
+													selection_domain = [[[config.fields[0], 'ilike', '%' + input_value + '%']]];
+												}
+											}
+											// pick-up dialog																														
+											$list = easyObject.UI.list({class_name: class_name, view_name: view_name, domain: selection_domain, lang: config.lang});
 											$dia = easyObject.UI.dialog({
 													content: $list,
 													title: 'Choose item'});

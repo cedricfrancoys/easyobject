@@ -435,8 +435,11 @@ var easyObject = {
 				$view.find('li').each(function() {
 					// extract the fields from the view and generate the columns model
 					var name = $(this).attr('id');
-					result.col_model.push({display: name, name: name, width: $(this).attr('width')});
-					result.fields.push(name);
+					var width = $(this).attr('width'));
+					if(parseInt(width > 0) {
+						result.col_model.push({display: name, name: name, width: width});
+						result.fields.push(name);
+					}
 				});
 				if(result.url.length == 0) result.url = 'index.php?get=core_objects_list';
 				return result;
@@ -661,7 +664,7 @@ var easyObject = {
 										case 'text':
 										case 'binary':
 											// note: remember that binary type may hold field translation
-											grid_conf.domain[0].push([ field, 'like', '%' + value + '%']);
+											grid_conf.domain[0].push([ field, 'ilike', '%' + value + '%']);
 											break;
 									}
 								}

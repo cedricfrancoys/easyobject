@@ -49,7 +49,7 @@ $params = get_params(array(
 							'sortorder'			=> 'asc',
 							'records'			=> null,
 							'lang'				=> DEFAULT_LANG,
-							'ui'				=> SESSION_LANG_UI
+							'ui'				=> $_SESSION['LANG_UI']
 					));
 
 // convert the fields parameter if we received a comma-separated list instead of an array
@@ -300,7 +300,7 @@ else {
 
 			// transforms html document
 			load_class('utils/phpQuery');
-			$doc = phpQuery::newDocument($html);
+			$doc = phpQuery::newDocumentHTML($html, 'UTF-8');
 
 			$orientation = pq('form')->attr('orientation');
 			// if(!empty(pq('form')->attr('orientation'))) 
@@ -439,9 +439,16 @@ else {
 					require_once("classes/utils/dompdf/dompdf_config.inc.php");
 					
 					$dompdf = new DOMPDF();
-					$dompdf->load_html($styles.$html);
+					$dompdf->load_html($styles.$html, 'UTF-8');
 					$dompdf->set_paper("letter", $orientation);
 					$dompdf->render();
+
+					// add footer on all pages
+					$canvas = $dompdf->get_canvas();
+					$y = $canvas->get_height() - 2 * $text_height - 35;
+					$font = Font_Metrics::get_font("helvetica", "bold");
+					$canvas->page_text(529, $y, "Page {PAGE_NUM} of {PAGE_COUNT}", $font, 8, array(0,0,0));
+					
 					$dompdf->stream("export.pdf", array("Attachment" => false));
 					break;
 			}

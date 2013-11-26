@@ -7,6 +7,7 @@ namespace core {
 			return array(
 				'firstname'		=> array('type' => 'string'),
 				'lastname'		=> array('type' => 'string'),
+				'start'			=> array('type' => 'string'),				
 				'birthdate'		=> array('type' => 'date'),
 				'login'			=> array('type' => 'string', 'label' => 'Username', 'help' => 'Your username is your email address.'),
 				'password'		=> array('type' => 'string', 'label' => 'Password'),

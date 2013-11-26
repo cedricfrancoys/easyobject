@@ -22,6 +22,10 @@
 
 // todo : make a distinction between mandatory constants and optional constants (that should be defined either in a second config file or in a config file specific to the current app's package)
 
+/**
+* Current version of easyObject
+*/
+    define('VERSION', '0.9.3');
 
 /**
 * Database parameters

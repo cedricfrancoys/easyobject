@@ -87,9 +87,9 @@
 				// instanciate header row and the first column which contains the 'select-all' checkbox
 				var $hrow = $('<tr/>')
 				.append($('<th/>').css({'width': '30px'})
-					.append($('<div/>')
+					.append($('<div/>').css({'width': '30px'})
 						.append(
-							$('<input type="checkbox" />').addClass('checkbox')
+							$('<input type="checkbox" />').addClass('checkbox').css({'width': '20px'})
 							.click(function() {
 								var checked = this.checked;
 								$("input:checkbox", $tbody).each(function(i, elem) {
@@ -340,7 +340,7 @@
 					$.each(json.rows, function(i, row) {
 						$row = $('<tr/>').attr('id', row.id).append($('<td/>').append($('<div/>').append(
 								$('<input type="checkbox" />')
-								.addClass('checkbox')
+								.addClass('checkbox').css({'width': '20px'})
 								.on('dblclick', function() {conf.edit.func($grid, [row.id]);})
 						)));
 						if(i%2) $row.addClass('erow');

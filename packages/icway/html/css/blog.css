@@ -429,7 +429,6 @@ p.comments a {
 	color: #1b59c2;
 }
 .commentlist{
-    border-bottom: 1px dotted #EEEEEE;
     margin: 0;
     padding: 0;
 }
@@ -440,6 +439,10 @@ p.comments a {
     margin: 0;
     padding: 1em;
 	line-height: 130%;
+}
+.commentlist li p{
+	padding-bottom: 20px;
+	border-bottom: 1px dotted #EEEEEE;	
 }
 .commentlist input {
     border: 3px solid #DDDDDD;

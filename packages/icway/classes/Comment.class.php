@@ -27,7 +27,7 @@ namespace icway {
 		public static function onchange_content($om, $uid, $oid, $lang) {			
 			load_class('Zend_Mail');
 			load_class('Zend_Mail_Transport_Smtp');			
-			$res = $om->browse($uid, 'icway\Comment', array($oid), array('author', 'post_id', 'content'), $lang);				
+			$res = $om->browse($uid, 'icway\Comment', array($oid), array('author', 'post_id', 'email', 'content'), $lang);				
 			
 			if($res[$oid]['post_id'] <= 0) return;
 			
@@ -42,6 +42,10 @@ namespace icway {
 			);
 			// create email
 			$mail = new \Zend_Mail();
+			// if given email is a valid address, add 'Reply-To' data to the header
+			if(preg_match('/^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/', $res[$oid]['email'], $matches)) {
+				$mail->setReplyTo($res[$oid]['email']);
+			}
 			$mail->setFrom(SMTP_ACCOUNT_EMAIL, 'icway');
 			$mail->addTo('isaced@gmail.com', 'isaced');			
 			$mail->setSubject('ICway - Commentaire sur le post '.$res[$oid]['post_id']);

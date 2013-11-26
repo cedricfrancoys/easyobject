@@ -43,7 +43,7 @@
 					switch(conf.type) {
 						case 'boolean':
 // todo : align checkbox left
-							$this.data('widget', $('<input type="checkbox"/>')
+							$this.data('widget', $('<input type="checkbox" value="1" />')
 												.attr({id: conf.name, name: conf.name})
 												.prop('checked', (parseInt(conf.value) > 0))
 												.val((parseInt(conf.value) > 0)?1:0)

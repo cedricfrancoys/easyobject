@@ -72,12 +72,12 @@ foreach($classes_list as $class) {
 	// get a static instance of the class
 	$object = &$om->getStatic($class_name);
 	// get the SQL table name
-	$table_name = $om->getObjectTableName($class_name);
-
-	$result[] = "CREATE TABLE IF NOT EXISTS `{$table_name}` (";
-
+	$table_name = $object->getTable();	
+	// get the schema
 	$schema = $object->getSchema();
-
+	// init result array
+	$result[] = "CREATE TABLE IF NOT EXISTS `{$table_name}` (";
+	
 	foreach($schema as $field => $description) {
 		if(in_array($description['type'], array_keys($types_associations))) {
 			$type = $types_associations[$description['type']];
