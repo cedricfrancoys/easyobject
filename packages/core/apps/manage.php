@@ -45,8 +45,8 @@ $html->addJSFile('html/js/ace/src-min/ace.js');
 
 
 //$html->addJSFile('html/js/easyObject.min.js');
-$html->addJSFile('html/js/easyObject.loader.js');
 
+$html->addJSFile('html/js/easyObject.loader.js');
 
 $js_packages = function () {
 	$packages_directory = 'packages';

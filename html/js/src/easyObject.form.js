@@ -148,6 +148,18 @@
 					if(conf.autosave)	
 						$view.append($('<button type="button" />').css('display', 'none').attr('name', 'autosave').attr('action', 'draft'));
 				}
+
+				// handle visibilty attribute for some DOM objects
+				$view.find('var,label,button,section,div,span').each(function() {
+					var attr_visible = $(this).attr('visible');
+
+// todo : would be better to handle this dynamicaly, so we could toggle objects on user actions
+					// remove non-visible items
+					if(attr_visible != undefined) {
+						if(!eval(attr_visible)) $(this).remove();
+					}				
+				});
+
 				$form.append(transform_html($view));
 				// if 'domain' attribute is set, we store it in the conf object
 				conf.domain = $view.attr('domain');
@@ -694,7 +706,8 @@
 							// go to top of page
 							$('html, body').animate({ scrollTop: 0 }, 0);
 						}
-		//				else if(typeof(msg) != 'undefined') alert(msg);
+// todo : send message to EO console
+						//				else if(typeof(msg) != 'undefined') alert(msg);
 						return false;
 					};
 
@@ -764,12 +777,11 @@
 										// if action require a redirection, go to the new location
 										if(typeof(json_data.url) != 'undefined' && json_data.url.length > 0) window.location.href = json_data.url;
 										else {
-		// temporary
-		/*
-											if(no_redirect) alert('Action ' + action + ' successfuly executed');
+											if(no_redirect) {
+// todo : send message to EO console											
+													// alert('Action ' + action + ' successfuly executed');
+											}
 											else return close('ok', 'Action ' + action + ' successfuly executed');
-		*/
-											if(!no_redirect) return close('ok', 'Action ' + action + ' successfuly executed');
 										}
 									}
 								}

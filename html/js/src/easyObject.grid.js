@@ -80,7 +80,7 @@
 			layout: function($grid, conf) {
 				var self = this;
 				// create table
-				var $table = $('<table/>').attr('id', 'grid_table').attr('cellspacing', '0');
+				var $table = $('<table/>').attr('id', 'grid_table').attr('cellspacing', '0').css({'width': '100%'});
 				var $thead = $('<thead/>').attr('id', 'grid_table_head');
 				var $tbody = $('<tbody/>').attr('id', 'grid_table_body');
 

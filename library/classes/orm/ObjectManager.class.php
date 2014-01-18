@@ -461,6 +461,7 @@ class ObjectManager {
 								}
 								// we need to store the computed value (to avoid computing it at each object load)
 								// if the object is still a dradt, we don't want to mark the object as modified(so we use the SYSTEM_USER_ID - which is equal to 0)
+// todo : doesn't work in case of rights restriction (or we have to add user 0 to all groups)
 								if(empty($row['modifier'])) $object->setValues(SYSTEM_USER_ID, array($column => $computed_value), $lang);
 								// otherwise we update the object (even if we were actually loading it)
 								else $object->setValues($user_id, array($column => $computed_value), $lang);

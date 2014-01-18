@@ -435,8 +435,8 @@ var easyObject = {
 				$view.find('li').each(function() {
 					// extract the fields from the view and generate the columns model
 					var name = $(this).attr('id');
-					var width = $(this).attr('width'));
-					if(parseInt(width > 0) {
+					var width = $(this).attr('width');
+					if(parseInt(width) > 0) {
 						result.col_model.push({display: name, name: name, width: width});
 						result.fields.push(name);
 					}

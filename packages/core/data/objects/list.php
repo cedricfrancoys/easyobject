@@ -74,6 +74,8 @@ if($params['fields'] && !is_array($params['fields'])) $params['fields'] = explod
 $start = ($params['page']-1) * $params['rp'];
 if($start < 0) $start = 0;
 
+$list = array();
+
 // 2) check for special option 'mode' (that allows to limit result to deleted objects)
 if($params['mode'] == 'recycle') {
 	// add the (deleted = 1) clause to every condition
@@ -94,13 +96,13 @@ if(empty($params['records'])) {
 		$db = &DBConnection::getInstance();
 		$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], $start, $params['rp'], $params['lang']);
 		// use the getAffectedRows method to get the total number of reords
-		$count_ids = $db->getAffectedRows();
-		$list = &browse($params['object_class'], $ids, $params['fields'], $params['lang']);
+		if($count_ids = $db->getAffectedRows())
+			$list = &browse($params['object_class'], $ids, $params['fields'], $params['lang']);
 	}
 	else {
 		$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], 0, '', $params['lang']);
-		$list = &browse($params['object_class'], array_slice($ids, $start , $params['rp'], true), $params['fields'], $params['lang']);
-		$count_ids = count($ids);
+		if($count_ids = count($ids))		
+			$list = &browse($params['object_class'], array_slice($ids, $start , $params['rp'], true), $params['fields'], $params['lang']);
 	}
 }
 else {

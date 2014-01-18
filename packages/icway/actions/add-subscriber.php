@@ -28,9 +28,13 @@ $transport = new \Zend_Mail_Transport_Smtp(SMTP_HOST, array(
 
 //Create email
 $mail = new \Zend_Mail();
+// if given email is a valid address, add 'Reply-To' data to the header
+if(preg_match('/^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/', $params['email'], $matches)) {
+	$mail->setReplyTo($params['email']);
+}
 $mail->setFrom(SMTP_ACCOUNT_EMAIL, 'icway');
 $mail->addTo('isaced@gmail.com', 'isaced');
-$mail->setSubject("ICway - Demande d'inscription a la newsletter");
+$mail->setSubject("ICway - Demande d'inscription");
 $mail->setBodyText('e-mail: '.$params['email']."\n".'langue: '.$params['lang']);
 // Send email
 $mail->send($transport);
