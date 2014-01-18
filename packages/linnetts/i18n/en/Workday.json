@@ -1,8 +1,0 @@
-{
-	"model": {
-		"id":{"label":"Code"},
-		"day":{"label":"Day"}
-	},
-	"view": {
-	}
-}
