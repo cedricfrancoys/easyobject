@@ -14,30 +14,37 @@
 	display: table;
 	font: 400 0.85em "trebuchet ms";
 	color: #444444;	
-	width: auto;
+	width: 100%;
 	margin-top: 10px;
 	padding-bottom: 10px;
 	border-bottom: solid 1px #efefef;
 }
-.file_cabinet .row .name,  .file_cabinet .row .desc, .file_cabinet .row .type, .file_cabinet .row .size, .file_cabinet .row .modif{
+.file_cabinet .row .name,  .file_cabinet .row .desc, .file_cabinet .row .type, .file_cabinet .row .size, .file_cabinet .row .author, .file_cabinet .row .pages, .file_cabinet .row .modif{
 	text-align: left;
 	display: table-cell;
 	padding: 0 10px;
 }
 
 .file_cabinet .row .name {
-	width: 30%;
+	width: 25%;
 }
 .file_cabinet .row .desc {
 	text-align: justify;
 	width: 35%;
 }
-.file_cabinet .row .type {
-	width: 10%;
+.file_cabinet .row .type {	
+	text-align: center;
+	width: 9%;
 }
 .file_cabinet .row .size {
-	width: 10%;
+	width: 8%;
+}
+.file_cabinet .row .pages {
+	width: 8%;
 }
 .file_cabinet .row .modif {
+	width: 0%;
+}
+.file_cabinet .row .author{
 	width: 15%;
 }
