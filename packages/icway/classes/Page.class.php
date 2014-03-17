@@ -7,6 +7,7 @@ namespace icway {
 		public static function getColumns() {
 			return array(
 				'title'				=> array('type' => 'string', 'multilang' => true),
+				'mnemonic'			=> array('type' => 'string'),
 				'url_resolver_id' 	=> array('type' => 'many2one', 'foreign_object' => 'core\UrlResolver'),
 				'content'			=> array('type' => 'text', 'multilang' => true),
 				'script'			=> array('type' => 'text'),				
