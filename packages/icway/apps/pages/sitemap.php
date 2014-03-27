@@ -21,7 +21,7 @@ $renderer['content'] = function($params) {
 		$sections_values = &browse('icway\Section', array($section_id), array('sections_ids', 'page_id', 'title'), $params['lang']);
 		foreach($sections_values as $section_id => $section_values) {
 			$url = $get_page_url($section_values['page_id']);
-			$html .= '<a href="#" onclick="javascript:select_page(\''.$url.'\');">'.$section_values['title'].'</a>';
+			$html .= '<a href="'.$url.'">'.$section_values['title'].'</a>';
 			$html .= '<ul>';
 			$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('id', 'sections_ids', 'page_id', 'title'), $params['lang']);
 			foreach($subsections_values as $subsection_values) {
@@ -29,7 +29,7 @@ $renderer['content'] = function($params) {
 				if(!empty($subsection_values['sections_ids'])) $html .= get_pages_list($subsection_values['id']);
 				else {
 					$url = $get_page_url($subsection_values['page_id']);
-					$html .= '<a href="#" onclick="javascript:select_page(\''.$url.'\');">'.$subsection_values['title'].'</a>';
+					$html .= '<a href="'.$url.'">'.$subsection_values['title'].'</a>';
 				}
 				$html .= '</li>';
 			}

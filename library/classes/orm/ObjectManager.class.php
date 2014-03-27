@@ -48,16 +48,16 @@ class ObjectManager {
 			'boolean'		=> array('type', 'label', 'help', 'onchange', 'search'),
 			'integer'		=> array('type', 'label', 'help', 'onchange', 'search'),
 			'float'			=> array('type', 'label', 'help', 'onchange', 'search'),
-			'string'		=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
-			'short_text'	=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
-			'text'			=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
+			'string'		=> array('type', 'label', 'help', 'onchange', 'search', 'multilang'),
+			'short_text'	=> array('type', 'label', 'help', 'onchange', 'search', 'multilang'),
+			'text'			=> array('type', 'label', 'help', 'onchange', 'search', 'multilang'),
 			'date'			=> array('type', 'label', 'help', 'onchange', 'search'),
 			'time'			=> array('type', 'label', 'help', 'onchange', 'search'),
 			'datetime'		=> array('type', 'label', 'help', 'onchange', 'search'),
 			'timestamp'		=> array('type', 'label', 'help', 'onchange', 'search'),
 			'selection'		=> array('type', 'label', 'help', 'onchange', 'selection'),
-			'binary'		=> array('type', 'label', 'help', 'onchange', 'multilang', 'search'),
-			'many2one'		=> array('type', 'foreign_object', 'label', 'help', 'onchange', 'search'),
+			'binary'		=> array('type', 'label', 'help', 'onchange', 'search', 'multilang'),
+			'many2one'		=> array('type', 'foreign_object', 'label', 'help', 'onchange', 'search', 'multilang'),
 			'one2many'		=> array('type', 'foreign_object', 'foreign_field', 'label', 'help', 'onchange'),
 			'many2many'		=> array('type', 'foreign_object', 'foreign_field', 'rel_table', 'rel_local_key', 'rel_foreign_key', 'label', 'help', 'onchange'),
 			'related'		=> array('type', 'foreign_object', 'result_type', 'path', 'label', 'help', 'onchange', 'store'),
@@ -397,6 +397,7 @@ class ObjectManager {
                 	if(in_array($schema[$field]['type'], array('related', 'function')) && isset($schema[$field]['store']) && $schema[$field]['store']) {
                 		if(in_array($schema[$field]['result_type'], self::$simple_types)) $simple_fields[] = $field;
 // todo: following code has not been tested yet (for now, only simple fields are stored)
+// we should check if object is already loaded or not
                 		else {
 							$result = $this->dbConnection->getRecords(array($table_name), array($field), $ids);
 							while($row = $this->dbConnection->fetchArray($result)) {

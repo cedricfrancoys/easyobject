@@ -268,6 +268,7 @@
 												// generate a search request with input mask on that field											
 												// use first field of the view as criteria
 // todo : check how we shoud select the field for criteria
+// this doesn't work for auto-generated contents (many2one display depend on view file)
 												var ids = search(class_name, [[[config.fields[0], 'ilike', '%' + input_value + '%']]], '', 'asc', 0, 2, config.lang);
 												var results = 0;
 												$.each(ids, function(i, id){ ++results; });

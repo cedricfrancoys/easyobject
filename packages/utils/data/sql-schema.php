@@ -66,6 +66,8 @@ $types_associations = array(
 
 $m2m_tables = array();
 
+// todo : handle the 'unique' attribute
+
 foreach($classes_list as $class) {
 	// get the full class name
 	$class_name = $params['package'].'\\'.$class;

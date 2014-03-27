@@ -8,7 +8,7 @@ namespace icway {
 			return array(
 				'title'				=> array('type' => 'string', 'multilang' => true),
 				'mnemonic'			=> array('type' => 'string'),
-				'url_resolver_id' 	=> array('type' => 'many2one', 'foreign_object' => 'core\UrlResolver'),
+				'url_resolver_id' 	=> array('type' => 'many2one', 'foreign_object' => 'core\UrlResolver', 'multilang' => true),
 				'content'			=> array('type' => 'text', 'multilang' => true),
 				'script'			=> array('type' => 'text'),				
 				'html' 				=> array('type' => 'function', 'result_type' => 'string', 'store' => true, 'function' => 'icway\Page::getHtml'),				
