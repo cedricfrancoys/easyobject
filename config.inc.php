@@ -70,6 +70,18 @@
 	// 256ko by default
 	// define('UPLOAD_MAX_FILE_SIZE', 256000);
 	define('UPLOAD_MAX_FILE_SIZE', 1000000);
+	
+
+/**
+* Binaries storage directory
+*/
+	define('BINARY_STORAGE_DIR', './bin');
+	
+/**
+* Binary type storage mode
+*/
+	// possible values are : 'DB' (database) and 'FS' (filesystem)
+	define('BINARY_STORAGE_MODE', 'FS');
 
 /**
 * Debugging
@@ -202,11 +214,19 @@
 	// define('DRAFT_VALIDITY', 10);
 	define('DRAFT_VALIDITY', 0);
 
+	
 /**
 * Date formatting
 */
 	define('DATE_FORMAT', 'd/m/Y');
 
+	
+/**
+* Currency formatting
+*/
+	// define('CURRENCY_FORMAT', '#.##0,00€');
+	define('CURRENCY_FORMAT', '£#,##0.00');
+	
 
 /**
 * Email sending
@@ -227,4 +247,3 @@
 * Public objects (for SPAM protection mechanism)
 */	
 	define ("PUBLIC_OBJECTS", serialize (array ('icway\Comment')));
-	

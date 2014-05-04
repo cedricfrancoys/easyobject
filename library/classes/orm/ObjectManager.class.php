@@ -709,9 +709,22 @@ class ObjectManager {
 						if(isset($_FILES[$field]) && isset($_FILES[$field]['tmp_name'])) {
 							if(isset($_FILES[$field]['error']) && $_FILES[$field]['error'] == 2 || isset($_FILES[$field]['size']) && $_FILES[$field]['size'] > UPLOAD_MAX_FILE_SIZE)
 								throw new Exception("file exceed maximum allowed size (".floor(UPLOAD_MAX_FILE_SIZE/1024)." ko)", NOT_ALLOWED);
-							$fields_values[$field] = file_get_contents($_FILES[$field]['tmp_name'], FILE_BINARY, null, -1, UPLOAD_MAX_FILE_SIZE);
+						
+							if(BINARY_STORAGE_MODE == 'DB') {
+								// store file content in database
+								$fields_values[$field] = file_get_contents($_FILES[$field]['tmp_name'], FILE_BINARY, null, -1, UPLOAD_MAX_FILE_SIZE);
+							}
+							else if(BINARY_STORAGE_MODE == 'FS') {
+								// 1) move temporary file
+								load_class('utils/FSManipulator');
+								$storage_location = BINARY_STORAGE_DIR.'/'.FSManipulator::getSanitizedName($_FILES[$field]['name']);								
+								// note : if a file by that name already exists it will be overwritten
+								move_uploaded_file($_FILES[$field]['tmp_name'], $storage_location);
+								// 2) store file location in database
+								$fields_values[$field] = $storage_location;
+							}
 						}
-						else throw new Exception("binary data not received or cannot be retrieved", UNKNOWN_ERROR);
+						else throw new Exception("binary data has not been received or cannot be retrieved", UNKNOWN_ERROR);
 						break;
  					case 'one2many':
 					case 'many2many':
