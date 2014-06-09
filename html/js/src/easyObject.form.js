@@ -269,7 +269,9 @@
 												// use first field of the view as criteria
 // todo : check how we shoud select the field for criteria
 // this doesn't work for auto-generated contents (many2one display depend on view file)
-												var ids = search(class_name, [[[config.fields[0], 'ilike', '%' + input_value + '%']]], '', 'asc', 0, 2, config.lang);
+// temp : we keep only the first field (we remove everything that might have been added after first ',')
+var input_criteria = (explode(',', input_value))[0];
+												var ids = search(class_name, [[[config.fields[0], 'ilike', '%' + input_criteria + '%']]], '', 'asc', 0, 2, config.lang);
 												var results = 0;
 												$.each(ids, function(i, id){ ++results; });
 												if(results == 1) {
@@ -279,7 +281,7 @@
 													return;
 												}
 												else {
-													selection_domain = [[[config.fields[0], 'ilike', '%' + input_value + '%']]];
+													selection_domain = [[[config.fields[0], 'ilike', '%' + input_criteria + '%']]];
 												}
 											}
 											// pick-up dialog																														

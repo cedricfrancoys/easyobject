@@ -59,8 +59,6 @@ if(!$page_found) {
 else {
 	// get the complete URL (we should get only one result)
 	$values = browse('core\UrlResolver', $ids, array('complete_url', 'human_readable_url'));
-	$additional_params = array_merge($additional_params, extract_params($values[$ids[0]]['complete_url']));
-
 	if(substr_count($values[$ids[0]]['human_readable_url'], '/') > 1) {
 		// if human_url is deeper than one level, send a HTTP 302 and redirect to 'complete_url'
 		header("Location: ".$base.ltrim($values[$ids[0]]['complete_url'], '/'), true, 302);
@@ -70,6 +68,7 @@ else {
 		// otherwise, set the header to HTTP 200, and output the associated html
 		header('HTTP/1.0 200 OK');
 		header('Status: 200 OK');
+		$additional_params = array_merge($additional_params, extract_params($values[$ids[0]]['complete_url']));		
 		// set the global var '$_REQUEST' : if a param is already set, its value is overwritten
 		foreach($additional_params as $key => $value) $_REQUEST[$key] = $value;
 		// continue as usual
