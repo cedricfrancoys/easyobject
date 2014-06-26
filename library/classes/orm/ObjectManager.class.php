@@ -408,6 +408,7 @@ class ObjectManager {
 					}
 					else {
 						foreach($ids as $object_id) {
+// todo: find a way to load all data at once (this could be achieved by using SQL queries instead of calling 'search' method)						
 							$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 							// if field is already loaded and/or has been modified, there is nothing to do
 				   			if(in_array($field, array_keys($object->getLoadedFields($lang)))) continue;
@@ -929,7 +930,7 @@ class ObjectManager {
 			if(!empty($ids) && !is_array($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
 			if(!empty($fields) && !is_array($fields)) throw new Exception("argument is not an array of objects fields : '$fields'", INVALID_PARAM);
 
-			// not sure we should do this as it could take a while
+			// not sure we should do this as it could take a while (instead, first use search method with no domain)
 			// if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, 'id', 'asc', 0, '', $lang);
         	if(is_null($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
 
@@ -1017,7 +1018,7 @@ class ObjectManager {
 			$res_list = array();
 			$res_assoc_db = array();
 			$valid_operators = array(
-								'boolean'		=> array('=', '<>'),
+								'boolean'		=> array('=', '<>', '<', '>'),
 								'integer'		=> array('in', 'not in', '=', '<>', '<', '>', '<=', '>='),
 								'float'			=> array('=', '<>', '<', '>', '<=', '>='),
 								'string'		=> array('like', 'ilike', '=', '<>'),
@@ -1030,6 +1031,7 @@ class ObjectManager {
 								'selection'		=> array('in', '=', '<>'),
 								'binary'		=> array('like', 'ilike', '='),
 								// contains is allowed for many2one field (for compatibilty reasons)
+								// note: 'contains' operator means 'list contains at least one of the following ids'
 								'many2one'		=> array('is', 'in', '=', 'contains'),
 								'one2many'		=> array('contains'),
 								'many2many'		=> array('contains'),
@@ -1071,7 +1073,7 @@ class ObjectManager {
 
 						// check the validity of the field name and the operator
 						if(!in_array($field, array_keys($schema))) throw new Exception("invalid domain, unexisting field '$field' for object '$object_class'", INVALID_PARAM);
-						if(!in_array($operator, $valid_operators[$type])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' in object '$object_class'", INVALID_PARAM);
+						if(!in_array($operator, $valid_operators[$type])) throw new Exception("invalid operator '$operator' for field '$field' of type '{$schema[$field]['type']}' (result type: $type) in object '$object_class'", INVALID_PARAM);
 						// remember special fields involved in the domain (by removing them from the special_fields list)
 						if(isset($special_fields[$field])) unset($special_fields[$field]);
 

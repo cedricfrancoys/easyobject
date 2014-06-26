@@ -525,7 +525,9 @@ var input_criteria = (explode(',', input_value))[0];
 						// empty binary fields would result in erasing already existing data!
 						if(schemaObj[field]['type'] == 'binary') {
 							$form.data('conf').onSubmitCallbacks.add(function() {
-								if($item.data('widget').val().length == 0) $item.remove();
+								// if($item.data('widget').val().length == 0) $item.remove();
+								// test
+								if($item.data('widget').val().length == 0) $item.data('widget').attr({id: '', name: ''});
 							});							
 						}
 						
@@ -539,8 +541,9 @@ var input_criteria = (explode(',', input_value))[0];
 							// set field as required
 							$item.editable('set', 'required');
 // todo : there may be a confusion between empty required field and field with incompatible value, since no feedback is given to the user
+// note : marking a binary field as required might be a problem when re-editing
 							$form.data('conf').onSubmitCallbacks.add(function() {
-								if($('#'+field, $form).val().length <= 0) {
+								if($('#'+field, $form) != undefined && $('#'+field, $form).val().length <= 0) {
 									// if a required field is empty at submission, mark it as invalid
 									$item.editable('set', 'invalid');
 									$form.data('conf').onSubmitResult = false;
@@ -709,8 +712,7 @@ var input_criteria = (explode(',', input_value))[0];
 							// go to top of page
 							$('html, body').animate({ scrollTop: 0 }, 0);
 						}
-// todo : send message to EO console
-						//				else if(typeof(msg) != 'undefined') alert(msg);
+						else if(typeof msg != 'undefined') easyObject.log(msg);
 						return false;
 					};
 
@@ -761,10 +763,8 @@ var input_criteria = (explode(',', input_value))[0];
 								if(typeof conf.success_handler == 'function') conf.success_handler(json_data);
 								else {
 									// process the returned data
-									if(typeof json_data.result != 'object' && !json_data.result) {
+									if(typeof json_data.result != 'object' && typeof json_data.result != 'undefined') {
 										// json_data.result is an error_code
-										//var message = 'Execution error(s):' + "\n";
-	// todo : to check
 										// get an array of messages for the current language
 										var langObj = easyObject.get_lang(easyObject.getObjectPackageName(conf.class_name), easyObject.getObjectName(conf.class_name), conf.lang);
 
@@ -778,11 +778,10 @@ var input_criteria = (explode(',', input_value))[0];
 									else {
 										if(no_redirect) json_data.url = '';
 										// if action require a redirection, go to the new location
-										if(typeof(json_data.url) != 'undefined' && json_data.url.length > 0) window.location.href = json_data.url;
+										if(typeof json_data.url != 'undefined' && json_data.url.length > 0) window.location.href = json_data.url;
 										else {
 											if(no_redirect) {
-// todo : send message to EO console											
-													// alert('Action ' + action + ' successfuly executed');
+												easyObject.log('Action ' + action + ' successfuly executed');
 											}
 											else return close('ok', 'Action ' + action + ' successfuly executed');
 										}

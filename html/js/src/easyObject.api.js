@@ -408,6 +408,8 @@ var easyObject = {
 				class_name: '',
 				view_name: 'list.default',
 				domain: [[]],
+				sortname: 'id',
+				sortorder: 'asc',										
 				ui: easyObject.conf.user_lang,
 				permanent_deletion: false
 			};
@@ -417,13 +419,19 @@ var easyObject = {
 				$.extend(result, conf);
 				$view = $('<div/>').append(view_html).children().first();
 				// check if we need to apply a condition to the elements to be displayed in the view
-				var domain_str = $view.attr('domain');
+				var domain_str		= $view.attr('domain');
+				var sortname_str	= $view.attr('sortname');
+				var sortorder_str	= $view.attr('sortorder');				
 				if(domain_str != undefined) {
 // todo : check syntax validity using reg exp
 					// var domain = eval(domain_str);
 					// result.domain.push(domain[0]);
+					// note: this means that view domain overwrites any conf-defined domain
 					result.domain = eval(domain_str);
 				}
+				if(sortname_str != undefined) result.sortname = sortname_str;
+// todo : has to be either 'asc' or 'desc'				
+				if(sortorder_str != undefined) result.sortorder = sortorder_str;
 				var views_str = $view.attr('views');
 				if(views_str != undefined) {
 // todo : check syntax validity (should be json)

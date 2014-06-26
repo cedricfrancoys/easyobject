@@ -66,10 +66,14 @@
 /**
 * File transfer parameters
 */
-	// maximum authorized size for file upload (in octet)
+	// maximum authorized size for file upload (in octet)	
 	// 256ko by default
+	// keep in mind that this parameter does not override the PHP 'upload_max_filesize' directive
+	// so it can be more restrictive but cannot be higher!
+	// 	note: 'upload_max_filesize' is a PHP_INI_PERDIR directive and therefore must be defined in php.ini
+	
 	// define('UPLOAD_MAX_FILE_SIZE', 256000);
-	define('UPLOAD_MAX_FILE_SIZE', 1000000);
+	define('UPLOAD_MAX_FILE_SIZE', 4000000);
 	
 
 /**
@@ -136,7 +140,7 @@
     define('INVALID_PARAM',		 1);	// one or more parameters have invalid or incompatible value
     define('SQL_ERROR',			 2);	// error while building SQL query or processing it (check that object class matches DB schema)
     define('UNKNOWN_OBJECT',	 4);	// unknown class or object
-    define('NOT_ALLOWED',		 8);	// action violates some rule or user don't have required permissions
+    define('NOT_ALLOWED',		 8);	// action violates some rule (including max size for binary fields) or user don't have required permissions
 
 /**
 * Cache parameters

@@ -31,6 +31,7 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 load_class('utils/HtmlWrapper');
 
+$params = get_params(array('lang'=>'en'));
 
 $html = new HtmlWrapper();
 $html->addCSSFile('html/css/easyobject/base.css');
@@ -61,7 +62,8 @@ $html->addScript("
 $(document).ready(function() {
 	// init
 	easyObject.init({
-		dialog_width: 900
+		dialog_width: 900,
+		user_lang: '{$params['lang']}'
 	});
 	
 	// vars
