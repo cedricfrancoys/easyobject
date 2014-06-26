@@ -1,0 +1,19 @@
+{
+	"model": {
+		"title":{"label":"Titre du document"},
+		"author":{"label":"Auteur(s)", "help":"Syntaxes:\nPrénom NOM\nNOM DE L'ASSOCIATION\nwww.association.ext"},
+		"last_update":{"label":"Dernière mise à jour", "help":"Date de dernière mise à jour ou date de création."},
+		"description":{"label":"Description", "help":""},
+		"language":{"label":"Langue"},
+		"size":{"label":"Taille", "help":"Taille en Ko et nombre de pages dans le cas d'un document prêt pour l'impression\nExemple: 350 Ko (15 p.)"},
+		"pages":{"label":"Pages", "help":"Nombre de pages (ne s'applique que dans le cas d'un document prêt pour l'impression)"},
+		"licence":{"label":"Licence", "help":"Acronyme ou label sous lequel la licence peut être identifiée.\nExemples: CC-by-sa-nc, GNU FDL, FDDL, 'Non spécifié'"},
+		"original_url":{"label":"URL d'origine", "help":""}		
+	},
+	"view": {
+		"Info":{"label":"Infos"},	
+		"Description":{"label":"Description"},
+		"Content":{"label":"Contenu"},
+		"Categories":{"label":"Catégories"}
+	}
+}
