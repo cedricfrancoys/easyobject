@@ -400,17 +400,17 @@ $html->add('
 	<div class="quick-search-dock">
 		<img name="[]" src="packages/alterlib/html/img/compost.png" />
 		<img name="[3]" src="packages/alterlib/html/img/construction_habitation.png" />
-		<img name="[]" src="packages/alterlib/html/img/construction_presse_a_briques.png" />
-		<img name="[]" src="packages/alterlib/html/img/eau_filtre.png" />
-		<img name="[]" src="packages/alterlib/html/img/eau_pompe.png" />
-		<img name="[]" src="packages/alterlib/html/img/eau_pompe_belier.png" />
-		<img name="[]" src="packages/alterlib/html/img/eau_pompe_manuelle.png" />
+		<img name="[54]" src="packages/alterlib/html/img/construction_presse_a_briques.png" />
+		<img name="[41]" src="packages/alterlib/html/img/eau_filtre.png" />
+		<!-- <img name="[22]" src="packages/alterlib/html/img/eau_pompe.png" /> -->
+		<!-- <img name="[]" src="packages/alterlib/html/img/eau_pompe_belier.png" /> -->
+		<img name="[22]" src="packages/alterlib/html/img/eau_pompe_manuelle.png" /> 
 		<img name="[25]" src="packages/alterlib/html/img/elec_eclairage.png" />
 		<img name="[29]" src="packages/alterlib/html/img/elec_eolien.png" />
 		<img name="[]" src="packages/alterlib/html/img/elec_hydraulique.png" />
 		<img name="[16]" src="packages/alterlib/html/img/elec_solaire.png" />
-		<img name="[]" src="packages/alterlib/html/img/nourriture_pain.png" />
-		<img name="[14]" src="packages/alterlib/html/img/therm_solaire.png" />
+		<img name="[46]" src="packages/alterlib/html/img/nourriture_pain.png" />
+		<img name="[47]" src="packages/alterlib/html/img/therm_solaire.png" />
 	</div>
 </div>
 <div id="container">
