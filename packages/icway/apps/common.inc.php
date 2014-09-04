@@ -1,7 +1,43 @@
 <?php
-
 load_class('orm/I18n');
 load_class('utils/DateFormatter');
+load_class('utils/HtmlTemplate');
+
+/**
+* This function returns the translation value (if defined) of the specified term
+* *
+* @param string $term
+* @param string $lang
+*/
+function get_translation($term, $lang) {
+	$i18n = I18n::getInstance();
+	return $i18n->getClassTranslationValue($lang, array(
+												'object_class'	=> 'icway\Page',
+												'object_part'	=> 'view',
+												'object_field'	=> $term,
+												'field_attr'	=> 'label')
+											);
+}
+
+
+// We override the HtmlTemplate class to customize its decorator behavior
+class SiteTemplate extends HtmlTemplate {
+	/**
+	* This function returns html part specified by $attributes (from a 'var' tag) and associated with current post id
+	* (here come the calls to easyObject API)
+	*
+	* @param array $attributes
+	*/
+	protected function decorator($attributes) {
+		if(isset($this->renderer[$attributes['id']])) return $this->renderer[$attributes['id']]($this->params);
+		else {
+			if(!isset($attributes['translate']) || !in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) $html = '';
+			else $html = get_translation($attributes['id'], $this->params['lang']);
+			return $html;
+		}
+	}
+}
+
 
 // we're dealing with vars from the global scope
 global $params, $renderer;
@@ -34,39 +70,10 @@ switch($params['lang']) {
 		setlocale(LC_ALL, 'fr', 'fr_FR', 'fr_FR.utf8');
 		break;
 }
-/**
-* This function returns the translation value (if defined) of the specified term
-* *
-* @param string $term
-* @param string $lang
-*/
-function get_translation($term, $lang) {
-	$i18n = I18n::getInstance();
-	return $i18n->getClassTranslationValue($lang, array(
-												'object_class'	=> 'icway\Page',
-												'object_part'	=> 'view',
-												'object_field'	=> $term,
-												'field_attr'	=> 'label')
-											);
-}
-/**
-* This function returns html part specified by $attributes (from a 'var' tag) and associated with current post id
-* (here come the calls to easyObject API)
-*
-* @param array $attributes
-*/
-function get_html($attributes) {
-	global $params, $renderer;
-	if(isset($renderer[$attributes['id']])) return $renderer[$attributes['id']]($params);
-	else {
-		if(!isset($attributes['translate']) || !in_array($attributes['translate'], array('yes', 'on', 'true', '1'))) $html = '';
-		else $html = get_translation($attributes['id'], $params['lang']);
-		return $html;
-	}
-};
+
 
 /**
-* This array holds the methods to use for rendering the page
+* This array holds the functions to use for rendering the page
 * (i.e. translate the 'var' tags from the template)
 */
 $renderer = array(

@@ -5,12 +5,12 @@ namespace core {
 
 		public static function getColumns() {
 			return array(
+				'login'			=> array('type' => 'string'),
+				'password'		=> array('type' => 'string'),
 				'firstname'		=> array('type' => 'string'),
 				'lastname'		=> array('type' => 'string'),
 				'start'			=> array('type' => 'string'),				
 				'birthdate'		=> array('type' => 'date'),
-				'login'			=> array('type' => 'string', 'label' => 'Username', 'help' => 'Your username is your email address.'),
-				'password'		=> array('type' => 'string', 'label' => 'Password'),
 				'language'		=> array('type' => 'string'),
 				'validated'		=> array('type' => 'boolean'),
 				'groups_ids'	=> array('type' => 'many2many', 'foreign_object' => 'core\Group', 'foreign_field' => 'users_ids', 'rel_table' => 'core_rel_group_user', 'rel_foreign_key' => 'group_id', 'rel_local_key' => 'user_id'),

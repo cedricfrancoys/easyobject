@@ -58,4 +58,4 @@ else {
 }
 
 // send json result
-echo json_encode(array('result' => $result, 'url' => '?show=core_user_start', 'error_message_ids' => $error_message_ids));
+echo json_encode(array('result' => $result, 'url' => 'index.php?show=core_user_start', 'error_message_ids' => $error_message_ids));

@@ -4,10 +4,9 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode
 set_silent(true);
 
-include_once('parser.inc.php');
 include_once('common.inc.php');
 
-$template = 'packages/icway/html/template_site.html';
+$template_file = 'packages/icway/html/template_site.html';
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'mnemonic', 'title', 'content', 'tips_ids'), $params['lang']);
 
 /**
@@ -86,4 +85,7 @@ $page_file = 'pages/'.$values[$params['page_id']]['mnemonic'].'.php';
 @include($page_file);
 
 // output html
-if(!is_null($params['page_id']) && file_exists($template)) print(decorate_template(file_get_contents($template), get_html));
+if(!is_null($params['page_id']) && file_exists($template_file)) {
+	$template = new SiteTemplate(file_get_contents($template_file), $renderer, $params);	
+	print($template->getHtml());
+}

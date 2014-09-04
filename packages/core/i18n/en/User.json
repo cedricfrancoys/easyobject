@@ -1,8 +1,6 @@
 {
 	"model": {
-		"login":{	
-				"label":"Username",
-				"help":"Your username is your email address."},
+		"login":{"label":"Username", "help":"Your username is your email address."},
 		"password":{"label":"Password"}
 	},
 	"view": {

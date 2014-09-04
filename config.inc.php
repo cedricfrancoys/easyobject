@@ -73,7 +73,7 @@
 	// 	note: 'upload_max_filesize' is a PHP_INI_PERDIR directive and therefore must be defined in php.ini
 	
 	// define('UPLOAD_MAX_FILE_SIZE', 256000);
-	define('UPLOAD_MAX_FILE_SIZE', 4000000);
+	define('UPLOAD_MAX_FILE_SIZE', 30000000);
 	
 
 /**

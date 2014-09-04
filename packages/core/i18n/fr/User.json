@@ -1,9 +1,9 @@
 {
 	"model": {
-		"login":{
-				"label":"Identifiant",
-				"help":"Votre identifiant est votre adresse e-mail."},
-		"password":{"label":"Mot de passe"}
+		"login":{"label":"Identifiant", "help":"Votre identifiant est votre adresse e-mail."},
+		"password":{"label":"Mot de passe"},
+		"firstname":{"label":"Prénom"},
+		"lastname":{"label":"Nom"}
 	},
 	"view": {
 		"identification":{"label":"Identification"},

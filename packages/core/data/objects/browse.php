@@ -20,7 +20,7 @@
 */
 
 /*
-* file: actions/core/objects/browse.php
+* file: packages/core/data/objects/browse.php
 *
 * Returns the fields values of the object's given ids.
 *
