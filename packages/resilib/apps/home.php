@@ -20,7 +20,7 @@ function build_menu($categories_ids, $root=false) {
 	global $html_select_categories, $array_categories;
 	if($root) $html = '<ul id="menu">';
 	else $html = '<ul>';
-	$categories = browse('alterlib\Category', $categories_ids, array('id', 'name', 'children_ids', 'path'));
+	$categories = browse('resilib\Category', $categories_ids, array('id', 'name', 'children_ids', 'path'));
 	foreach($categories as $category) {
 		$array_categories[$category['id']] = array('name'=>$category['name'], 'path'=>$category['path']);
 		// we use attribute 'name' to store the category identifier
@@ -33,7 +33,7 @@ function build_menu($categories_ids, $root=false) {
 	return $html;
 }
 // get root categories
-$cat_ids = search('alterlib\Category', array(array(array('parent_id', '=', '0'))), 'name');
+$cat_ids = search('resilib\Category', array(array(array('parent_id', '=', '0'))), 'name');
 // build menu by recursion
 $html_menu = build_menu($cat_ids, true);
 
@@ -41,10 +41,10 @@ $html_menu = build_menu($cat_ids, true);
 // 2) generate default result list (not mandatory but better for search engines and end-user)
 
 // by default we request all documents (we could improve this with a multi-page widget)
-$documents_ids = search('alterlib\Document');
-$documents = browse('alterlib\Document', $documents_ids, array('title', 'author', 'categories_ids', 'language', 'last_update'));
+$documents_ids = search('resilib\Document');
+$documents = browse('resilib\Document', $documents_ids, array('title', 'author', 'categories_ids', 'language', 'last_update'));
 // get template for result entries
-$template_result = file_get_contents('packages/alterlib/html/template_result.html');
+$template_result = file_get_contents('packages/resilib/html/template_result.html');
 // describe how vars from result-template must be interpreted
 $renderer = array(
 	'title'						=>	function ($params) use ($documents) {
@@ -101,7 +101,7 @@ $renderer = array(
 											var languages = {$js_languages};
 										";
 										// add main script (inline)
-										$html .= file_get_contents('packages/alterlib/html/js/resilib.js');	
+										$html .= file_get_contents('packages/resilib/html/js/resilib.js');	
 										return $html;
 								},
 	'menu'						=>	function ($params) use ($html_menu) {
@@ -114,10 +114,10 @@ $renderer = array(
 										return $html_result;
 								},
 	'presentation'				=>	function ($params) {
-										return file_get_contents('packages/alterlib/html/presentation.html');
+										return file_get_contents('packages/resilib/html/presentation.html');
 								},
 	'contribute'				=>	function ($params) {
-										return file_get_contents('packages/alterlib/html/contribute.html');
+										return file_get_contents('packages/resilib/html/contribute.html');
 								},
 	'date'						=>	function ($params) {
 										$date = date("F Y");
@@ -132,5 +132,5 @@ $renderer = array(
 								}								
 );
 // output html
-$template = new HtmlTemplate(file_get_contents('packages/alterlib/html/template.html'), $renderer);	
+$template = new HtmlTemplate(file_get_contents('packages/resilib/html/template.html'), $renderer);	
 print($template->getHtml());

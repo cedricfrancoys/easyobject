@@ -58,7 +58,7 @@ function display_details(document_id) {
 	$details_dialog.dialog('open');
 
 	var $details = $template_details.clone();
-	var documents = browse('alterlib\\Document', [document_id], ['title', 'author', 'categories_ids', 'language', 'last_update', 'licence', 'description', 'type', 'size_txt', 'original_url', 'resilink']);
+	var documents = browse('resilib\\Document', [document_id], ['title', 'author', 'categories_ids', 'language', 'last_update', 'licence', 'description', 'type', 'size_txt', 'original_url', 'resilink']);
 
 	if(typeof documents != 'object') return false;
 	$details.find('var').each(function (index, elem) {
@@ -200,7 +200,7 @@ $(document).ready(function() {
 	// load templates
 	$.ajax({
 		type: 'GET',
-		url: 'packages/alterlib/html/template_details.html',
+		url: 'packages/resilib/html/template_details.html',
 		async: false,
 		dataType: 'html',
 		contentType: 'application/html; charset=utf-8',
@@ -210,7 +210,7 @@ $(document).ready(function() {
 
 	$.ajax({
 		type: 'GET',
-		url: 'packages/alterlib/html/template_result.html',
+		url: 'packages/resilib/html/template_result.html',
 		async: false,
 		dataType: 'html',
 		contentType: 'application/html; charset=utf-8',
@@ -282,7 +282,7 @@ $(document).ready(function() {
 		$(window).scrollTop(0);
 		$.ajax({
 			type: 'GET',
-			url: 'index.php?get=alterlib_lookup&'+$(this).serialize(),
+			url: 'index.php?get=resilib_lookup&'+$(this).serialize(),
 			async: false,
 			dataType: 'json',
 			contentType: 'application/html; charset=utf-8',

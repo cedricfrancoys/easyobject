@@ -14,10 +14,10 @@ set_silent(true);
 check_params(array('id'));
 $params = get_params(array('id'=>null));
 
-//$documents_ids = search('alterlib\Document');
-//$documents = browse('alterlib\Document', $documents_ids, array('original_url', 'type'));
+//$documents_ids = search('resilib\Document');
+//$documents = browse('resilib\Document', $documents_ids, array('original_url', 'type'));
 
-$documents = browse('alterlib\Document', array($params['id']), array('original_url', 'type'));
+$documents = browse('resilib\Document', array($params['id']), array('original_url', 'type'));
 $document = $documents[$params['id']];
 
 // check that a document by the specified id does exist
@@ -66,7 +66,7 @@ while(true) {
 
 // we were unable to get the content at its original plase, so we use the local version (resilink)
 load_class('utils/FSManipulator');
-$documents = browse('alterlib\Document', array($params['id']), array('size', 'type', 'filename', 'content'));
+$documents = browse('resilib\Document', array($params['id']), array('size', 'type', 'filename', 'content'));
 
 
 
