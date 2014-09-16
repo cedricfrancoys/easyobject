@@ -22,9 +22,8 @@
 /*
 * file: packages/core/data/objects/browse.php
 *
-* Returns the fields values of the object's given ids.
+* Returns the values of the specified fields for the objects pointed by the given ids.
 *
-* @param string $class
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library
@@ -34,16 +33,38 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('object_class', 'ids'));
+// let's announce ourselves and fetch parameters values
+$params = announce(	
+	array(	
+		'description'	=>	"Returns the values of the specified fields for the given objects ids.",
+		'params' 		=>	array(
+								'object_class'	=> array(
+													'description' => 'Class to look into.',
+													'type' => 'string', 
+													'required'=> true
+													),
+								'ids'			=> array(
+													'description' => 'List of ids of the objects to browse.',
+													'type' => 'array', 
+													'required'=> true
+													),
+								'fields'		=> array(
+													'description' => 'Wanted fields. If not specified, all simple fields are returned.',
+													'type' => 'array', 
+													'default' => null
+													),
+								'lang'			=> array(
+													'description '=> 'Specific language for multilang field.',
+													'type' => 'string', 
+													'default' => DEFAULT_LANG
+													)
+							)
+	)
+);
 
-// assign values with the received parameters
-$params = get_params(array('object_class'=>null, 'ids'=>null, 'fields'=>null, ''=>false, 'lang'=>DEFAULT_LANG));
+// get resulting array
+$result = &browse($params['object_class'], $params['ids'], $params['fields'], $params['lang']);
 
-if($params['fields'] == 'null' ) $params['fields'] = null;
-
-// json result
-$result = &browse($params['object_class'], $params['ids'], $params['fields'], $lang = $params['lang']);
-
+// outpur json result
 header('Content-type: text/html; charset=UTF-8');
 echo json_encode($result, JSON_FORCE_OBJECT);

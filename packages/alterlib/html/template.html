@@ -1,383 +1,110 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr-FR">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="ui/1.10.4/themes/smoothness/jquery-ui.css" />
-<link rel="stylesheet" href="jquery.chosen/chosen.css">
-<script src="js/jquery-1.7.1.min.js"></script>
-<script src="ui/1.10.4/jquery-ui.js"></script>
-<script src="jquery.chosen/chosen.jquery.js" type="text/javascript"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-		$( "#menu" ).menu({
-			select: function( event, ui ) {
-				console.log(ui.item.children().first());
-				console.log($(this));
-			}
-		});
-		$( "#menu" ).find('a').each(function() {
-			$(this).on('click', function(event) {
-				// console.log(this.href);
-				// todo : utiliser l'attribut 'name' pour stocker le mnemo de la catégorie
-				console.log(this.name);
-				$( "#menu" ).menu("collapseAll", event, true);
-				return false;
-			});
-		});
-		
-		$( "#tabs" ).tabs();
-
-		$('.chosen-select').chosen({'width':'200px'});
-
-		$('#search_form').on('submit', function(e) { 
-			e.preventDefault();  
-			var data = $(this).serialize();
-			console.log(data); 
-		});
-		$('#loader').hide();
-		$('#inner').show();		
-	});
-</script>
-<style>
-.chosen-container-multi .chosen-choices {
-	font-size: 75%;
-}
-
-input::-webkit-input-placeholder { font-size: 75%; color: #666; }
-input::-moz-placeholder { font-size: 75%; color: #666; }
-input:-ms-input-placeholder { font-size: 75%; color: #666; }
-input:-moz-placeholder { font-size: 75%; color: #666; }
-
-input[type=text] {
-    background-color: #FFFFFF;
-	background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
-	background-image: -webkit-linear-gradient(#eeeeee 1%, #ffffff 15%);
-	background-image: -moz-linear-gradient(#eeeeee 1%, #ffffff 15%);
-	background-image: -o-linear-gradient(#eeeeee 1%, #ffffff 15%);
-	background-image: linear-gradient(#eeeeee 1%, #ffffff 15%);
-    border: 1px solid #AAAAAA;
-	height: 27px;
-    padding: 0px;
-	font-family: sans-serif;	
-}
-input[type=text]:focus {
-  border: 1px solid #5897FB;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-#loader {
-    position: absolute;
-    display: block;	
-	left: 50%;
-	top: 50%;
-    cursor: wait;
-    background: url('css/img/load.gif') no-repeat left center transparent;
-	width: 250px;
-	padding-left: 30px;
-	margin-left: -125px;;
-	font-size: 13pt;
-	line-height: 16px;
-	font-family: sans-serif;
-}
-
-body {
-	background-color: #EAEAE6;
-}
-
-#container {
-	position: relative;
-	background: none repeat scroll 0 0 #FFFFFF;
-	border: 1px solid #D2D2CF;
-	border-radius: 8px;
-	margin: 0 20px;
-	padding: 10px;
-	color: #000000;
-	min-height: 300px;
-}
-
-#container  #inner {
-	display: none;
-	border-collapse: collapse;	
-	width: 100%;
-	border: 0;
-	margin: 0;
-	padding: 0;
-	
-}
-#main {
-	vertical-align: top;
-}
-
-.ui-menu {
-	font-size: 80%;
-	font-family: "Lucida Grande",Arial;
-	width: 199px;
-}
-.ui-tabs .ui-tabs-panel {
-	padding: 0.3em;
-	padding-top: 1em;
-}
-#left_pane {
-    width: 220px;
-	vertical-align: top;
-}
-#tabs {
-	font-size: 80%;
-}
+<link media="all" rel="stylesheet" type="text/css" href="packages/alterlib/html/ui/1.10.4/themes/smoothness/jquery-ui.css" />
+<link media="all" rel="stylesheet" type="text/css" href="packages/alterlib/html/jquery.chosen/chosen.css" />
+<link media="all" rel="stylesheet" type="text/css" href="packages/alterlib/html/css/main.css" />
+<link media="all" rel="stylesheet" type="text/css" href="packages/alterlib/html/css/details.css" />
+<link media="all" rel="stylesheet" type="text/css" href="packages/alterlib/html/css/results.css" />
+<script type="text/javascript" src="html/js/jquery-1.7.1.min.js"></script>	
+<script type="text/javascript" src="html/js/easyobject.api.min.js"></script>	
+<script type="text/javascript" src="html/js/src/jquery.simpletip-1.3.1.js"></script>	
+<script type="text/javascript" src="packages/alterlib/html/ui/1.10.4/jquery-ui.js"></script>	
+<script type="text/javascript" src="packages/alterlib/html/jquery.chosen/chosen.jquery.js"></script>	
 
 
-#result {
-	font-family: "Lucida Grande",Arial;
-	font-size: 0.8em;
-	color: #202020;
-	background-color: #FFFFFF;
-	border-collapse: collapse;	
-	width: 100%;
-	border: 0;
-	margin: 0;
-	padding: 0;
-}
-#result td {
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;	
-    height: 100px;
-    vertical-align: top;
-	padding: 10px;
-	padding-bottom: 0;
-}
-#result tr {
-	background: url("css/img/bg-result-light.png") repeat-x scroll 0 0 #FFFFFF;
-	border-top: 1px solid #C8C8C4;
-}	
-#result a:link, #result a:visited {
-    color: #007FAE;
-}
-#result .summary {
-	padding-left: 30px;
-}
-#result .summary .title {
-	margin-bottom: 0.5em;
-}
-#result .summary .title a {
-	font-weight: bold;
-}
-#result .summary .title span {
-    font-size: 85%;
-}
-#result .summary .version, #result .summary .categories {
-    font-size: 85%;
-}
-#result .summary .actions {
-    font-size: 85%;
-    margin-top: 0.5em;
-}
-#result .summary .actions a {
-	text-decoration: none;
-	padding-right: 10px;
-}
-#result .summary .actions a:hover {
-	text-decoration: underline;
-}
-#result .summary .categories a {
-    color: #006600;
-    font-weight: bold;
-}
-#result .summary .version span {
-    color: #707070;
-}
-</style>
+<script type="text/javascript"><var id="inline_script"></var></script>
 </head>
-
-<body>
-<div id="container">
- 	<div id="loader">Chargement en cours...</div>
- 	<table id="inner">	
-	<tr>		
- 		<td id="left_pane">
-			<div id="tabs">
-			  <ul>
-				<li><a href="#tabs-1">Categories</a></li>
-				<li><a href="#tabs-2">Rechercher</a></li>
-			  </ul>
-			  <div id="tabs-1">
-		<ul id="menu">				
-				<li class="first"><a name="habitation" href="#">Habitation</a>
-					<ul>
-						<li><a href="#">Auto-construction</a> 
-							<ul>
-								<li><a href="#">Terre</a>
-									<ul>	
-										<li><a href="#">Presses à briques</a></li>
-									</ul>											
-								</li>
-								<li><a href="#">Paille</a>
-									<ul>	
-										<li><a href="#">Technique GREB</a></li>
-										<li><a href="#">Technique Nebraska</a></li>										
-									</ul>											
-								</li>
-								<li><a href="#">Bois</a>
-									<ul>	
-										<li><a href="#">Charpente</a></li>									
-										<li><a href="#">Bois cordé</a></li>										
-									</ul>											
-								</li>
-								
-							</ul>							
-						</li>
-						<li><a href="#">Toitures végétales</a> </li>
-						<li><a href="#">Toilettes sèches</a> </li>
-					</ul>
-				</li>
-				<li class="first"><a href="#">Eau</a>
-					<ul>
-
-						<li><a href="#">Eau potable</a> 
-							<ul>
-								<li><a href="#">Eau de pluie</a>
-								</li>
-								<li><a href="#">Epuration</a>
-									<ul>	
-										<li><a href="#">Filtres à eau</a></li>
-										<li><a href="#">hitoépurtion</a></li>										
-									</ul>											
-								</li>
-							</ul>							
-						</li>
-						<li><a href="#">Pompes à eau</a> </li>
-
-					</ul>
-				</li>
-				
-			</ul>
-
-			  </div>
-			  <div id="tabs-2">
-			    <form id="search_form">
-				<div style="font-weight: bold; height: 25px;">Catégories</div>
-				<div style="width: 200px; display: block;">
-				  <select name="categories[]" data-placeholder="Ajouter une ou plusieurs catégories..." class="chosen-select" multiple tabindex="4">
-					<option value=""></option>
-					<option value="United States">United States</option>
-					<option value="United Kingdom">United Kingdom</option>
-					<option value="Afghanistan">Afghanistan</option>
-					<option value="Aland Islands">Aland Islands</option>
-					<option value="Albania">Albania</option>
-					<option value="Algeria">Algeria</option>
-					<option value="American Samoa">American Samoa</option>
-					<option value="Andorra">Andorra</option>
-					<option value="Angola">Angola</option>
-					<option value="Anguilla">Anguilla</option>
-					<option value="Antarctica">Antarctica</option>
-					<option value="Antigua and Barbuda">Antigua and Barbuda</option>
-					<option value="Argentina">Argentina</option>
-					<option value="Armenia">Armenia</option>
-					<option value="Aruba">Aruba</option>
-					<option value="Australia">Australia</option>
-					<option value="Austria">Austria</option>
-					<option value="Azerbaijan">Azerbaijan</option>
-					<option value="Bahamas">Bahamas</option>
-					<option value="Bahrain">Bahrain</option>
-					<option value="Bangladesh">Bangladesh</option>
-					<option value="Barbados">Barbados</option>
-					<option value="Belarus">Belarus</option>
-					<option value="Belgium">Belgium</option>
-					<option value="Belize">Belize</option>
-					<option value="Benin">Benin</option>
-					<option value="Bermuda">Bermuda</option>
-					<option value="Bhutan">Bhutan</option>
-					<option value="Bolivia, Plurinational State of">Bolivia, Plurinational State of</option>
-					<option value="Bonaire, Sint Eustatius and Saba">Bonaire, Sint Eustatius and Saba</option>
-					<option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
-					<option value="Botswana">Botswana</option>
-					<option value="Bouvet Island">Bouvet Island</option>
-					<option value="Brazil">Brazil</option>
-					<option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
-					<option value="Brunei Darussalam">Brunei Darussalam</option>
-					<option value="Bulgaria">Bulgaria</option>
-					<option value="Burkina Faso">Burkina Faso</option>
-					<option value="Burundi">Burundi</option>
-					<option value="Cambodia">Cambodia</option>
-					<option value="Cameroon">Cameroon</option>
-					<option value="Canada">Canada</option>
-					<option value="Cape Verde">Cape Verde</option>
-					<option value="Cayman Islands">Cayman Islands</option>
-					<option value="Central African Republic">Central African Republic</option>
-					<option value="Chad">Chad</option>
-					<option value="Chile">Chile</option>
-					<option value="China">China</option>
-					<option value="Christmas Island">Christmas Island</option>
-					<option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option>
-					<option value="Colombia">Colombia</option>
-					<option value="Comoros">Comoros</option>
-					<option value="Congo">Congo</option>
-					<option value="Congo, The Democratic Republic of The">Congo, The Democratic Republic of The</option>
-					<option value="Cook Islands">Cook Islands</option>
-					<option value="Costa Rica">Costa Rica</option>
-					<option value="Cote D'ivoire">Cote D'ivoire</option>
-					<option value="Croatia">Croatia</option>
-				  </select>
-				</div>
-				<br />
-				<div style="font-weight: bold; height: 25px;">Mots-clés</div>
-				<div>
-					<input style="width: 198px;" name="keywords" type="text" value="" placeholder="Dans le titre ou la description...">
-				</div>
-				<br />
-				<div style="width:100%; text-align: right;"><input type="submit" value="Ok" class="button" /></div>
-				
-				</form>
-			  </div>
-			</div>	
-			
-			
-		</td>
-
-		<td id="main">
-			<table id="result">
-				<tr>
-					<td class="summary">
-						<div class="title">
-							<a href="#">Bilan d'une autoconstruction en paille</a> /<span> Cédric & Isabelle FRANCOYS</span>
+</body>
+<div class="simpleTabs">
+	<ul class="simpleTabsNavigation">
+		<li><a href="#page-1">Recherche</a></li>
+		<li><a href="#page-2">Présentation</a></li>
+		<li><a href="#page-3">Participer</a></li>		
+	</ul>
+	<div id="page-1" class="simpleTabsContent">
+		<div style="position: relative; display: table; margin: 0; padding: 0; height: 100px; width: 100%;" >
+			<div class="quick-search-dock">
+				<fieldset>
+					<legend>Catégories phares</legend>
+					<img name="[]" src="packages/alterlib/html/img/compost.png" />
+					<img name="[3]" src="packages/alterlib/html/img/construction_habitation.png" />
+					<img name="[54]" src="packages/alterlib/html/img/construction_presse_a_briques.png" />
+					<img name="[41]" src="packages/alterlib/html/img/eau_filtre.png" />
+					<!-- <img name="[22]" src="packages/alterlib/html/img/eau_pompe.png" /> -->
+					<!-- <img name="[]" src="packages/alterlib/html/img/eau_pompe_belier.png" /> -->
+					<img name="[22]" src="packages/alterlib/html/img/eau_pompe_manuelle.png" /> 
+					<img name="[25]" src="packages/alterlib/html/img/elec_eclairage.png" />
+					<img name="[29]" src="packages/alterlib/html/img/elec_eolien.png" />
+					<img name="[]" src="packages/alterlib/html/img/elec_hydraulique.png" />
+					<img name="[16]" src="packages/alterlib/html/img/elec_solaire.png" />
+					<img name="[46]" src="packages/alterlib/html/img/nourriture_pain.png" />
+					<img name="[47]" src="packages/alterlib/html/img/therm_solaire.png" alt="chauffe-eau" />
+				</fieldset>
+			</div>
+			<div class="logo-dock">
+				<img src="packages/alterlib/html/img/resilib_logo.png" />
+			</div>			
+		</div>
+		<div id="container">
+			<div id="loader" class="loader">Chargement en cours...</div>
+			<table id="inner">
+			<tr>
+				<td id="left_pane">
+					<div id="tabs">
+					  <ul>
+						<li><a href="#tabs-1">Categories</a></li>
+						<li><a href="#tabs-2">Rechercher</a></li>
+					  </ul>
+					  <div id="tabs-1">
+						<var id="menu"></var>
+					  </div>
+					  <div id="tabs-2">
+						<form id="search_form">
+						<div style="font-weight: bold; height: 25px;">Langue</div>
+						<div style="width: 200px; display: block;">
+						  <select id="widget_lang" name="language" data-placeholder="Sélectionner la langue..." class="chosen-select">
+							<option value="" default></option>
+							<option value="fr">Français</option>
+							<option value="en">Anglais</option>
+							<option value="es">Espagnol</option>
+						  </select>
 						</div>
-						<div class="version">
-							Dernière mise à jour :<span>février 2012</span>
+						<br />
+						<div style="font-weight: bold; height: 25px;">Catégorie(s)</div>
+						<div style="width: 200px; display: block;">
+						  <select id="widget_categories" name="categories_ids[]" drop-width="500px" data-placeholder="Dans une ou plusieurs catégories..." class="chosen-select" multiple>
+							<var id="select_categories"></var>
+						  </select>
 						</div>
-						<div class="categories">
-							Catégories : <a href="#">habitat</a>, <a href="#">auto-construction</a>, <a href="#">eco-construction</a>
-						</div>
-						<div class="actions">
-							Rechercher :
-							<a href="#">Toutes les publications de cet auteur</a>
-							<a href="#">Autres publications dans ces catégories</a>
-						</div>
-					</td>
-				 </tr>
-
-				<tr>
-					<td class="summary">
-						<div class="title">
-							<a href="#">Bilan d'une autoconstruction en paille</a> /<span> Cédric & Isabelle FRANCOYS</span>
-						</div>
-						<div class="version">
-							Dernière mise à jour :<span>février 2012</span>
-						</div>
-						<div class="categories">
-							Catégories : <a href="#">habitat</a>, <a href="#">auto-construction</a>, <a href="#">eco-construction</a>
-						</div>
-						<div class="actions">
-							Rechercher :
-							<a href="#">Toutes les publications de cet auteur</a>
-							<a href="#">Autres publications dans ces catégories</a>
-						</div>
-					</td>
-				 </tr>
-				 
-			 </table>
-		</td>
-	</tr>	
-	</table>
+						<br />
+						<div style="font-weight: bold; height: 25px;">Auteur</div>
+						<div><input id="widget_author" style="width: 198px;" name="author" type="text" value="" placeholder="Dans le nom de l\'auteur..."></div>
+						<br />
+						<div style="font-weight: bold; height: 25px;">Titre</div>
+						<div><input id="widget_title" style="width: 198px;" name="title" type="text" value="" placeholder="Dans le titre..."></div>
+						<br />
+						<div style="width:100%; text-align: right;"><input type="submit" value="Ok" class="button" /></div>
+						<input style="display: none;" type="reset" />
+						</form>
+					  </div>
+					</div>
+				</td>
+				<td id="main">
+					<table id="result"><var id="result"></var></table>
+				</td>
+			</tr>
+			</table>
+		</div>
+	</div>
+	<div id="page-2" class="simpleTabsContent">
+		<var id="presentation"></var>
+	</div>
+	<div id="page-3" class="simpleTabsContent">
+		<var id="contribute"></var>
+	</div>	
 </div>
+<div id="footer"><var id="date"></var> &nbsp;&bull;&nbsp; <var id="count_docs"></var> documents référencés &nbsp;&bull;&nbsp; <var id="count_cats"></var> catégories<br />Resilib est une initiative citoyenne  &nbsp;&bull;&nbsp;  Le contenu de ce site est librement partageable </div>
 </body>
 </html>

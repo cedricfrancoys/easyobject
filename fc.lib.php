@@ -28,6 +28,7 @@
 *		check_params()
 *		get_params($params, $default_values)
 *		extract_params($url)
+*	- script description and the parameters it should receive
 *
 *	Classes folder (either Zend or user-defined framework, or both) needs to be placed in a directory named 'library' located in the same folder as the current fc.lib.php file
 *	User-defined classes naming convention : ClassName.class.php
@@ -147,6 +148,8 @@ class FClib {
 	/**
 	* Checks if all parameters have been received in the HTTP request. If not, the script is terminated.
 	*
+	* @deprecated : use announce method instead
+	*
     * @static
 	*/
 	public static function check_params($mandatory_params) {
@@ -157,9 +160,11 @@ class FClib {
 			die();
 		}
 	}
-
+	
 	/**
 	* Gets the value of a list of parameters received in the HTTP request. If a parameter is not defined, its default value is returned.
+	*
+	* @deprecated : use announce method instead
 	*
     * @static
 	* @param	array	$params
@@ -175,6 +180,48 @@ class FClib {
 		return $result;
 	}
 
+	/**
+	* This method desribes the current script and its parameters. It also ensures that required parameters have been transmitted.
+	* And, if necessary, sets default values for missing optional params.
+	*
+	* Accepted types for parameters types are : int, bool, float, string, array
+	*	
+    * @static
+	* @param	array	$announcement	array holding the description of the script and its parameters
+	* @return	array	parameters and their final values
+	*/
+	public static function announce($announcement) {		
+		$result = array();
+		// 1) check presence of all mandatory parameters
+		// build mandatory fields array
+		$mandatory_params = array();
+		foreach($announcement['params'] as $param => $description) {
+			if(isset($description['required']) && $description['required']) $mandatory_params[] = $param;
+		}
+		// if at least one mandatory param is missing
+		if(count(array_intersect($mandatory_params, array_keys($_REQUEST))) != count($mandatory_params)) {
+			// output json data telling what is expected
+			echo json_encode($announcement, JSON_FORCE_OBJECT);
+			// terminate script
+			die();
+		}
+		// 2) find any missing parameters
+		$allowed_params = array_keys($announcement['params']);
+		$missing_params = array_diff($allowed_params, array_intersect($allowed_params, array_keys($_REQUEST)));
+		// 3) build result array and set default values for optional missing parameters
+		foreach($announcement['params'] as $param => $description) {
+			if(in_array($param, $missing_params)) {
+				if(!isset($announcement['params'][$param]['default'])) $_REQUEST[$param] = null;
+				else $_REQUEST[$param] = $announcement['params'][$param]['default'];
+			}
+			// prevent some js/php misunderstanding
+			if($_REQUEST[$param] == 'null' ) $_REQUEST[$param] = null;
+			if($announcement['params'][$param]['type'] == 'array' && !is_array($_REQUEST[$param])) $_REQUEST[$param] = explode(',', $_REQUEST[$param]);
+			$result[$param] = $_REQUEST[$param];
+		}
+		return $result;
+	}
+	
 	/**
 	* Extracts paramters from an URL : returns an associative array with the params and their values
 	*
@@ -255,12 +302,18 @@ function include_file($file_name) {
 	return FClib::include_file($file_name);
 }
 
+// deprecated : use announce method instead
 function check_params($params) {
 	FClib::check_params($params);
 }
 
+// deprecated : use announce method instead
 function get_params($params) {
 	return FClib::get_params($params);
+}
+
+function announce($announcement) {
+	return FClib::announce($announcement);
 }
 
 function extract_params($url) {

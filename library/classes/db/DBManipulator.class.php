@@ -67,6 +67,12 @@ class DBManipulator {
 	 */
 	protected $affected_rows;
 
+	/**
+	 * Latest query
+	 *
+	 * @var		string
+	 * @access	protected
+	 */
 	protected $last_query;
 
 	protected $mysql_handler;
@@ -145,14 +151,20 @@ class DBManipulator {
 		return $this->affected_rows;
 	}
 
+	public function getLastQuery() {
+		return $this->last_query;
+	}
 
 	protected function setLastId($id) {
 		$this->last_id = $id;
 	}
 
-
 	protected function setAffectedRows($affected_rows) {
 		$this->affected_rows = $affected_rows;
+	}
+
+	protected function setLastQuery($query) {
+		$this->last_query = $query;
 	}
 
 }

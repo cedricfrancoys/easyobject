@@ -66,21 +66,21 @@
 /**
 * File transfer parameters
 */
-	// maximum authorized size for file upload (in octet)	
+	// maximum authorized size for file upload (in octet)
 	// 256ko by default
 	// keep in mind that this parameter does not override the PHP 'upload_max_filesize' directive
 	// so it can be more restrictive but cannot be higher!
 	// 	note: 'upload_max_filesize' is a PHP_INI_PERDIR directive and therefore must be defined in php.ini
-	
-	// define('UPLOAD_MAX_FILE_SIZE', 256000);
 	define('UPLOAD_MAX_FILE_SIZE', 30000000);
-	
+	// define('UPLOAD_MAX_FILE_SIZE', 256000);
+
 
 /**
 * Binaries storage directory
 */
+	// ensure http service has read/write permissions on this directory
 	define('BINARY_STORAGE_DIR', './bin');
-	
+
 /**
 * Binary type storage mode
 */
@@ -215,22 +215,20 @@
 * Draft & Versioning
 */
 	// draft validity in days
-	// define('DRAFT_VALIDITY', 10);
 	define('DRAFT_VALIDITY', 0);
+	// define('DRAFT_VALIDITY', 10);
 
-	
 /**
 * Date formatting
 */
 	define('DATE_FORMAT', 'd/m/Y');
 
-	
+
 /**
 * Currency formatting
 */
-	// define('CURRENCY_FORMAT', '#.##0,00€');
 	define('CURRENCY_FORMAT', '£#,##0.00');
-	
+	// define('CURRENCY_FORMAT', '#.##0,00€');
 
 /**
 * Email sending
@@ -239,15 +237,15 @@
 	define('SMTP_ACCOUNT_USERNAME', 'example');
 	define('SMTP_ACCOUNT_PASSWORD', 'password');
 	define('SMTP_ACCOUNT_EMAIL', 'example@gmail.com');
-	
-	
+
+
 /**
 * Default App
-*/	
+*/
 	// application that will be invoked if nothing is specified in the url (typically while accessing root folder)
 	define('DEFAULT_APP', 'core_manage');
-	
+
 /**
 * Public objects (for SPAM protection mechanism)
-*/	
+*/
 	define ("PUBLIC_OBJECTS", serialize (array ('icway\Comment')));

@@ -22,7 +22,7 @@
 /*
 * file: packages/core/data/objects/list.php
 *
-* Search and browse matching objects.
+* Search and browse objects matching the given criteria.
 *
 * input: 'object_class'
 *
@@ -51,25 +51,66 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('object_class'));
 
-// 1) get parameters values
-$params = get_params(array(
+// let's announce ourselves and fetch parameters values
+$params = announce(
+	array(
+		'description'	=>	"Search and browse objects matching the given criteria.",
+		'params' 		=>	array(
+								'object_class'	=> array(
+													'description' => 'Class to look into.',
+													'type' => 'string',
+													'required'=> true
+													),
+								'fields'		=> array(
+													'description' => 'Wanted fields. If not specified, all simple fields are returned.',
+													'type' => 'array',
+													'default' => null
+													),
+								'domain'		=> array(
+													'description' => 'The domain holds the criteria that results have to match (serie of conjunctions)',
+													'type' => 'array',
+													'default' => array(array())
+													),
+								'page'		=> array(
+													'description' => 'The page we\'re interested in (page size is set with \'rp\' parameter).',
+													'type' => 'int',
+													'default' => 1
+													),
+								'rp'		=> array(
+													'description' => 'Number of rows we want to have into the list.',
+													'type' => 'int',
+													'default' => 10
+													),
+								'sortname'		=> array(
+													'description' => 'Column to use for sorting results.',
+													'type' => 'string',
+													'default' => 'id'
+													),
+								'sortorder'		=> array(
+													'description' => 'The direction  (i.e. \'asc\' or \'desc\').',
+													'type' => 'string',
+													'default' => 'asc'
+													),
+								'records'		=> array(
+													'description' => 'Number of records in the list (if already known)',
+													'type' => 'string',
+													'default' => null
+													),
+								'mode'		=> array(
+													'description' => 'Allows to limit result to deleted objects (when value is \'recycle\')',
+													'type' => 'string',
+													'default' => null
+													),
+								'lang'			=> array(
+													'description '=> 'Specific language for multilang field.',
+													'type' => 'string',
+													'default' => DEFAULT_LANG
+													)
+							)
+	)
+);
 
-							'object_class'		=> null, 
-							'fields'			=> null, 
-							'domain'			=> array(array()), 
-							'page'				=> 1, 
-							'rp'				=> 10,					// number of rows we want to have into the grid
-							'sortname'			=> 'id',				// index column (i.e. user click to sort)
-							'sortorder'			=> 'asc',				// the direction  (i.e. 'asc' or 'desc')
-							'records'			=> null, 
-							'mode'				=> null, 
-							'lang'				=> DEFAULT_LANG
-					));
-
-if($params['fields'] && !is_array($params['fields'])) $params['fields'] = explode(',', $params['fields']);
 
 $start = ($params['page']-1) * $params['rp'];
 if($start < 0) $start = 0;
@@ -85,28 +126,15 @@ if($params['mode'] == 'recycle') {
 
 // 3) search and browse
 if(empty($params['records'])) {
-	// This way we search all possible results : that might result in a quite long process if the tables are big
+	// We search all possible results. It might take some time (the bigger the tables, the longer it takes to process them)
 	// but it is the only way to determine the number of results,
-	// so we do it only when the number of results is unknown
-	if(OPERATION_MODE == 'standalone') {
-		// if we are in standalone mode, however, the DBMS might offer some options to do this quicker (for example with MySQL FOUND_ROWS())
-		// first ensure objectManger is instanciated
-		$om = &ObjectManager::getInstance();
-		// get an instance of the DBMS manipulator
-		$db = &DBConnection::getInstance();
-		$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], $start, $params['rp'], $params['lang']);
-		// use the getAffectedRows method to get the total number of reords
-		if($count_ids = $db->getAffectedRows())
-			$list = &browse($params['object_class'], $ids, $params['fields'], $params['lang']);
-	}
-	else {
-		$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], 0, '', $params['lang']);
-		if($count_ids = count($ids))		
-			$list = &browse($params['object_class'], array_slice($ids, $start , $params['rp'], true), $params['fields'], $params['lang']);
-	}
+	// so we do it only when the number of results is unknown.
+	$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], 0, '', $params['lang']);
+	if($count_ids = count($ids))
+		$list = &browse($params['object_class'], array_slice($ids, $start , $params['rp'], true), $params['fields'], $params['lang']);
 }
 else {
-	// This is a faster way to do the search but it requires the number of total results
+	// This is a faster way to do the search but it requires the number of total results.
 	$ids = search($params['object_class'], $params['domain'], $params['sortname'], $params['sortorder'], $start, $params['rp'], $params['lang']);
 	$list = &browse($params['object_class'], $ids, $params['fields'], $params['lang']);
 	$count_ids = $params['records'];
@@ -131,5 +159,6 @@ $html = rtrim($html, "\n ,");
 $html .= "\n".'	]'."\n";
 $html .= '}';
 
+// 5) output result
 header('Content-type: text/html; charset=UTF-8');
 print($html);

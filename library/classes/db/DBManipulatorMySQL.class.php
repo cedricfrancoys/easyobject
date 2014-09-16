@@ -73,18 +73,19 @@ class DBManipulatorMySQL extends DBManipulator {
 	*/
 	function sendQuery($query) {
 	    if(function_exists('debug_mode') && (debug_mode() & DEBUG_SQL)) print("$query<br />\n");
-		$this->last_query = $query;
+		$this->setLastQuery($query);
 		if(($result = mysql_query($query)) === false) throw new Exception(__METHOD__.' : query failure, '.mysql_error(), SQL_ERROR);
 		else {
-			// select
+			// if everything went well, fetch some additional info
+			// a) for 'select' queries
 			if(stristr(substr($query, 0, 6), 'select')) {
 				if(($res = mysql_query("SELECT FOUND_ROWS();")) === false) throw new Exception(__METHOD__.' : query failure, '.mysql_error(), SQL_ERROR);
 				$row = mysql_fetch_row($res);
 				$this->setAffectedRows($row[0]);
 			}
-			// show
+			// b) for 'show' queries
 			else if(stristr(substr($query, 0, 4), 'show')) $this->setAffectedRows(mysql_num_rows($result));
-			// insert, update, replace, delete
+			// c) for other queries (insert, update, replace, delete)
 			else $this->setAffectedRows(mysql_affected_rows());
 			$this->setLastId(mysql_insert_id());
 		}
@@ -193,7 +194,9 @@ class DBManipulatorMySQL extends DBManipulator {
 		if(!empty($conditions) && !is_array($conditions)) throw new Exception(__METHOD__." : unable to build sql query ($sql), parameter 'conditions' is not an array.", SQL_ERROR);
 
 		// select clause
-		$sql = 'SELECT SQL_CALC_FOUND_ROWS ';
+		// we could add the following directive for better performance (we disabled it to maximize code portability)
+		// $sql = 'SELECT SQL_CALC_FOUND_ROWS ';
+		$sql = 'SELECT ';
 		if(empty($fields)) $sql .= '*';
 		else foreach($fields as $field) $sql .= DBManipulatorMySQL::escapeFieldName($field).', ';
 		$sql = rtrim($sql, ' ,');
