@@ -64,7 +64,7 @@ namespace resilib {
 		}
 		
 		public static function getResilink($om, $uid, $oid, $lang) {			
-			return '<a href="?get=resilib_download&id='.$oid.'" target="_blank">Lien resilink</a>';
+			return '<a href="index.php?get=resilib_download&id='.$oid.'" target="_blank">Lien resilink</a>';
 		}
 
 		public static function getSizeTxt($om, $uid, $oid, $lang) {

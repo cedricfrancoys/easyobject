@@ -22,9 +22,8 @@
 /*
 * file: packages/utils/data/validation.php
 *
-* Returns the errors found in the specified package.
+* Tests the given package and returns found errors (if any).
 *
-* @param string $package
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library
@@ -33,14 +32,21 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('package'));
+// announce script and fetch parameters values
+$params = announce(
+	array(
+		'description'	=>	"Tests the given package and returns found errors (if any).",
+		'params' 		=>	array(
+								'package'	=> array(
+													'description' => 'Package to validate.',
+													'type' => 'string',
+													'required'=> true
+													),
+							)
+		)
+);
 
-// assign values with the received parameters
-$params = get_params(array('package'=>null));
-
-if(empty($params['package'])) die('no package specified');
-else $params['package'] = strtolower($params['package']);
+$params['package'] = strtolower($params['package']);
 
 
 // get singletons instances
@@ -55,18 +61,8 @@ $result = array();
 * TESTING FILES
 *
 */
-
+// get the list of classes in the given package
 $classes_list = get_classes($params['package']);
-
-
-// 1) vérifier la cohérence des descriptions dans les fichiers de définition de classe
-// 2) vérifier la présence des fichiers .class.php référencés dans les définitions
-// 3) vérifier la présence des fichiers view par défaut (form.default.html et list.default.html)
-// 4) vérifier la présence des fichiers de traduction (.json)
-// 5) vérifier la cohérence des fichiers view (.html)
-// 6) vérifier la cohérence des fichiers de traduction (.lson)
-
-
 
 foreach($classes_list as $class) {
 // todo :
@@ -109,11 +105,14 @@ foreach($classes_list as $class) {
     if(!is_file("packages/{$params['package']}/views/$class.list.default.html"))
 		$result[] = "Class $class: missing default list view (/views/$class.list.default.html)";
 
-// todo : 4) check if translation file are present
+// todo : 4) check if translation file are present (.json)
     // for each defined language
     // how to determine which languages are defined ?
         //if(!is_file("packages/{$params['package']}/i18n/$language/$class.json"))
 
+// todo : 5) check view files consistency (.html)
+// todo : 6) check translation file consistency (.json)		
+		
 }
 
 
@@ -123,10 +122,10 @@ foreach($classes_list as $class) {
 *
 */
 
-// 1) verify that the DB table exists
-// 2) verify that the fields exists in DB
-// 3) verify types compatibility
-// 4) verify that the DB table exists
+// 1) check that the DB table exists
+// 2) check that the fields exists in DB
+// 3) check types compatibility
+// 4) check that the DB table exists
 
 	// a) check that every declared simple field is present in the associated DB table
 	// b) check that relational tables, if any, are present as well

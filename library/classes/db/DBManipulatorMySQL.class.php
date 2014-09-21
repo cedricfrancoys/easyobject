@@ -186,7 +186,7 @@ class DBManipulatorMySQL extends DBManipulator {
 	 * @param	string $order name of the order field
 	 * @return	resource reference to query resource
 	 */
-	public function getRecords($tables, $fields=null, $ids = null, $conditions = null, $id_field = 'id', $order='', $sort='asc', $start='0', $limit='') {
+	public function getRecords($tables, $fields=null, $ids = null, $conditions = null, $id_field = 'id', $order='', $sort='asc', $start='0', $limit='0') {
         // test values and types
 		if(!is_array($tables) || empty($tables)) throw new Exception(__METHOD__." : unable to build sql query ($sql), parameter 'tables' empty or not an array.", SQL_ERROR);
 		if(!empty($fields) && !is_array($fields)) throw new Exception(__METHOD__." : unable to build sql query ($sql), parameter 'fields' is not an array.", SQL_ERROR);

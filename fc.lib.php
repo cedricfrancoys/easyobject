@@ -210,7 +210,7 @@ class FClib {
 		$missing_params = array_diff($allowed_params, array_intersect($allowed_params, array_keys($_REQUEST)));
 		// 3) build result array and set default values for optional missing parameters
 		foreach($announcement['params'] as $param => $description) {
-			if(in_array($param, $missing_params)) {
+			if(in_array($param, $missing_params) || empty($_REQUEST[$param])) {
 				if(!isset($announcement['params'][$param]['default'])) $_REQUEST[$param] = null;
 				else $_REQUEST[$param] = $announcement['params'][$param]['default'];
 			}

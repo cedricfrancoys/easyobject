@@ -33,7 +33,7 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// let's announce ourselves and fetch parameters values
+// announce script and fetch parameters values
 $params = announce(	
 	array(	
 		'description'	=>	"Returns the values of the specified fields for the given objects ids.",
@@ -46,7 +46,7 @@ $params = announce(
 								'ids'			=> array(
 													'description' => 'List of ids of the objects to browse.',
 													'type' => 'array', 
-													'required'=> true
+													'default' => null
 													),
 								'fields'		=> array(
 													'description' => 'Wanted fields. If not specified, all simple fields are returned.',

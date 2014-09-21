@@ -58,7 +58,7 @@ class ObjectManager {
 			'selection'		=> array('type', 'label', 'help', 'onchange', 'selection'),
 			'binary'		=> array('type', 'label', 'help', 'onchange', 'search', 'multilang'),
 			'many2one'		=> array('type', 'foreign_object', 'label', 'help', 'onchange', 'search', 'multilang'),
-			'one2many'		=> array('type', 'foreign_object', 'foreign_field', 'label', 'help', 'onchange'),
+			'one2many'		=> array('type', 'foreign_object', 'foreign_field', 'label', 'help', 'onchange', 'order'),
 			'many2many'		=> array('type', 'foreign_object', 'foreign_field', 'rel_table', 'rel_local_key', 'rel_foreign_key', 'label', 'help', 'onchange'),
 			'related'		=> array('type', 'foreign_object', 'result_type', 'path', 'label', 'help', 'onchange', 'store'),
 			'function'		=> array('type', 'result_type', 'function', 'label', 'help', 'onchange', 'store')
@@ -1010,7 +1010,7 @@ class ObjectManager {
 	* @param string $limit
 	* @return mixed (integer or array)
 	*/
-	public function search($user_id, $object_class, $domain=null, $order='id', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG) {
+	public function search($user_id, $object_class, $domain=null, $order='id', $sort='asc', $start='0', $limit='0', $lang=DEFAULT_LANG) {
 // todo : if no order field is specifield, use fields returned by optional method 'getOrder', if any
 		try {
 			if(!IdentificationManager::hasRight($user_id, $object_class, 0, R_READ)) throw new Exception("user($user_id) does not have permission to read objects of class ($object_class)", NOT_ALLOWED);

@@ -200,7 +200,7 @@ $(document).ready(function() {
 	// load templates
 	$.ajax({
 		type: 'GET',
-		url: 'packages/resilib/html/template_details.html',
+		url: 'packages/resilib/html/templates/details.html',
 		async: false,
 		dataType: 'html',
 		contentType: 'application/html; charset=utf-8',
@@ -210,7 +210,7 @@ $(document).ready(function() {
 
 	$.ajax({
 		type: 'GET',
-		url: 'packages/resilib/html/template_result.html',
+		url: 'packages/resilib/html/templates/result.html',
 		async: false,
 		dataType: 'html',
 		contentType: 'application/html; charset=utf-8',

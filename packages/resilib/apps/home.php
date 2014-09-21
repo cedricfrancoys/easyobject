@@ -44,7 +44,7 @@ $html_menu = build_menu($cat_ids, true);
 $documents_ids = search('resilib\Document');
 $documents = browse('resilib\Document', $documents_ids, array('title', 'author', 'categories_ids', 'language', 'last_update'));
 // get template for result entries
-$template_result = file_get_contents('packages/resilib/html/template_result.html');
+$template_result = file_get_contents('packages/resilib/html/templates/result.html');
 // describe how vars from result-template must be interpreted
 $renderer = array(
 	'title'						=>	function ($params) use ($documents) {
@@ -89,7 +89,7 @@ foreach($documents as $document_id => $document) {
 
 // describe how vars from main template must be interpreted
 $renderer = array(
-	'inline_script'				=>	function ($params) {
+	'inline_script'				=>	function ($params) use ($array_categories, $array_languages) {
 										// vars to be added to javascript
 										$js_categories = json_encode($array_categories, JSON_FORCE_OBJECT);
 										$js_languages = json_encode($array_languages, JSON_FORCE_OBJECT);
@@ -132,5 +132,5 @@ $renderer = array(
 								}								
 );
 // output html
-$template = new HtmlTemplate(file_get_contents('packages/resilib/html/template.html'), $renderer);	
+$template = new HtmlTemplate(file_get_contents('packages/resilib/html/templates/main.html'), $renderer);	
 print($template->getHtml());

@@ -20,11 +20,10 @@
 */
 
 /*
-* file: data/core/objects/search.php
+* file: packages/core/data/objects/search.php
 *
-* Returns ids of matching the given criterias.
+* Returns ids of objects matching the given criterias.
 *
-* @param string $class_name
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library
@@ -34,12 +33,49 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('object_class'));
-
-// todo : add lang parameter
-
-$params = get_params(array('object_class'=>null, 'fields'=>null, 'domain'=>null, 'start'=>0, 'limit'=>'', 'order'=>'id', 'sort'=>'desc'));
+// announce script and fetch parameters values
+$params = announce(
+	array(
+		'description'	=>	"Returns ids of objects matching the given criterias.",
+		'params' 		=>	array(
+								'object_class'	=> array(
+													'description' => 'Class to look into.',
+													'type' => 'string',
+													'required'=> true
+													),
+								'domain'		=> array(
+													'description' => 'The domain holds the criteria that results have to match (serie of conjunctions)',
+													'type' => 'array',
+													'default' => array(array())
+													),
+								'order'		=> array(
+													'description' => 'Column to use for sorting results.',
+													'type' => 'string',
+													'default' => 'id'
+													),
+								'sort'		=> array(
+													'description' => 'The direction  (i.e. \'asc\' or \'desc\').',
+													'type' => 'string',
+													'default' => 'desc'
+													),
+								'start'		=> array(
+													'description' => 'The row from which results have to start.',
+													'type' => 'int',
+													'default' => '0'
+													),
+								'limit'		=> array(
+													'description' => 'The maximum number of results.',
+													'type' => 'int',
+													'default' => '0'
+													),													
+								'lang'			=> array(
+													'description '=> 'Specific language for multilang field.',
+													'type' => 'string',
+													'default' => DEFAULT_LANG
+													)
+							)
+	)
+);
 
 // get json result
 $result = search($params['object_class'], $params['domain'], $params['order'], $params['sort'], $params['start'], $params['limit']);

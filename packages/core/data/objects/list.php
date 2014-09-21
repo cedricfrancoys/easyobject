@@ -34,11 +34,11 @@
 *	"total": "1",
 *	"records": "5",
 *	"rows": [
-*		{"id":"1","cell":["1","Bart","Simpson","1976-03-04","2012-06-01"]},
-*		{"id":"2","cell":["2","Parker","Lewis","2000-01-01","2012-08-25"]},
-*		{"id":"3","cell":["3","Kevin","McCallister","2000-01-01","2012-08-25"]},
-*		{"id":"4","cell":["4","Joey","Jeremiah","2000-01-01","2012-08-25"]},
-*		{"id":"5","cell":["5","Christine","Nelson","2000-01-01","2012-08-25"]}
+*		{"id":"1","cell":["1","Bart","Simpson","1976-03-04","2012-08-25"]},
+*		{"id":"2","cell":["2","Parker","Lewis","1971-11-05","2012-08-25"]},
+*		{"id":"3","cell":["3","Kevin","McCallister","1980-08-26","2012-08-25"]},
+*		{"id":"4","cell":["4","Joey","Jeremiah","1971-12-22","2012-08-25"]},
+*		{"id":"5","cell":["5","Todd","Anderson","1970-11-06","2012-08-25"]}
 *		]
 * }
 *
@@ -52,7 +52,7 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 set_silent(true);
 
 
-// let's announce ourselves and fetch parameters values
+// announce script and fetch parameters values
 $params = announce(
 	array(
 		'description'	=>	"Search and browse objects matching the given criteria.",
@@ -73,7 +73,7 @@ $params = announce(
 													'default' => array(array())
 													),
 								'page'		=> array(
-													'description' => 'The page we\'re interested in (page size is set with \'rp\' parameter).',
+													'description' => 'The page we\'re interested in (page length is set with \'rp\' parameter).',
 													'type' => 'int',
 													'default' => 1
 													),

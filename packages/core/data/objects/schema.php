@@ -20,12 +20,10 @@
 */
 
 /*
-* file: actions/core/user/login.php
+* file: packages/core/data/objects/schema.php
 *
-* Logs a user in.
+* Returns the definition of a given class.
 *
-* @param string $login
-* @param string $password (locked MD5 value)
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library
@@ -35,20 +33,23 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('object_class'));
-// assign values with the received parameters
-$params = get_params(array('object_class'=>null));
-//$package = ObjectManager::getObjectPackageName($params['class']);
+// announce script and fetch parameters values
+$params = announce(
+	array(
+		'description'	=>	"Returns the definition of a given class.",
+		'params' 		=>	array(
+								'object_class'	=> array(
+													'description' => 'The class which we want the schema.',
+													'type' => 'string',
+													'required'=> true
+													)
+							)
+	)
+);
 
-
+// ask schema to the object manager
 $om = &ObjectManager::getInstance();
-$schema = $om->getObjectSchema($params['object_class']);
-
+$result = $om->getObjectSchema($params['object_class']);
 
 // send json result
-/*
-if error
-	echo json_encode(array('result' => false));
-*/
-echo json_encode($schema);
+echo json_encode($result);
