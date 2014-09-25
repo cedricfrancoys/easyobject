@@ -24,6 +24,7 @@ $renderer = array_merge($renderer, array(
 							$dateFormatter = new DateFormatter($values[$params['post_id']]['created'], DATE_TIME_SQL);
 							$date = ucfirst(strftime("%d %B %Y", $dateFormatter->getTimestamp()));
 							if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
+							if(in_array($params['post_id'], array(1,2,3))) $date = '&nbsp;';
 							$html .= '<h2>'.$date.'</h2>';
 							$html .= $values[$params['post_id']]['content'];
 							return $html;

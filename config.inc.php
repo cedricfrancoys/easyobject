@@ -20,7 +20,7 @@
 */
 
 
-// todo : make a distinction between mandatory constants and optional constants (that should be defined either in a second config file or in a config file specific to the current app's package)
+// todo : make a distinction between mandatory and optional constants (that should be defined either in a second config file or in a config file specific to the current app's package)
 
 /**
 * Current version of easyObject
@@ -71,6 +71,7 @@
 	// keep in mind that this parameter does not override the PHP 'upload_max_filesize' directive
 	// so it can be more restrictive but cannot be higher!
 	// 	note: 'upload_max_filesize' is a PHP_INI_PERDIR directive and therefore must be defined in php.ini
+
 	define('UPLOAD_MAX_FILE_SIZE', 30000000);
 	// define('UPLOAD_MAX_FILE_SIZE', 256000);
 
@@ -90,7 +91,7 @@
 /**
 * Debugging
 */
-
+    $SILENT_MODE = false;
 	ini_set('display_errors', true);
 	error_reporting(E_ALL);
 
@@ -99,11 +100,10 @@
 	define('DEBUG_ORM',	4);
 	//define('DEBUG_',	8);
 
-	// define('DEBUG_MODE', 0);
 	define('DEBUG_MODE', DEBUG_PHP | DEBUG_ORM | DEBUG_SQL);
-
-    $SILENT_MODE = false;
-
+	// define('DEBUG_MODE', 0);
+	
+	
 	/**
 	* Allows to force the script to be verbose or to mute it (no output).
 	*
@@ -174,11 +174,13 @@
 	// if no ACL is defined (which is the case by default) for an object nor for its class, any user will be granted the permissions set below
 	// by default, we allow anyone to see any content (you may change it if necessary)
 	// note: in order to allow a user to fully create objects, he must be granted R_CREATE and R_WRITE permissions
-	//define('DEFAULT_RIGHTS', R_READ);
 
 	// tip : to set several rights at once, you may use the OR binary operator
+	// define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE);
+	
 	define('DEFAULT_RIGHTS', R_CREATE | R_READ | R_WRITE | R_DELETE | R_MANAGE);
-
+	//define('DEFAULT_RIGHTS', R_READ);
+	
 	// level of authorization control
 	// By default, the control is done at the class level. It means that a user will be granted the same rights for every objects of a given class.
 	// However, sometimes we must take the object id under account (for instance, if pages of a web site can have their own permissions)
@@ -189,9 +191,8 @@
 * Logging
 */
 	// note : keep in mind that enabling logging makes I/O operations a little bit longer
-	//define('LOGGING_MODE', false);
 	define('LOGGING_MODE', R_CREATE | R_WRITE | R_DELETE);
-
+	//define('LOGGING_MODE', false);
 
 /**
 * Operation mode

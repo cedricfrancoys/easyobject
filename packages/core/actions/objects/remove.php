@@ -22,6 +22,7 @@
 /*
 * file: packages/core/actions/objects/remove.php
 *
+* Removes specified object(s).
 *
 */
 
@@ -32,11 +33,30 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('object_class', 'ids'));
+// announce script and fetch parameters values
+$params = announce(	
+	array(	
+		'description'	=>	"Removes specified object(s).",
+		'params' 		=>	array(
+								'object_class'	=> array(
+													'description' => 'Class of the object(s) to delete.',
+													'type' => 'string', 
+													'required'=> true
+													),
+								'ids'			=> array(
+													'description' => 'List of ids of the objects to browse.',
+													'type' => 'array', 
+													'required'=> true
+													),
+								'permanent'			=> array(
+													'description '=> 'Flag telling if deletion has to be permanent (not in recycle bin).',
+													'type' => 'bool', 
+													'default' => false
+													)
+							)
+	)
+);
 
-// assign values with the received parameters
-$params = get_params(array('object_class'=>null, 'ids'=>null, 'permanent'=>false));
 
 // json result
 $result = remove($params['object_class'], $params['ids'], $params['permanent']);

@@ -22,10 +22,8 @@
 /*
 * file: packages/core/actions/objects/update.php
 *
-* Update an object.
-*
-* @param string $class_anme
-* @param array $ids
+* Update specified object(s) or creates new object(s) (when given id is 0).
+°
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library
@@ -35,11 +33,35 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('object_class', 'ids'));
+// announce script and fetch parameters values
+$params = announce(	
+	array(	
+		'description'	=>	"Update specified object(s) or creates new object(s) (when given id is 0).",
+		'params' 		=>	array(
+								'object_class'	=> array(
+													'description' => 'Class to look into.',
+													'type' => 'string', 
+													'required'=> true
+													),
+								'ids'			=> array(
+													'description' => 'List of ids of the objects to browse.',
+													'type' => 'array', 
+													'required'=> true
+													),
+								'public_code'	=> array(
+													'description' => 'Code for updating public objects (should be equal to session_id).',
+													'type' => 'string',
+													'default' => null
+													),
+								'lang'			=> array(
+													'description '=> 'Specific language for multilang field.',
+													'type' => 'string', 
+													'default' => DEFAULT_LANG
+													)
+							)
+	)
+);
 
-// assign values with the received parameters
-$params = get_params(array('object_class'=>null, 'ids'=>null, 'lang'=>DEFAULT_LANG, 'public_code'=>null));
 
 // additional check for public objects (i.e. that can be creatd or modified by guest users)
 if(in_array($params['object_class'], unserialize(PUBLIC_OBJECTS))) {
@@ -47,11 +69,11 @@ if(in_array($params['object_class'], unserialize(PUBLIC_OBJECTS))) {
 	if(is_null($params['public_code']) || $params['public_code'] != SESSION_ID) die();
 }
 
-// first we check the validation of the posted content
+// first we try to validate the submitted content
 $error_message_ids = array();
 $validation = validate($params['object_class'], $_REQUEST);
 
-// if something went wrong during the validation, abort the log in process
+// if something went wrong during the validation, abort the process
 if($validation === false) $result = UNKNOWN_ERROR;
 else {
 	if(count($validation)) {
@@ -61,8 +83,8 @@ else {
 	}
 	else {
 // note : keep in mind that if we are requesting a new object
-// and if that object has one field whose name is in the $_REQUEST
-// then we don't prevent from setting values (which would result in the creation AND modification, so object would no longer be a draft)
+// and if that object has one (or more) field whose name is in the $_REQUEST array
+// then operation will result in the creation AND modification of the object (which then would no longer be a draft)
 		// values are valid : update object and get json result
 		$result = update($params['object_class'], $params['ids'], $_REQUEST, $params['lang']);
 		// look for deprecated draft
@@ -71,6 +93,9 @@ else {
 		if(is_array($result) && !empty($ids)) remove('core\Version', $ids, true);
 	}
 }
+
+// note: in case of success, $result will contain an array (with ids of newly created objects, if any)
+// otherwise it will hold an error code (integer)
 
 // send json result
 header('Content-type: text/html; charset=UTF-8');

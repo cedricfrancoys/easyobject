@@ -1242,15 +1242,15 @@ class ObjectManager {
 
 
 	/**
-	* Sets the values of an instance and creates a new object (if specified $object_id is 0).
-	* This method expects an array with modified values of an object.
+	* Sets the values of one or more instance(s) or creates new object(s) (if specified $object_id is 0).
+	* This method expects an array with new values for specified objects.
 	* In case new objects are created, an array is returned containing associated new ids.
 	*
 	* @param integer $user_id
 	* @param string $object_class
 	* @param array $ids
 	* @param array $values
-	* @return mixed (integer or array containing ids of newly created objects - if none, array is empty)
+	* @return mixed (integer - error code if something went wrong - or array containing ids of newly created objects - if none, array is empty)
 	*/
 	public function update($user_id, $object_class, $ids, $values=null, $lang=DEFAULT_LANG) {
 		try {

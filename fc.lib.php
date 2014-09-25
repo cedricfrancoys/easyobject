@@ -201,7 +201,7 @@ class FClib {
 		// if at least one mandatory param is missing
 		if(count(array_intersect($mandatory_params, array_keys($_REQUEST))) != count($mandatory_params)) {
 			// output json data telling what is expected
-			echo json_encode($announcement, JSON_FORCE_OBJECT);
+			echo json_encode(array('result'=>INVALID_PARAM,'announcement'=>$announcement), JSON_FORCE_OBJECT);
 			// terminate script
 			die();
 		}

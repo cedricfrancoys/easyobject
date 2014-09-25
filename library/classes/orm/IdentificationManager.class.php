@@ -77,7 +77,7 @@ class IdentificationManager {
 					if(isset($this->groupsTable[$user_id])) $groups_ids = $this->groupsTable[$user_id];
 					else {
 						$groups_ids = array(DEFAULT_GROUP_ID);
-						$result = $db->getRecords(array('core_rel_group_user'), array('group_id'), null, array(array(array('user_id', '=', "'$user_id'"))));
+						$result = $db->getRecords(array('core_rel_group_user'), array('group_id'), null, array(array(array('user_id', '=', $user_id))));
 						if($db->getAffectedRows()) while($row = $db->fetchArray($result)) $groups_ids[] = $row['group_id'];
 						$this->groupsTable[$user_id] = $groups_ids;
 					}
