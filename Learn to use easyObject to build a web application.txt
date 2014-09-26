@@ -64,13 +64,13 @@ In order to do so, we add an author field, defined like this:
                       'type'        => 'function', 
                       'result_type' => 'string', 
                       'store'       => true, 
-                      'function'    => 'blog\Post::callable_getAuthor'
+                      'function'    => 'blog\Post::getAuthor'
                 )
 </code>
 
 As well as the method allowing to retrieve the name of the given user id:
 <code php>
-public static function callable_getAuthor($om, $uid, $oid, $lang) {
+public static function getAuthor($om, $uid, $oid, $lang) {
     $author = '';
     $res = $om->browse($uid, 'blog\Post', array($oid), array('creator'), $lang);
     if(is_array($res)) {
@@ -84,7 +84,7 @@ public static function callable_getAuthor($om, $uid, $oid, $lang) {
 </code>
 
 
-Finally, our file looks like this:
+Now, our file looks like this:
 
 <code php>
 <?php
@@ -101,12 +101,12 @@ namespace blog {
                                      'type' => 'function', 
                                      'result_type' => 'string', 
                                      'store' => true, 
-                                     'function' => 'blog\Post::callable_getAuthor'
+                                     'function' => 'blog\Post::getAuthor'
                                 )
             );
         }
 
-        public static function callable_getAuthor($om, $uid, $oid, $lang) {
+        public static function getAuthor($om, $uid, $oid, $lang) {
             $author = '';
             $res = $om->browse($uid, 'blog\Post', array($oid), array('creator'), $lang);
             if(is_array($res)) {
