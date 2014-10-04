@@ -60,6 +60,8 @@ class HttpRequest {
        
         // fetch
         $this->_fp = fsockopen(($this->_protocol == 'https' ? 'ssl://' : '') . $this->_host, $this->_port);
+		if($this->_fp === false) return '';
+		
         fwrite($this->_fp, $req);
         while(is_resource($this->_fp) && $this->_fp && !feof($this->_fp))
             $response .= fread($this->_fp, 1024);

@@ -20,15 +20,14 @@
 */
 
 /*
-* file: packages/core/actions/objects/remove.php
+* file: data/utils/compare.php
 *
-* Removes specified object(s).
+* Returns the timestamp of the lastest change made in DB.
 *
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
-
 
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
@@ -36,30 +35,33 @@ set_silent(true);
 // announce script and fetch parameters values
 $params = announce(	
 	array(	
-		'description'	=>	"Removes specified object(s).",
+		'description'	=>	"This script tells if two easyObject databases are synchronized.",
 		'params' 		=>	array(
-								'object_class'	=> array(
-													'description' => 'Class of the object(s) to delete.',
+								'url1'	=> array(
+													'description' => 'Base URL of the first easyObject installation.',
 													'type' => 'string', 
 													'required'=> true
 													),
-								'ids'			=> array(
-													'description' => 'List of ids of the objects to browse.',
-													'type' => 'array', 
+								'url2'	=> array(
+													'description' => 'Base URL of the second easyObject installation.',
+													'type' => 'string', 
 													'required'=> true
-													),
-								'permanent'		=> array(
-													'description '=> 'Flag telling if deletion has to be permanent (not in recycle bin).',
-													'type' => 'bool', 
-													'default' => false
 													)
 							)
 	)
 );
 
+load_class('utils/HttpRequest');
 
-// json result
-$result = remove($params['object_class'], $params['ids'], $params['permanent']);
+$request = new HttpRequest($params['url1'].'?get=utils_last-change');
+$url1 = json_decode($request->get(), true);
 
+$request = new HttpRequest($params['url2'].'?get=utils_last-change');
+$url2 = json_decode($request->get(), true);
+
+$result = array();
+$result[] = (bool) (isset($url2['result'][0]) && isset($url2['result'][0]) && ($url1['result'][0] == $url2['result'][0]));
+
+// send json result
 header('Content-type: text/html; charset=UTF-8');
-echo json_encode(array('result' => $result, 'url' => ''));
+echo json_encode(array('result' => $result, 'url' => '', 'error_message_ids' => ''));

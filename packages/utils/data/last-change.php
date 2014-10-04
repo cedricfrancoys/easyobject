@@ -20,46 +20,64 @@
 */
 
 /*
-* file: packages/core/actions/objects/remove.php
+* file: data/utils/last-change.php
 *
-* Removes specified object(s).
+* Returns the timestamp of the lastest change made in DB.
 *
 */
 
 // Dispatcher (index.php) is in charge of setting the context and should include easyObject library
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
-
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
+
+load_class('utils/DateFormatter');
+
 
 // announce script and fetch parameters values
 $params = announce(	
 	array(	
-		'description'	=>	"Removes specified object(s).",
+		'description'	=>	"This script returns the timestamp of the latest modification made by a user to the current installation.",
 		'params' 		=>	array(
-								'object_class'	=> array(
-													'description' => 'Class of the object(s) to delete.',
-													'type' => 'string', 
-													'required'=> true
-													),
-								'ids'			=> array(
-													'description' => 'List of ids of the objects to browse.',
-													'type' => 'array', 
-													'required'=> true
-													),
-								'permanent'		=> array(
-													'description '=> 'Flag telling if deletion has to be permanent (not in recycle bin).',
-													'type' => 'bool', 
-													'default' => false
-													)
 							)
 	)
 );
 
 
-// json result
-$result = remove($params['object_class'], $params['ids'], $params['permanent']);
 
+// get singletons instances
+$om = &ObjectManager::getInstance();
+$db = &DBConnection::getInstance();
+
+$result = $tables = $timestamps = array();
+$packages = get_packages();
+
+// load database tables
+$res = $db->sendQuery("show tables;");
+while($row = $db->fetchRow($res)) {
+	$tables[$row[0]] = true;
+}
+
+// get last modif for each table
+foreach($packages as $package) {
+	$classes = get_classes($package);
+	foreach($classes as $class) {
+		$table = $om->getObjectTableName($package.'\\'.$class);
+		if(isset($tables[$table])) {
+			$res = $db->sendQuery("SELECT max(`modified`) as max FROM `$table`;");
+			$row = $db->fetchRow($res);
+			if(!is_null($row[0])) {
+				$dateFormatter = new DateFormatter($row[0], DATE_TIME_SQL);
+				$timestamps[] = $dateFormatter->getTimestamp();		
+			}
+		}
+	}	
+}
+	
+arsort($timestamps);
+$result[] = array_shift($timestamps);
+
+// send json result
 header('Content-type: text/html; charset=UTF-8');
-echo json_encode(array('result' => $result, 'url' => ''));
+echo json_encode(array('result'=>$result));

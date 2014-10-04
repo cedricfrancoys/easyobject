@@ -33,13 +33,25 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
-// ensure required parameters have been transmitted
-check_params(array('package'));
+$packages = get_packages();
 
-// assign values with the received parameters
-$params = get_params(array('package'=>null));
-if(empty($params['package'])) die('no package specified');
-else $params['package'] = strtolower($params['package']);
+// announce script and fetch parameters values
+$params = announce(	
+	array(	
+		'description'	=>	"This script returns the sql schema of the specified package.",
+		'params' 		=>	array(
+								'package'	=> array(
+													'description' => 'Package for which we want SQL schema.',
+													'type' => 'string', 
+													'selection' => array_combine(array_values($packages), array_values($packages)),
+													'required'=> true
+													)
+							)
+	)
+);
+
+
+$params['package'] = strtolower($params['package']);
 
 $result = array();
 

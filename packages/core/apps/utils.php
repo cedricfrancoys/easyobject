@@ -44,15 +44,6 @@ $html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
 $html->addJSFile('html/js/easyObject.loader.js');
 
 
-$js_packages = function () {
-	$packages_directory = 'packages';
-	$packages_list = array();
-	if(is_dir($packages_directory) && ($list = scandir($packages_directory))) {
-		foreach($list as $node) if (!in_array($node, array('.', '..')) && is_dir($packages_directory.'/'.$node) && $node{0} != '.') $packages_list[] = "'$node'";
-	}
-	return '['.implode(',', $packages_list).']';
-};
-
 $js_plugins = function () {
 	$plugins_directory = 'packages/utils/data';
 	$plugins_list = array();
@@ -72,15 +63,11 @@ $js_plugins = function () {
 $html->addScript("
 $(document).ready(function() {
 	// vars
-	var packages = {$js_packages()};
 	var plugins = {$js_plugins()};
-    var package = 'core';
 
 	// layout
 	$('body')
 	.append($('<div/>').attr('id', 'menu').css({'height': $(window).height()+'px', 'float':'left', 'width':'200px'})
-			.append($('<label/>').css({'margin': '4px', 'font-weight': 'bold', 'display': 'block'}).html('Package: '))
-			.append($('<select/>').attr('id', 'package').css({'margin': '4px'}))
 			.append($('<label/>').css({'margin': '4px', 'font-weight': 'bold', 'display': 'block'}).html('Plugin: '))
     		.append($('<select/>').attr('id', 'plugin').css({'margin': '4px'}))
     		.append($('<button type=\"button\"/>').attr({'id': 'submit'}).html('ok'))
@@ -88,26 +75,65 @@ $(document).ready(function() {
     .append($('<div/>').attr('id', 'main').css({'display': 'table', 'background-color': 'white', 'height': $(window).height()+'px', 'float':'left', 'width': ($(window).width()-240)+'px', 'padding': '10px'}));
 
 	// feed
-	$.each(packages, function(i,item){
-		$('#package').append($('<option/>').val(item).html(item));
-	});
 	$.each(plugins, function(i,item){
 		$('#plugin').append($('<option/>').val(item).html(item));
 	});
 
 	// events
 	$('#submit').click(function() {
-		$.getJSON('index.php?get=utils_'+$('#plugin').val()+'&package='+$('#package').val(), function (json_data) {
+		$.getJSON('index.php?get=utils_'+$('#plugin').val()+'&'+$('#params').serialize(), function (json_data) {
 				$('#main').empty();
-				$('#main').append($('<div/>').css({'font-weight': 'bold', 'margin-bottom': '20px'}).append($('#plugin').val() + ' plugin results for package ' +  $('#package').val()));
-				$('#main').append($('<textarea/>').attr('id', 'result').css({'width': '100%', 'height': '400px'}));
-				if(typeof json_data.result != 'object') {
-					// error
+				$('#main').append($('<div/>').css({'font-weight': 'bold', 'margin-bottom': '20px'}).append('Plugin results :'));
+				$('#main').append($('<div/>').attr('id', 'result').css({'width': '100%', 'height': '400px'}));
+				if(typeof json_data.result == 'object') {
+					// result is an object					
+					$('#result').append($('<textarea/>').attr('id', 'output').css({'width': '100%', 'height': '100%'}));
+					$.each(json_data.result, function(i, item){
+						$('#output').append(item+'\\r\\n');
+					});
 				}
 				else {
-					$.each(json_data.result, function(i, item){
-						$('#result').append(item+'\\r\\n');
-					});
+					// result is an error code
+					if(json_data.result == 1) {
+						// INVALID_PARAMS
+						$('#result').append('At least one parameter is missing or has invalid value.'+'<br /><br />');
+						// try to build a form matching requirements
+						if(typeof json_data.announcement == 'object') {
+							// we received an announcement
+							$('#result').append(json_data.announcement.description+'<br /><br />');
+							$('#result').append($('<form/>').attr('id', 'params').append($('<table/>').addClass('widgets').css({'border': 'solid 1px grey'})));
+							$.each(json_data.announcement.params, function(i, item){
+								var conf = {
+									type: item.type,
+									name: i
+								};
+								if(typeof item.selection != 'undefined') {
+									conf.type = 'selection';
+									conf.selection = item.selection;
+								}
+								$('#params .widgets').append($('<tr/>')
+									.append($('<td/>').css({'padding':'10px','width':'150px', 'font-weight':'bold'}).text(i+':'))
+									.append($('<td/>').css({'padding':'10px',}).editable(conf))
+									.append($('<td/>').css({'padding':'10px',}).html(item.description))
+								);
+							});
+							$('#params .widgets').append($('<tr/>')
+								.append($('<td/>').attr('colspan', '3').css({'padding':'10px','text-align': 'right'})
+									.append(
+										$('<button type=\"button\"/>').html('submit').on('click', function() {
+										$('#submit').click();
+										})
+									)
+								)
+							);
+						}
+						/*
+						
+						if(typeof json_data.announcement == 'object') {
+							$('#result').append(JSON.stringify(json_data.announcement, null, 4));
+						}
+						*/
+					}
 				}
 		});
 	});

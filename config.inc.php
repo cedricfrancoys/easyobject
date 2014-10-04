@@ -21,6 +21,7 @@
 
 
 // todo : make a distinction between mandatory and optional constants (that should be defined either in a second config file or in a config file specific to the current app's package)
+// mandatory should be present in this file (required by url_resolve.php)
 
 /**
 * Current version of easyObject
@@ -79,13 +80,13 @@
 /**
 * Binaries storage directory
 */
-	// ensure http service has read/write permissions on this directory
+	// note: ensure http service has read/write permissions on this directory
 	define('BINARY_STORAGE_DIR', './bin');
 
 /**
 * Binary type storage mode
 */
-	// possible values are : 'DB' (database) and 'FS' (filesystem)
+	// possible values are: 'DB' (database) and 'FS' (filesystem)
 	define('BINARY_STORAGE_MODE', 'FS');
 
 /**

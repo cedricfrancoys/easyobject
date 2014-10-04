@@ -49,4 +49,4 @@ http://easyobject.cedricfrancoys.be/#help
 
 Quick start 
 If you're new to easyObject, maybe you'll like to try the beginner guide : 
-" Learn to use easyObject to build a web application " - a 10 minutes tutorial.
+" Learn to build a web application in 10 minutes".

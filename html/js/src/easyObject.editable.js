@@ -31,16 +31,19 @@
 		var default_conf = {
 			name: '',
 			value: '',
-			type: 'string', //boolean, integer, string, password, short_text, text, date, time, datetime, timestamp, selection, binary, one2many, many2one, many2many
+			type: 'string',			//accepted values are: bool/boolean, float, int/integer, string, password, short_text, text, date, time, datetime, timestamp, selection, binary, one2many, many2one, many2many
 			readonly: false,
 			required: false,
-			onchange: function() {console.log($(this).val());}
+			onchange: function() {},
+			selection: {}
+			// ...
 		}
 
 		if(typeof(arg) == 'object') {
 			return this.each(function() {
 				return (function ($this, conf) {
 					switch(conf.type) {
+						case 'bool':					
 						case 'boolean':
 // todo : align checkbox left
 							$this.data('widget', $('<input type="checkbox" value="1" />')
@@ -54,6 +57,7 @@
 												.appendTo($this)
 										);
 							break;
+						case 'int':							
 						case 'integer':
 						case 'float':
 						case 'string':

@@ -34,7 +34,7 @@ class ErrorHandler {
 	}
 
     public static function UncaughtExceptionHandling($exception) {
-    	trigger_error('Fatal error : Uncaught exception raised by '.$exception_thrower.' : '.$exception->getFile().'@'.$exception->getLine().', '.$exception->getMessage(), E_USER_ERROR);
+    	trigger_error('Fatal error : Uncaught exception raised in : '.$exception->getFile().'@'.$exception->getLine().', '.$exception->getMessage(), E_USER_ERROR);
 	}
 
     public static function ExceptionHandling($exception, $exception_thrower) {

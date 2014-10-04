@@ -1,4 +1,24 @@
 <?php
+/**
+*    This file is part of the easyObject project.
+*    http://www.cedricfrancoys.be/easyobject
+*
+*    Copyright (C) 2012  Cedric Francoys
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 define('__EASYOBJECT_LIB', true) or die('unable to define or already defined constant __EASYOBJECT_LIB');
 defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 
@@ -13,7 +33,7 @@ if(OPERATION_MODE == 'client-server') {
 * Set of stand-alone functions allowing to :
 * 	- relieve the user from object notations and repetitive multi-steps calls,
 * 	- ease remote calls in client-server mode
-*   - check if OPERATION_MODE is properly set (unknown values results in fatal error)
+*   - ensure that OPERATION_MODE is properly set (unknown values results in fatal error)
 */
 
 function user_id($session_id=SESSION_ID) {
@@ -218,6 +238,14 @@ function remove($object_class, $ids, $permanent=false, $session_id=SESSION_ID) {
 
 
 /* additional utility functions */
+function get_packages() {
+	$packages_list = array();
+	$package_directory = getcwd().'/packages';
+	if(is_dir($package_directory) && ($list = scandir($package_directory))) {
+		foreach($list as $node) if(is_dir($package_directory.'/'.$node) && !in_array($node, array('.', '..'))) $packages_list[] = $node;
+	}
+	return $packages_list;
+}
 
 function get_classes($package_name) {
 	$classes_list = array();

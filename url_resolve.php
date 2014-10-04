@@ -19,59 +19,99 @@
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// include main libraries
+// include main libraries (this script is an entry point)
 defined('__FC_LIB') or include_once('fc.lib.php');
 include_once('config.inc.php');
 defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 
-// prevent undesired output
+// disable output
 set_silent(true);
 
 session_start() or die(__FILE__.', line '.__LINE__.", unable to start session.");
 define('SESSION_ID', session_id());
 
-$additional_params = array();
-$page_found = true;
+
+// Here are the server environment vars we use and some examples of typical values
+// $_SERVER['SCRIPT_NAME']		ex.: /easyobject/url_resolve.php
+// $_SERVER['REQUEST_URI']		ex.: /easyobject/presentation/project, /easyobject/presentation/index.php?show=icway_site&page_id=6&lang=fr
+// $_SERVER['HTTP_REFERER']		ex.: http://localhost/easyobject/presentation/project
+
 
 // get the base directory of the current script (easyObject directory being considered as root for URL redirection)
-$base = '/';
-$path = explode('/', $_SERVER['SCRIPT_NAME']);
-if(($len = count($path)) > 2) for($i = 1, $j = $len-1; $i < $j; ++$i) $base .= $path[$i].'/';
+$base = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')+1);
+// note: in our example, $base should now contain '/easyobject/'
 
-// first, look for exact match
-$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', str_replace($base, '/', $_SERVER['REQUEST_URI'])))));
-// if no match, look for a resolver having same URL base location
-if(count($ids) <= 0) {
-	$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', str_replace($base, '/', $_SERVER['REDIRECT_URL'])))));
-	// page not found
-	if(count($ids) <= 0) $page_found = false;
-	else $additional_params = extract_params($_SERVER['REQUEST_URI']);
+// get a clean version of the request URI
+$request_uri = $_SERVER['REQUEST_URI'];
+// remove everything after question mark, if any
+if(($pos = strpos($_SERVER['REQUEST_URI'], '?')) !== false) $request_uri = substr($request_uri, 0, $pos);
+// remove 'index.php', if explicit
+$request_uri = str_replace('/index.php', '/', $request_uri);
+
+// if the main entry point (index.php) is requested (inside some virtual subfolder), then we redirect to the root
+// example: 
+// '/easyobject/presentation/index.php?show=icway_site&page_id=6&lang=fr'
+// must redirect to 
+// '/easyobject/index.php?show=icway_site&page_id=6&lang=fr'
+if(substr($request_uri, -1) == '/') {
+	$request_uri = str_replace($request_uri, $base, $_SERVER['REQUEST_URI']);
+	header('HTTP/1.0 200 OK');
+	header('Status: 200 OK');
+	header("Location: ".$request_uri);
+	exit();
 }
 
-// handle the result of the search
-if(!$page_found) {
+
+// if the resource being requested differs from a script (name containing a dot and thus suggesting a file, like 'style.css' or 'ui.js'),
+// then we try to find out its location (assuming referer's url might involve virtual folders)
+
+$parts = explode('.', $request_uri);
+if(count($parts)) {
+	// get everything after the last dot
+	$extension = strtolower($parts[count($parts)-1]);
+	// if resource is among accepted extensions
+	if(in_array($extension, array('htm', 'html', 'css', 'js', 'png', 'gif', 'jpg', 'jpeg'))) {
+		// get path from referer's URL (current URL must have that part in common)
+		$referer_url = FClib::get_script_path($_SERVER['HTTP_REFERER']).'/';
+		// keep only the part following referer's url
+		$request_uri = substr(FClib::get_url(), strlen($referer_url));
+		header('HTTP/1.0 200 OK');
+		header('Status: 200 OK');
+		header("Location: ".$base.$request_uri);
+		exit();
+	}
+}
+
+// If we reached this part, it means we are looking for a script pointed by an object of class 'core\UrlResolver'
+
+// first, look for exact match
+$request_uri = str_replace($base, '/', $_SERVER['REQUEST_URI']);
+$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', $request_uri))));
+// if no match, look for a resolver having same URL base location
+if(count($ids) <= 0) {
+	if(($pos = strrpos($request_uri, '?')) !== false) $request_uri = substr($request_uri, 0, $pos);
+	$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', $request_uri))));
+	$additional_params = FClib::extract_params($_SERVER['REQUEST_URI']);
+}
+else $additional_params = array();
+
+// page not found
+if(count($ids) <= 0) {
 	// set the header to HTTP 404 and exit
 	header('HTTP/1.0 404 Not Found');
 	header('Status: 404 Not Found');
 	include_once('html/page_not_found.html');
-	exit();
 }
+// URL found in DB
 else {
 	// get the complete URL (we should get only one result)
 	$values = browse('core\UrlResolver', $ids, array('complete_url', 'human_readable_url'));
-	if(substr_count($values[$ids[0]]['human_readable_url'], '/') > 1) {
-		// if human_url is deeper than one level, send a HTTP 302 and redirect to 'complete_url'
-		header("Location: ".$base.ltrim($values[$ids[0]]['complete_url'], '/'), true, 302);
-		exit();
-	}
-	else {
-		// otherwise, set the header to HTTP 200, and output the associated html
-		header('HTTP/1.0 200 OK');
-		header('Status: 200 OK');
-		$additional_params = array_merge($additional_params, extract_params($values[$ids[0]]['complete_url']));		
-		// set the global var '$_REQUEST' : if a param is already set, its value is overwritten
-		foreach($additional_params as $key => $value) $_REQUEST[$key] = $value;
-		// continue as usual
-		include_once('index.php');
-	}
+	$additional_params = array_merge($additional_params, FClib::extract_params($values[$ids[0]]['complete_url']));		
+	// set the global var '$_REQUEST' (if a param is already set, its value is overwritten)
+	foreach($additional_params as $key => $value) $_REQUEST[$key] = $value;
+	// set the header to HTTP 200 and relay processing to index.php
+	header('HTTP/1.0 200 OK');
+	header('Status: 200 OK');
+	// continue as usual
+	include_once('index.php');
 }

@@ -17,6 +17,7 @@
 .picasagallery_album {
     float: left;
 	width: 160px;
+	height: 265px;
 	margin-right: 20px;
     font-size: 10pt;
     text-align: center;

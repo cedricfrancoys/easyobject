@@ -32,14 +32,17 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode (debug output would corrupt json data)
 set_silent(true);
 
+$packages = get_packages();
+
 // announce script and fetch parameters values
 $params = announce(
 	array(
-		'description'	=>	"Tests the given package and returns found errors (if any).",
+		'description'	=>	"This script tests the given package and returns a report about found errors (if any).",
 		'params' 		=>	array(
 								'package'	=> array(
 													'description' => 'Package to validate.',
 													'type' => 'string',
+													'selection' => array_combine(array_values($packages), array_values($packages)),
 													'required'=> true
 													),
 							)

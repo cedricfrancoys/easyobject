@@ -115,7 +115,7 @@ $renderer = array(
 								$title = mb_strtoupper($page['title'], 'UTF-8');
 								if($page['url_resolver_id'] > 0) {
 									$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
-									$human_url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
+									$human_url = BASE_DIR.ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
 									$html .= "<li><a href=\"$human_url\">".$title."</a></li>";
 								}
 								else $html .= "<li><a href=\"index.php?show=icway_site&page_id={$id}&lang={$params['lang']}\">$title</a></li>";
@@ -127,18 +127,26 @@ $renderer = array(
 							$path = array();
 							// recurse to the root section
 							$sections_ids = search('icway\Section', array(array(array('page_id', '=', $params['page_id']))));
+							$pages_ids = array();
 							while(count($sections_ids)) {
 								$sections_values = &browse('icway\Section', $sections_ids, array('parent_id', 'title', 'page_id'), $params['lang']);
 								foreach($sections_values as $section_id => $section_values) {
 									array_unshift($path, array($section_values['page_id'] => $section_values['title']));
 									$sections_ids = array($section_values['parent_id']);
+									$pages_ids[] = $section_values['page_id'];
 									if($section_values['parent_id'] == 0) break 2;
 								}
 							}
 							$html = '<ul>';
+							$pages_values = &browse('icway\Page', $pages_ids, array('title', 'url_resolver_id'), $params['lang']);
 							for($i = 0, $j = count($path); $i < $j; $i++) {
 								foreach($path[$i] as $page_id => $page_title) {
-									$html .= '<li><a href="index.php?show=icway_site&page_id='.$page_id.'&lang='.$params['lang'].'">'.$page_title.'</a></li>';
+									if($pages_values[$page_id]['url_resolver_id'] > 0) {
+										$url_values = &browse('core\UrlResolver', array($pages_values[$page_id]['url_resolver_id']), array('human_readable_url'));
+										$human_url = BASE_DIR.ltrim($url_values[$pages_values[$page_id]['url_resolver_id']]['human_readable_url'], '/');
+										$html .= "<li><a href=\"$human_url\">".$page_title."</a></li>";
+									}
+									else $html .= '<li><a href="index.php?show=icway_site&page_id='.$page_id.'&lang='.$params['lang'].'">'.$page_title.'</a></li>';
 								}
 							}
 							$html .= '</ul>';

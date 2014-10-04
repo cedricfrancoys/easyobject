@@ -24,9 +24,7 @@
 *	- classes and files inclusion (especially for cascading inclusions)
 *		load_class($class_path)
 *		include_file($file_name) : file that defines functions or constants (in order to use variables, one must use the global keyword)
-*	- extracting and checking presence of HTTP data (GET / POST/ COOKIE)
-*		check_params()
-*		get_params($params, $default_values)
+*	- extracting HTTP data (GET / POST/ COOKIE)
 *		extract_params($url)
 *	- script description and the parameters it should receive
 *
@@ -55,20 +53,6 @@ class FClib {
 	/*
 	* private methods
 	*/
-
-	/**
-	* Gets the location of the current file (fc.lib.php)
-	*
-    * @static
-	* @return	string
-	*/
-	private static function get_script_path() {
-		$file_path = str_replace('\\', '/', __FILE__);
-		if(($pos = strrpos($file_path, '/')) !== false) {
-			$file_path = substr($file_path, 0, $pos);
-		}
-	    return $file_path;
-	}
 
     /**
     * Gets the name of a class given the full path of the file containing its definition.
@@ -121,6 +105,20 @@ class FClib {
 	*/
 
 	/**
+	* Gets the location of the given script, by default the current file (fc.lib.php)
+	*
+    * @static
+	* @return	string
+	*/
+	public static function get_script_path($script=__FILE__) {
+		$file_path = str_replace('\\', '/', $script);
+		if(($pos = strrpos($file_path, '/')) !== false) {
+			$file_path = substr($file_path, 0, $pos);
+		}
+	    return $file_path;
+	}
+
+	/**
 	* Adds the library folder to the include path (library folder should contain the Zend framework if required)
 	*
     * @static
@@ -141,7 +139,10 @@ class FClib {
 	public static function get_url($server_port=true, $query_string=true) {
 		$url = 'http://'.$_SERVER['SERVER_NAME'];
 		if($server_port && $_SERVER['SERVER_PORT'] != '80')  $url .= ':'.$_SERVER['SERVER_PORT'];
-		if($query_string && strlen($_SERVER['REQUEST_URI'])) $url .= $_SERVER['REQUEST_URI'];
+		// add full request URI if required
+		if($query_string) $url .= $_SERVER['REQUEST_URI'];	
+		// otherwise get the base directory of the current script (assuming this script is located in the root installation dir)
+		else $url .= substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')+1);
 		return $url;
 	}
 

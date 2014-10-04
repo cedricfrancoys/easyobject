@@ -47,6 +47,9 @@ set_silent(true);
 // set current entry-point script as client
 define('OPERATION_SIDE', 'client');
 
+// get the base directory of the current script (easyObject installation directory being considered as root for URL redirection)
+define('BASE_DIR', substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')+1));
+
 // try to start or resume the session
 if(!strlen(session_id())) session_start() or die(__FILE__.', line '.__LINE__.", unable to start session.");
 
