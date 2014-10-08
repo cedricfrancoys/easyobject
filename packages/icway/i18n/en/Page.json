@@ -5,7 +5,7 @@
 		"home":{"label":"Home"},
 		"go_back":{"label":"Back"},	
 		"categories":{"label":"Categories"},
-		"resources":{"label":"Resources"},
+		"resources":{"label":"Useful notes"},
 		"share_page":{"label":"Share this page"},
 		"like_txt":{"label":"If you like the content of this page, tell it!"},
 		"recent_articles_title":{"label":"Recent articles"},

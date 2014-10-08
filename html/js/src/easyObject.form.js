@@ -311,62 +311,7 @@ var input_criteria = (explode(',', input_value))[0];
 								});
 								break;
 							case 'one2many':
-								var class_name = schemaObj[field]['foreign_object'];
-/*
-// this is prototype... not sure it is wise to use it (in addition, edit/add/remove buttons are still missing)
-								if(config.parent_class == class_name) {
-									// recursive tree
-									// obtain listiew for target object and generate grid config (col_model & url)
-									$.extend(config, easyObject.get_grid_config({
-											class_name: class_name,
-											view_name: (attr_view != undefined)?attr_view:'list.default',
-											domain: [[[ schemaObj[field]['foreign_field'], '=', conf.object_id ]]]
-									}));
-									$.extend(config, {
-										del: {
-											func: function($ddlist) {
-												var conf = $ddlist.data('conf');
-												var id = $ddlist.dropdownlist('selection');
-												conf.less = add_value(conf.less, id);
-												conf.more = remove_value(conf.more, id);
-												// force grid to refresh its content
-												$ddlist.trigger('reload');
-												// update the value of the widget
-												$ddlist.trigger('change');
-											}
-										},
-										add: {
-											func: function($ddlist) {
-												$list = easyObject.UI.list({class_name: class_name, view_name: 'list.default', lang: conf.lang});
-												$dia = easyObject.UI.dialog({
-														content: $list,
-														title: 'Add item'});
-												$dia.dialog({
-													buttons: {
-														"Ok": function() {
-															var conf = $ddlist.data('conf');
-															var $sub_grid = $list.data('grid');
-															$.each($sub_grid.grid('selection'), function(i, id){
-																conf.more = add_value(conf.more, id);
-																conf.less = remove_value(conf.less, id);
-															});
-															// closing the dialog will trigger the list reload
-															$(this).dialog("close").dialog("destroy");
-														}
-													},
-													close: function(event, ui) {
-														// force grid to refresh its content
-														$ddlist.trigger('reload');
-														// update the value of the widget
-														$ddlist.trigger('change');
-													}
-												});
-											}
-										}
-									});
-
-								}
-*/								
+								var class_name = schemaObj[field]['foreign_object'];							
 								// obtain listiew for target object and generate grid config (col_model & url)
 								$.extend(config, easyObject.get_grid_config({
 										class_name: class_name,
@@ -828,7 +773,7 @@ var input_criteria = (explode(',', input_value))[0];
 							var dialog_height = $dia.height() + 50;
 							var window_height = $(window).height();
 							var position = $dia.dialog('option', 'position');
-							$dia.dialog('option', 'position', [position[0], (window_height-dialog_height)/3]);								
+							$dia.dialog('option', 'position', [position[0], (window_height-dialog_height)/4]);								
 						}
 						// register a 'destroy' event for removing the form and its content and killing any attached timer
 						$form.bind('destroy', function() {

@@ -11,8 +11,9 @@ class HtmlTemplate {
 	protected $params;		// array containing values required by rendering functions
 	
 	/**
-	* Returns html part specified by $attributes (from a 'var' tag) given some additional parameters
-	* This method is called for each tag. As parameter, it should receive an array with tag attributes (at least 'id'). Return value should be a string containing html code. 
+	* Returns html part specified by $attributes, given some additional parameters.
+	* This method is called for each 'var' tag. As parameter, it should receive an array with tag attributes (at least 'id'). 
+	* Return value should be a string containing html. 
 	* To customize its behavior, this method might be overriden in inherited classes
 	*
 	* @param array $attributes	tag attributes

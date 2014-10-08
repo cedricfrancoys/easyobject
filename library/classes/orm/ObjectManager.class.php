@@ -495,16 +495,20 @@ class ObjectManager {
 					'object_id');
  				// fill in the object values array (use 'value' instead of field name)
 				while($row = $this->dbConnection->fetchArray($result)) {
-					// check value to ensure not to erase default value for empty field
 					// note : sometimes, we need the value, even if it is empty (and it is important that it overwrites the default value, if any)
 					// it means that, for existing objects, default value may be overwritten by an empty value
-					// if(!$this->dbConnection->isEmpty($row['value'])) $values_array[$row['object_field']] = $row['value'];
 					$values_array[$row['object_id']][$row['object_field']] = $row['value'];
 				}
+				// force assignment to NULL if no result was returned by the SQL query
+				foreach($ids as $id) {
+					foreach($simple_fields_multilang as $field) {
+						if(!isset($values_array[$id][$field])) $values_array[$id][$field] = NULL;
+					}
+				}
 			}
-			// set objects values according to the loaded fields (do not mark as modified)
+			// set objects values according to the loaded fields (do not mark as modified: they're just loaded)
 			foreach($ids as $object_id) {
-				if(isset($values_array[$object_id])) {
+				if(array_key_exists($object_id, $values_array)) { // note: we don't use 'isset' since it mixes up with NULL values
 					$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 					$schema = $object->getSchema();
 					// do some pre-treatment if necessary (this step is symetric to the one in setFields method)

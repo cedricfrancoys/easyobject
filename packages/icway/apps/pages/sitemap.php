@@ -6,15 +6,15 @@ $renderer['content'] = function($params) {
 	function get_pages_list($section_id) {
 		global $params;
 		$html = '';
-		$get_page_url = function ($page_id) {
+		$get_page_url = function ($page_id) use ($params) {
 			$url = '';
-			$pages_values = &browse('icway\Page', array($page_id), array('url_resolver_id'));
+			$pages_values = &browse('icway\Page', array($page_id), array('url_resolver_id'), $params['lang']);
 			foreach($pages_values as $id => $page) {
 				if($page['url_resolver_id'] > 0) {
 					$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
 					$url = ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');
 				}
-				else $url = "index.php?show=icway_site&page_id={$id}";
+				else $url = "index.php?show=icway_site&page_id={$id}&lang=".$params['lang'];
 			}
 			return $url;
 		};

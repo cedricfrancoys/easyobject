@@ -248,6 +248,6 @@
 	define('DEFAULT_APP', 'core_manage');
 
 /**
-* Public objects (for SPAM protection mechanism)
+* List of public objects (involved in right management and SPAM protection mechanism)
 */
 	define ("PUBLIC_OBJECTS", serialize (array ('icway\Comment')));
