@@ -25,7 +25,7 @@ $renderer = array_merge($renderer, array(
 							return '';
 						},
 	'title'			=>	function ($params) use ($values) {
-							return $values[$params['page_id']]['title'];
+							return $values[$params['page_id']]['title'].' - icway.be';
 						},
 	'content'		=>	function ($params) use ($values) {
 							return $values[$params['page_id']]['content'];

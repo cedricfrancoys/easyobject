@@ -52,7 +52,7 @@ $renderer = array_merge($renderer, array(
 								}
 								if($post_values['url_resolver_id'] > 0) {
 									$url_values = &browse('core\UrlResolver', array($post_values['url_resolver_id']), array('human_readable_url'));
-									$url = ltrim($url_values[$post_values['url_resolver_id']]['human_readable_url'], '/');
+									$url = BASE_DIR.ltrim($url_values[$post_values['url_resolver_id']]['human_readable_url'], '/');
 								}
 								else $url = "index.php?show=icway_blog&post_id={$id}&lang={$params['lang']}";								
 								$html .= '<a class="tip" href="'.$url.'">'.$post_values['title'].'</a><br />';

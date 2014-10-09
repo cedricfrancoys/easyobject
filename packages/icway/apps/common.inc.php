@@ -81,18 +81,21 @@ $renderer = array(
 							return FClib::get_url();
 						},
 	'to_fr'		=>	function ($params) {
-							$url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
-							$url .= (strpos($url, '?'))? '&lang=fr': '?lang=fr';
+							// $url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
+							// $url .= (strpos($url, '?'))? '&lang=fr': '?lang=fr';
+							$url = "index.php?show=icway_site&page_id={$params['page_id']}&lang=fr";
 							return $url;
 						},
 	'to_en'		=>	function ($params) {
-							$url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
-							$url .= (strpos($url, '?'))? '&lang=en': '?lang=en';
+							// $url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
+							// $url .= (strpos($url, '?'))? '&lang=en': '?lang=en';
+							$url = "index.php?show=icway_site&page_id={$params['page_id']}&lang=en";
 							return $url;
 						},
 	'to_es'		=>	function ($params) {
-							$url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
-							$url .= (strpos($url, '?'))? '&lang=es': '?lang=es';
+							// $url = str_replace("&lang=".$params['lang'], '', FClib::get_url());
+							// $url .= (strpos($url, '?'))? '&lang=es': '?lang=es';
+							$url = "index.php?show=icway_site&page_id={$params['page_id']}&lang=es";
 							return $url;
 						},
 	'page_id'		=>	function ($params) {

@@ -96,7 +96,7 @@ $(document).ready(function() {
 					// result is an error code
 					if(json_data.result == 1) {
 						// INVALID_PARAMS
-						$('#result').append('At least one parameter is missing or has invalid value.'+'<br /><br />');
+						$('#result').append($('<div/>').css({'font-size': '90%', 'margin-bottom': '30px'}).html('This script requires one or more paramters.<br />(Seeing this message after sumbitting a form means that at least one parameter is missing or has invalid value.)'));
 						// try to build a form matching requirements
 						if(typeof json_data.announcement == 'object') {
 							// we received an announcement
@@ -127,8 +127,9 @@ $(document).ready(function() {
 								)
 							);
 						}
-						/*
+						else $('#result').append($('<div/>').html('No announcement received from the script.'));
 						
+						/*						
 						if(typeof json_data.announcement == 'object') {
 							$('#result').append(JSON.stringify(json_data.announcement, null, 4));
 						}

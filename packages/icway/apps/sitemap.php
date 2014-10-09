@@ -1,10 +1,35 @@
 <?php
+/**
+*    This file is part of the easyObject project.
+*    http://www.cedricfrancoys.be/easyobject
+*
+*    Copyright (C) 2012  Cedric Francoys
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
+* file: packages/icway/apps/sitemap.php
+*
+* Returns a 'sitemap according to sitemaps.org schema : http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+*
+*/
+
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 // force silent mode
 set_silent(true);
-
-// returns a 'sitemap.xml' file
 
 
 function get_pages_list($section_id) {
@@ -42,6 +67,7 @@ foreach(array('fr', 'en', 'es') as $lang) {
 	$url_ids = array_map(function($a){return $a['url_resolver_id'];}, $pages_values);
 	$url_values = &browse('core\UrlResolver', $url_ids, array('human_readable_url'));
 	foreach($pages_values as $page_id => $page_values) {
+		// we build the sitemap only with pages having a nice URL
 		if($page_values['url_resolver_id'] > 0) {
 			echo "<url>\n";
 			echo "\t<loc>".$root_url.ltrim($url_values[$page_values['url_resolver_id']]['human_readable_url'], '/')."</loc>\n";
