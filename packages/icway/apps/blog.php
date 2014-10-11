@@ -7,7 +7,7 @@ set_silent(true);
 include_once('common.inc.php');
 
 $template_file = 'packages/icway/html/template_blog.html';
-$values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'created', 'content', 'category_id', 'tips_ids', 'comments_ids'), $params['lang']);
+$values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'created', 'author', 'content', 'image', 'category_id', 'tips_ids', 'comments_ids'), $params['lang']);
 
 $params['cat_id'] = $values[$params['post_id']]['category_id'];
 
@@ -16,17 +16,30 @@ $params['cat_id'] = $values[$params['post_id']]['category_id'];
 * (i.e. translate the 'var' tags from the template)
 */
 $renderer = array_merge($renderer, array(
+	'ogp'			=>	function ($params) use ($values) {
+							$html = '<meta property="og:type" content="article" />';
+							$html .= '<meta property="og:title" content="'.$values[$params['post_id']]['title'].'" />';
+							$html .= '<meta property="og:image" content="'.$values[$params['post_id']]['image'].'" />';
+							$html .= '<meta property="og:url" content="'.FClib::get_url().'" />';
+							$html .= '<meta property="article:published_time" content="'.$values[$params['post_id']]['created'].'" />';
+							$html .= '<meta property="article:author" content="'.$values[$params['post_id']]['author'].'" />';
+							return $html;
+					},
 	'title'			=>	function ($params) use ($values) {
 							return $values[$params['post_id']]['title'];
 						},
 	'content'		=>	function ($params) use ($values) {
-							$html = '<h1>'.$values[$params['post_id']]['title'].'</h1>';
+							$html = '<article itemscope itemtype="http://schema.org/Article">';
+							$html .= '<h1 itemprop="name">'.$values[$params['post_id']]['title'].'</h1>';
 							$dateFormatter = new DateFormatter($values[$params['post_id']]['created'], DATE_TIME_SQL);
 							$date = ucfirst(strftime("%d %B %Y", $dateFormatter->getTimestamp()));
 							if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
 							if(in_array($params['post_id'], array(1,2,3))) $date = '&nbsp;';
-							$html .= '<h2>'.$date.'</h2>';
-							$html .= $values[$params['post_id']]['content'];
+							$html .= '<h2 itemprop="dateCreated">'.$date.'</h2>';
+							$html .= '<div itemprop="image"><img width="480" src="'.$values[$params['post_id']]['image'].'" /></div>';
+							$html .= '<section itemprop="text">'.$values[$params['post_id']]['content'].'</section>';
+							$html .= '<section itemprop="creator" style="text-align: right; margin-top: 30px;">'.$values[$params['post_id']]['author'].'</section>';							
+							$html .= '</article>';
 							return $html;
 						},
 	'tips'			=>	function ($params) use ($values) {
@@ -90,7 +103,7 @@ $renderer = array_merge($renderer, array(
 							$html .= '<ul>';
 							foreach($categories_values as $category_values) {
 								if(count($category_values['posts_ids']) > 0) {
-									if($category_values['id'] == $params['cat_id']) $html .= '<li class="current">';
+									if($category_values['id'] == $params['cat_id']) $html .= '<li itemprop="keywords" class="current">';
 									else $html .= '<li>';
 									$html .= '<a href="index.php?show=icway_site&page_id=5&cat_id='.$category_values['id'].'">'.$category_values['name'].'</a>';
 									$html .= '</li>';

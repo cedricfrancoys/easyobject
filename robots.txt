@@ -1,0 +1,4 @@
+User-Agent: *    
+Disallow: /library/
+Disallow: /packages/
+Disallow: /bin/private/

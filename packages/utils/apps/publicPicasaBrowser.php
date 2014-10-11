@@ -16,14 +16,13 @@
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
 
-check_params(array('CKEditorFuncNum'));
-$params = get_params(array('CKEditorFuncNum'=>null, 'album'=>null, 'username'=>'cedricfrancoys@gmail.com'));
+$params = get_params(array('ParentFunction'=>null, 'CKEditorFuncNum'=>null, 'album'=>null, 'username'=>'cedricfrancoys@gmail.com'));
 
 load_class('utils/HtmlWrapper');
 load_class('Zend_Gdata_Photos');
 load_class('Zend_Gdata_Photos_UserQuery');
 
-$page = "http://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?show=utils_picasa&CKEditorFuncNum=".$params['CKEditorFuncNum'];
+$page = "http://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?show=utils_publicPicasaBrowser&CKEditorFuncNum='.$params['CKEditorFuncNum'].'&ParentFunction='.$params['ParentFunction'];
 
 $html = new HtmlWrapper();
 $html->addStyle("
@@ -57,14 +56,23 @@ $html->addStyle("
 	}
 ");
 
-$html->addScript("
-	function select_image(imagePath) {
-		var CKEditorFuncNum = {$params['CKEditorFuncNum']};
-		window.parent.opener.CKEDITOR.tools.callFunction( CKEditorFuncNum, imagePath, '' );
-		// self.close();
-	}
-");
-
+if(!is_null($params['CKEditorFuncNum'])) {
+	$html->addScript("
+		function select_image(imagePath) {
+			var CKEditorFuncNum = {$params['CKEditorFuncNum']};
+			window.parent.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, imagePath, '' );
+			self.close();
+		}
+	");
+}
+else {
+	$html->addScript("
+		function select_image(imagePath) {
+			window.opener.{$params['ParentFunction']}(imagePath);
+			self.close();
+		}
+	");
+}
 
 
 $service = new Zend_Gdata_Photos();
