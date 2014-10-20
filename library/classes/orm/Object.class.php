@@ -70,7 +70,7 @@ class Object {
 		$this->fields_values	= array(DEFAULT_LANG=>array('id'=>0));
 		$this->loaded_fields	= array(DEFAULT_LANG=>array());
 		$this->modified_fields	= array(DEFAULT_LANG=>array());
-		$this->schema = array_merge($this->getSpecialFields(), $this->getColumns());
+		$this->schema = array_merge(Object::getSpecialFields(), $this->getColumns());
 		$this->setDefaults();
 	}
 
@@ -86,7 +86,7 @@ class Object {
 	}
 
 	public final static function getSpecialFields() {
-		return array(
+		static $special_fields = array(
 			'id'		=> array('type' => 'integer'),
 			'created'	=> array('type' => 'datetime'),
 			'modified'	=> array('type' => 'datetime'),
@@ -95,6 +95,7 @@ class Object {
 			'published'	=> array('type' => 'boolean'),
 			'deleted'	=> array('type' => 'boolean')
 		);
+		return $special_fields;
 	}
 
 	/**
@@ -146,8 +147,8 @@ class Object {
 		return $this->loaded_fields[$lang];
 	}
 
-	public final function resetLoadedFields($fields_list=null) {
-		if($fields_list == null) $fields_list = $this->loaded_fields;
+	public final function resetLoadedFields($fields_list=NULL) {
+		if($fields_list == NULL) $fields_list = $this->loaded_fields;
 		foreach($fields_list as $lang => $fields) {
 			foreach($fields as $field => $value) unset($this->loaded_fields[$lang][$field]);
 		}
@@ -158,8 +159,8 @@ class Object {
 		return $this->modified_fields[$lang];
 	}
 
-	public final function resetModifiedFields($fields_list=null) {
-		if($fields_list == null) $fields_list = $this->modified_fields;
+	public final function resetModifiedFields($fields_list=NULL) {
+		if($fields_list == NULL) $fields_list = $this->modified_fields;
 		foreach($fields_list as $lang => $fields) {
 			foreach($fields as $field => $value) unset($this->modified_fields [$lang][$field]);
 		}
@@ -170,7 +171,7 @@ class Object {
 	*
 	* @param array $types_list allows to restrict the result to specified types (the method willl only return fields from which type is present in the list)
 	*/
-	public final function getFieldsNames($types_list=null) {
+	public final function getFieldsNames($types_list=NULL) {
 		$result_array = array();
 		if(!is_array($types_list) || is_null($types_list))	$result_array = array_keys($this->schema);
 		else {
@@ -190,14 +191,14 @@ class Object {
 	 * @param string $lang
 	 * @return array
 	 */
-	public final function &getValues($fields=null, $lang=DEFAULT_LANG) {
+	public final function &getValues($fields=NULL, $lang=DEFAULT_LANG) {
 		$result_array = array();
 		if(is_null($fields)) $fields = array_keys($this->schema);
 		foreach($fields as $field) {
     		$f_lang = DEFAULT_LANG;
 			if(isset($this->schema[$field]['multilang']) && $this->schema[$field]['multilang']) $f_lang = $lang;
-			if(isset($this->fields_values[$f_lang]) && isset($this->fields_values[$f_lang][$field])) $result_array[$field] = $this->fields_values[$f_lang][$field];
-			else $result_array[$field] = null;
+			if(isset($this->fields_values[$f_lang]) && array_key_exists($field, $this->fields_values[$f_lang])) $result_array[$field] = $this->fields_values[$f_lang][$field];
+			else $result_array[$field] = NULL;
 		}
 		return $result_array;
 	}

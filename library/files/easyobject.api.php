@@ -38,8 +38,8 @@ if(OPERATION_MODE == 'client-server') {
 
 function user_id($session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
-		$um = &IdentificationManager::getInstance();
-		return $um->user_id($session_id);
+		$im = &IdentificationManager::getInstance();
+		return $im->user_id($session_id);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = 0;
@@ -57,8 +57,8 @@ function user_id($session_id=SESSION_ID) {
 
 function user_key($session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
-		$um = &IdentificationManager::getInstance();
-		return $um->user_key($session_id);
+		$im = &IdentificationManager::getInstance();
+		return $im->user_key($session_id);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = 0;

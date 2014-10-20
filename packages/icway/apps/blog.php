@@ -7,7 +7,7 @@ set_silent(true);
 include_once('common.inc.php');
 
 $template_file = 'packages/icway/html/template_blog.html';
-$values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'created', 'author', 'content', 'image', 'category_id', 'tips_ids', 'comments_ids'), $params['lang']);
+$values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'created', 'url_resolver_id', 'author', 'content', 'image', 'category_id', 'tips_ids', 'comments_ids'), $params['lang']);
 
 $params['cat_id'] = $values[$params['post_id']]['category_id'];
 
@@ -36,7 +36,8 @@ $renderer = array_merge($renderer, array(
 							if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
 							if(in_array($params['post_id'], array(1,2,3))) $date = '&nbsp;';
 							$html .= '<h2 itemprop="dateCreated">'.$date.'</h2>';
-							$html .= '<div itemprop="image"><img width="480" src="'.$values[$params['post_id']]['image'].'" /></div>';
+							if(isset($values[$params['post_id']]['image']) && strlen($values[$params['post_id']]['image']))
+								$html .= '<div itemprop="image"><img width="480" src="'.$values[$params['post_id']]['image'].'" /></div>';
 							$html .= '<section itemprop="text">'.$values[$params['post_id']]['content'].'</section>';
 							$html .= '<section itemprop="creator" style="text-align: right; margin-top: 30px;">'.$values[$params['post_id']]['author'].'</section>';							
 							$html .= '</article>';
