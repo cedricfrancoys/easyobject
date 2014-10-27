@@ -16,13 +16,16 @@ namespace icway {
 		}
 		
 		public static function onchangePage($om, $uid, $oid, $lang) {
-			$om->update($uid, 'icway\Page', array($oid), 
+			// since almost every page is somehow related to the others, at each change, we update the entire website
+			$pages_ids = $om->search($uid, 'icway\Page');		
+			$om->update($uid, 'icway\Page', $pages_ids, 
 						array(
 								'html' => NULL
 						), $lang);
 		}
 
 		public static function getHtml($om, $uid, $oid, $lang) {
+			// we call the page-html data provider to obtain html of the current page in the specified language
 			$get_include_contents = function ($filename) {
 				ob_start();
 				include($filename); 

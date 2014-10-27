@@ -1,7 +1,5 @@
 <?php
-
 // page 'blog'
-
 if(isset($params['cat_id'])) {
 	$renderer['content'] = function($params) {
 		$result = browse('icway\Category', array($params['cat_id']), array('name', 'posts_ids'), $params['lang']);
@@ -26,15 +24,15 @@ if(isset($params['cat_id'])) {
 	$renderer['left_column'] = function($params) {
 		// list of categories
 		$html = '';
-		$categories_ids = search('icway\Category', array(array(array())));
+		$categories_ids = search('icway\Category');
 		$categories_values = &browse('icway\Category', $categories_ids, array('id', 'name', 'posts_ids'), $params['lang']);
 		$html = '<h1>'.get_translation('categories', $params['lang']).'</h1>';
 		$html .= '<ul>';
 		foreach($categories_values as $category_values) {
 			if(count($category_values['posts_ids']) > 0) {
-				if($category_values['id'] == $params['cat_id']) $html .= '<li class="current">';
+				if($category_values['id'] == $params['cat_id']) $html .= '<li itemprop="keywords" class="current">';
 				else $html .= '<li>';
-				$html .= '<a href="index.php?show=icway_site&page_id=5&cat_id='.$category_values['id'].'" id="'.$category_values['id'].'">'.$category_values['name'].'</a>';
+				$html .= '<a href="'.BASE_DIR.'index.php?show=icway_site&page_id=5&cat_id='.$category_values['id'].'&lang='.$params['lang'].'">'.$category_values['name'].'</a>';
 				$html .= '</li>';
 			}
 		}
@@ -53,6 +51,6 @@ else {
 			break;
 	}
 	// we request the blog app
-	header('Location: index.php?show=icway_blog&'.http_build_query($params));
-	die();
+	header('Location: '.BASE_DIR.'index.php?show=icway_blog&'.http_build_query($params));
+	exit();
 }

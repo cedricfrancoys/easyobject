@@ -4,16 +4,15 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode
 set_silent(true);
 
-include('packages/icway/data/common.inc.php');
+include('common.inc.php');
 
-
+// get content of the html template
 $template_file = 'packages/icway/html/template_site.html';
+// get values of the current page
 $values = &browse('icway\Page', array($params['page_id']), array('id', 'mnemonic', 'url_resolver_id', 'title', 'content', 'tips_ids'), $params['lang']);
 
-
-
 /**
-* Extend renderer array with functions specific to this app
+* This array holds the functions to use for rendering the page
 * (i.e. translate the 'var' tags from the template)
 */
 $renderer = array_merge($renderer, array(
@@ -50,7 +49,7 @@ $renderer = array_merge($renderer, array(
 							$sections_values = &browse('icway\Section', array($selected_id), array('page_id', 'title', 'sections_ids'), $params['lang']);
 							// note: this is a loop but we only have one item
 							foreach($sections_values as $section_id => $section_values) {
-								$html = '<h1 style="cursor: pointer;" onclick="window.location.href=\'index.php?show=icway_site&page_id='.$section_values['page_id'].'&lang='.$params['lang'].'\';">'.$section_values['title'].'</h1>';
+								$html = '<h1 style="cursor: pointer;" onclick="window.location.href=\''.BASE_DIR.'index.php?show=icway_site&page_id='.$section_values['page_id'].'&lang='.$params['lang'].'\';">'.$section_values['title'].'</h1>';
 								$html .= '<ul>';
 								$subsections_values = &browse('icway\Section', $section_values['sections_ids'], array('page_id', 'title'), $params['lang']);
 								$pages_ids = array_reduce($subsections_values, function($a, $b) { $a[] = $b['page_id']; return $a;}, array());
@@ -65,7 +64,7 @@ if($id == 3) continue;
 										$url_values = &browse('core\UrlResolver', array($page['url_resolver_id']), array('human_readable_url'));
 										$url = BASE_DIR.ltrim($url_values[$page['url_resolver_id']]['human_readable_url'], '/');										
 									}
-									else $url = "index.php?show=icway_site&page_id={$id}&lang={$params['lang']}";
+									else $url = BASE_DIR."index.php?show=icway_site&page_id={$id}&lang={$params['lang']}";
 
 									$html .= '<a href="'.$url.'">'.$page['title'].'</a>';
 									$html .= '</li>';
@@ -81,11 +80,11 @@ if($id == 3) continue;
 * we may replace renderer entries with other methods (defined in separated .php files)
 */
 $page_file = 'pages/'.$values[$params['page_id']]['mnemonic'].'.php';
-// we try to include the file (without testing if it exists), preventing warning/error output
+// we try to include the file
 @include($page_file);
 
 // output html
-if(!is_null($params['page_id']) && file_exists($template_file)) {
+if(file_exists($template_file)) {
 	$template = new SiteTemplate(file_get_contents($template_file), $renderer, $params);	
 	print($template->getHtml());
 }

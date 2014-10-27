@@ -179,11 +179,11 @@ class ObjectManager {
 			if($object_id == 0) {
 				$is_new_object = true;
 				// check user's permission for creation
-				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_CREATE)) throw new Exception("user($user_id) does not have permission to create object($object_class)", NOT_ALLOWED);
+				if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_CREATE)) throw new Exception("user($user_id) does not have permission to create object($object_class)", NOT_ALLOWED);
 				$object_id = $this->getNewObjectId($user_id, $object_class);
 			}
 			// check user's permission for reading
-			else if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_READ)) throw new Exception("user($user_id) does not have read permission on the object($object_class, $object_id)", NOT_ALLOWED);
+			else if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_READ)) throw new Exception("user($user_id) does not have read permission on the object($object_class, $object_id)", NOT_ALLOWED);
 			// check if object is already loaded
 			if(isset($this->objectsArray[$object_class]) && isset($this->objectsArray[$object_class][$object_id])) $object = &$this->objectsArray[$object_class][$object_id];
 	        else {
@@ -476,7 +476,7 @@ class ObjectManager {
 														foreach($path_prev_ids as $path_object_id) {
 															// get the targeted field value (there might be a recursion here)
 															$path_values = $om->browse($user_id, $path_object_class, array($path_object_id), array($path_field), $lang);
-															$target = $path_values[$path_field][$path_object_id];
+															$target = $path_values[$path_object_id][$path_field];
 															if(is_null($target)) break 2;
 															// type of returned values may vary (integer or array) depending on the type of the field (i.e. many2many, one2many or many2one)
 															if(!is_array($target)) $target = (array) $target;
@@ -1225,15 +1225,15 @@ class ObjectManager {
 	* @param string $lang
 	* @return mixed (integer or array)
 	*/
-	public function &browse($user_id, $object_class, $ids=null, $fields=null, $lang=DEFAULT_LANG) {
+	public function &browse($user_id, $object_class, $ids=NULL, $fields=NULL, $lang=DEFAULT_LANG) {
 		try {
-			$result = array();
-			if(!empty($ids) && !is_array($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
-			if(!empty($fields) && !is_array($fields)) throw new Exception("argument is not an array of objects fields : '$fields'", INVALID_PARAM);
+			$result = array();		
 
-			// not sure we should do this as it could take a while (instead, first use search method with no domain)
-			// if(is_null($ids)) $ids = $this->search($user_id, $object_class, null, 'id', 'asc', 0, '', $lang);
-        	if(is_null($ids)) throw new Exception("argument is not an array of objects identifiers : '$ids'", INVALID_PARAM);
+			if(!is_array($ids))		$ids = (array) $ids;
+			if(!is_array($fields))	$fields = (array) $fields;
+			if(empty($ids)) 		return $result;
+
+			if(!IdentificationManager::hasRight($user_id, $object_class, $ids, R_READ)) throw new Exception("user '$user_id' does not have permission to read specified objects of class '$object_class'", NOT_ALLOWED);
 
 			$object = &$this->getObjectStaticInstance($object_class);
 			$schema = $object->getSchema();
@@ -1275,7 +1275,7 @@ class ObjectManager {
 					$result[$object_id] = $object->getValues($fields, $lang);
 				}
 				else {
-					if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_READ)) throw new Exception("user '$user_id' does not have permission to read object '$object_id' of class '$object_class'", NOT_ALLOWED);
+					if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_READ)) throw new Exception("user '$user_id' does not have permission to read object '$object_id' of class '$object_class'", NOT_ALLOWED);
 					$result[$object_id] = $this->getFields($user_id, $object_class, $object_id, $fields, $lang);
 					$this->setLog($user_id, R_READ, $object_class, $object_id, $fields, $lang);
 				}
@@ -1310,9 +1310,9 @@ class ObjectManager {
 	* @param string $limit
 	* @return mixed (integer or array)
 	*/
-	public function search($user_id, $object_class, $domain=null, $order='id', $sort='asc', $start='0', $limit='0', $lang=DEFAULT_LANG) {
+	public function search($user_id, $object_class, $domain=NULL, $order='id', $sort='asc', $start='0', $limit='0', $lang=DEFAULT_LANG) {
 		try {
-			if(!IdentificationManager::hasRight($user_id, $object_class, 0, R_READ)) throw new Exception("user($user_id) does not have permission to read objects of class ($object_class)", NOT_ALLOWED);
+			if(!IdentificationManager::hasRight($user_id, $object_class, array(0), R_READ)) throw new Exception("user($user_id) does not have permission to read objects of class ($object_class)", NOT_ALLOWED);
 			if(empty($order)) throw new Exception("sort field cannot be empty", INVALID_PARAM);
 			$res_list = array();
 			$res_assoc_db = array();
@@ -1455,7 +1455,7 @@ class ObjectManager {
 			}
 			elseif($order != 'id') $select_fields[] = $table_alias.'.'.$order;
 			// get the matching records by generating the resulting SQL query
-			$res = $this->dbConnection->getRecords($tables, $select_fields, null, $conditions, $table_alias.'.id', $order_table_alias.'.'.$order_field, $sort, $start, $limit);
+			$res = $this->dbConnection->getRecords($tables, $select_fields, NULL, $conditions, $table_alias.'.id', $order_table_alias.'.'.$order_field, $sort, $start, $limit);
 			while ($row = $this->dbConnection->fetchArray($res)) {
 				// if we are in standalone mode, we take advantage of the SQL sort
 				$res_list[] = $row['id'];
@@ -1551,7 +1551,7 @@ class ObjectManager {
 	* @param array $values
 	* @return mixed (integer - error code if something went wrong - or array containing ids of newly created objects - if none, array is empty)
 	*/
-	public function update($user_id, $object_class, $ids, $values=null, $lang=DEFAULT_LANG) {
+	public function update($user_id, $object_class, $ids, $values=NULL, $lang=DEFAULT_LANG) {
 		try {
 			$result = array();
 			$object = &$this->getObjectStaticInstance($object_class);
@@ -1566,7 +1566,7 @@ class ObjectManager {
 				if($object_id == 0) $action = R_CREATE;
 				else $action = R_WRITE;
 				// checking for permissions
-				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, $action)) throw new Exception("user '$user_id' does not have permission to write object '$object_id' of class '$object_class'", NOT_ALLOWED);
+				if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, $action)) throw new Exception("user '$user_id' does not have permission to write object '$object_id' of class '$object_class'", NOT_ALLOWED);
 				$id = $this->setFields($user_id, $object_class, $object_id, $values, $lang);
 				// log the current action
 				$this->setLog($user_id, $action, $object_class, $id, array_keys($values), $lang);
@@ -1600,7 +1600,7 @@ class ObjectManager {
 			$schema = $object->getSchema();
 
 			foreach($ids as $object_id) {
-				if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);
+				if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);
 				foreach($schema as $field => $def) {
 // todo : handle other relation types
 					if($def['type'] == 'one2many') {
@@ -1615,7 +1615,7 @@ class ObjectManager {
 			if ($permanent) {
 				$this->dbConnection->deleteRecords($table_name, $ids);
 				$log_action = R_DELETE;
-				$log_fields = null;
+				$log_fields = NULL;
 			}
 			else {
 				$this->dbConnection->setRecords($table_name, $ids, array('deleted'=>1));

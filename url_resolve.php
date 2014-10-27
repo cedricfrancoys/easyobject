@@ -33,8 +33,8 @@ define('SESSION_ID', session_id());
 
 // Here are the server environment vars we use and some examples of typical values
 // $_SERVER['SCRIPT_NAME']		ex.: /easyobject/url_resolve.php
-// $_SERVER['REQUEST_URI']		ex.: /easyobject/presentation/project, /easyobject/presentation/index.php?show=icway_site&page_id=6&lang=fr
-// $_SERVER['HTTP_REFERER']		ex.: http://localhost/easyobject/presentation/project
+// $_SERVER['REQUEST_URI']		ex.: /easyobject/en/presentation/project, /easyobject/en/presentation/index.php?show=icway_site&page_id=6&lang=en
+// $_SERVER['HTTP_REFERER']		ex.: http://localhost/easyobject/en/presentation/project
 
 
 // get the base directory of the current script (easyObject directory being considered as root for URL redirection)

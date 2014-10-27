@@ -4,11 +4,14 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode
 set_silent(true);
 
-include_once('common.inc.php');
+include('packages/icway/data/common.inc.php');
 
+// get content of the html template
 $template_file = 'packages/icway/html/template_blog.html';
+// get values of the current page
 $values = &browse('icway\Post', array($params['post_id']), array('id', 'title', 'created', 'url_resolver_id', 'author', 'content', 'image', 'category_id', 'tips_ids', 'comments_ids'), $params['lang']);
 
+// ensure cat_id is specified and is always consistent with the given post_id
 $params['cat_id'] = $values[$params['post_id']]['category_id'];
 
 /**
@@ -106,7 +109,7 @@ $renderer = array_merge($renderer, array(
 								if(count($category_values['posts_ids']) > 0) {
 									if($category_values['id'] == $params['cat_id']) $html .= '<li itemprop="keywords" class="current">';
 									else $html .= '<li>';
-									$html .= '<a href="index.php?show=icway_site&page_id=5&cat_id='.$category_values['id'].'">'.$category_values['name'].'</a>';
+									$html .= '<a href="'.BASE_DIR.'index.php?show=icway_site&page_id=5&cat_id='.$category_values['id'].'&lang='.$params['lang'].'">'.$category_values['name'].'</a>';
 									$html .= '</li>';
 								}
 							}
@@ -116,7 +119,7 @@ $renderer = array_merge($renderer, array(
 ));
 
 // output html
-if(!is_null($params['page_id']) && file_exists($template_file)) {
+if(file_exists($template_file)) {
 	$template = new SiteTemplate(file_get_contents($template_file), $renderer, $params);	
 	print($template->getHtml());
 }

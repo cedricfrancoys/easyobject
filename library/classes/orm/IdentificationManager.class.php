@@ -53,7 +53,7 @@ class IdentificationManager {
 		else return 0;
 	}
 
-    private function getUserPermissions($user_id, $object_class, $object_id=0) {
+    private function getUserPermissions($user_id, $object_class, $object_id=NULL) {
 		// all users are at least granted the default permissions
 		$user_rights = DEFAULT_RIGHTS;
    		// user always has read permission on its own object
@@ -179,9 +179,14 @@ class IdentificationManager {
 	*	************************************
 	*/
 
-	public static function hasRight($user_id, $object_class, $object_id, $right_flags) {
+	public static function hasRight($user_id, $object_class, $objects_ids, $right_flags) {
  		$im = &IdentificationManager::getInstance();
- 		$user_rights = $im->getUserPermissions($user_id, $object_class, $object_id);
+// todo: improve this by using bulk queries in method 'getUserPermissions'
+		$user_rights = DEFAULT_RIGHTS;
+		// we return the most restrictive permission on the given group of object
+		foreach($objects_ids as $object_id) {
+			$user_rights &= $im->getUserPermissions($user_id, $object_class, $object_id);
+		}
 		return (bool) ($user_rights & $right_flags);
 	}
 }
