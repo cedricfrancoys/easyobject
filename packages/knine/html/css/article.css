@@ -28,7 +28,17 @@ table, tbody, tr, td {
 	padding : 10px 10px 40px 5px;
 	background-color: #ffffff;
 }
-
+.loader {
+	text-align: center; 
+	font: Arial,Helvetica;
+	font-size: 17px; 
+	background: url('img/load.gif') no-repeat scroll 0% 0% transparent; 
+	margin-left: 40%; 
+	margin-top: 15%; 
+	height: 20px; 
+	line-height: 14px; 
+	width: 140px;
+}
 .loaded {}
 
 .article {

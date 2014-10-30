@@ -74,7 +74,7 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 		$articleDate = new DateFormatter();
 		$articleDate->setDate($article['created'], DATE_TIME_SQL);
 		$article_date = $articleDate->getDate(DATE_STRING);
-		$title_details	= '<br />&nbsp;&nbsp;<span style="font-size: 12px;">par '.$creator_name.'&nbsp;('.$article_date.')</span>';
+		$title_details	= '<br /><span style="font-size: 12px;">'.$creator_name.'&nbsp;('.$article_date.')</span>';
 	}
 
 	if($depth >= $max_depth) {
@@ -83,7 +83,7 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 		$html .= '	<div class="'.$class_name.'">'.$article['title'].$title_details.'</div>';
 		$html .= '	<div class="summary">'.$article['summary'].'</div>';
 		$html .= '	<div class="content" style="display: none;"></div>';
-		$html .= '  <div class="display_button"><a class="summary_link" style="display: none;" href="javascript:void(null);">'.$lang_summary.'</a><a class="details_link" href="javascript:void(null);">'.$lang_details.'</a></div>';
+		$html .= '  <div class="display_button"><a class="summary_link" style="display: none;">'.$lang_summary.'</a><a class="details_link">'.$lang_details.'</a></div>';
 		$html .= '</div>';
 	}
 	else {
@@ -105,7 +105,7 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 			$html .= $article['content'];
 		}
 		$html .= '	</div>';
-		$html .= '  <div class="display_button"><a class="summary_link" href="javascript:void(null);">'.$lang_summary.'</a><a class="details_link" style="display: none;" href="javascript:void(null);">'.$lang_details.'</a></div>';
+		$html .= '  <div class="display_button"><a class="summary_link">'.$lang_summary.'</a><a class="details_link" style="display: none;">'.$lang_details.'</a></div>';
 		$html .= '</div>';
 	}
 	return $html;

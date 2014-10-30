@@ -20,9 +20,9 @@
 */
 
 /*
-* file: views/core/user/login.php
+* file: packages/knine/apps/display.php
 *
-* Displays the logon screen.
+* Displays an article based on the given depth.
 *
 */
 
@@ -76,8 +76,9 @@ $(document).ready(function() {
 	$('#frame').knine({
 		article_id: {$params['article_id']},
 		depth: {$params['level']},
-		lang_summary: '{$lang_summary}', 
-		lang_details: '{$lang_details}'
+		lang_summary: '{$lang_summary}',
+		lang_details: '{$lang_details}',
+		autonum: true
 	});
 });
 ");

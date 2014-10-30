@@ -4,6 +4,7 @@
 // - translation files are optional (don't retry if not found)
 
 
+
 (function($) {
 	/**
 	* Error handler for remote calls related functions (ajax)
@@ -89,29 +90,40 @@ var easyObject = {
 			if($console.length == 0) $console = $('<div/>').attr('id', 'easyobject_console').css('display', 'none').appendTo('body');
 			$console.append(txt + "<br/>");
 		},
-		browse: function(class_name, ids, fields, lang) {
-				var result = [];
-				$.ajax({
-					type: 'GET',
-					url: 'index.php?get=core_objects_browse',
-					async: false,
-					dataType: 'json',
-					// note: if we don't want to request complex fields, remember to set fields parameter to null
-					data: {
-						fields: fields,
-						object_class: class_name,
-						ids: ids,
-						lang: lang
-					},
-					contentType: 'application/json; charset=utf-8',
-					success: function(json_data){
-							if(!json_data) alert("Unable to browse object : check fields names in DB/schema/related view and user's permissions");
-							else result = json_data;
-					},
-					error: function(e){
-					}
-				});
-				return result;
+		browse: function(conf) {
+				var default_conf = {
+					lang: easyObject.conf.content_lang,
+					async: true
+				};
+				return (function (conf) {
+					var deferred = $.Deferred();
+					var result = [];
+					$.ajax({
+						type: 'GET',
+						url: 'index.php?get=core_objects_browse',
+						async: conf.async,
+						dataType: 'json',
+						// note: if we don't want to request complex fields, remember to set fields parameter to null
+						data: {
+							fields: conf.fields,
+							object_class: conf.class_name,
+							ids: conf.ids,
+							lang: conf.lang
+						},
+						contentType: 'application/json; charset=utf-8',
+						success: function(json_data){
+								if(!json_data) alert("Unable to browse object : check fields names in DB/schema/related view and user's permissions");
+								else {
+									if(conf.async) deferred.resolve(json_data);
+									else result = json_data;
+								}
+						},
+						error: function(e){
+						}
+					});
+					if(conf.async)	return deferred.promise();
+					else			return result;
+				})($.extend(default_conf, conf));		
 		},
 		search: function(class_name, domain, order, sort, start, limit, lang) {
 				var result = [];
@@ -710,7 +722,13 @@ function lock(key, value) {
 }
 
 function browse(class_name, ids, fields, lang) {
-	return easyObject.browse(class_name, ids, fields, lang);
+	return easyObject.browse({
+		class_name: class_name,
+		ids: ids,
+		fields: fields, 
+		lang: lang,
+		async: false
+	});
 }
 
 function search(class_name, domain, order, sort, start, limit, lang) {

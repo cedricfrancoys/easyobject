@@ -11,6 +11,7 @@ $renderer['styles'] = function($params) {
 };		
 $renderer['content'] = function($params) {
 	$html = '';
+	$html .= '<div id="articles_list">';
 	// get children_ids from article 21
 	$articles_values = &browse('knine\Article', array(21), array('title', 'summary', 'children_ids'), DEFAULT_LANG);
 	$html .= '<h1>'.$articles_values[21]['title'].'</h1>';
@@ -19,6 +20,7 @@ $renderer['content'] = function($params) {
 	foreach($articles_values as $id => $values) {
 		$html .= '<h2 class="knine" id="'.$id.'"><a href="#">'.$values['title'].'</a></h2>';
 	}
+	$html .= '</div>';
 	return $html;
 };
 $renderer['inline_script'] = function ($params) {
@@ -32,26 +34,32 @@ $renderer['inline_script'] = function ($params) {
 	$script .= "var LANG_BACK = '{$lang_back}';\n";
 	$script .= "
 		$(document).ready(function(){
+			var \$loader = $('<div />').attr('id', 'loader').addClass('loader').text('Loading ...').hide().appendTo($('#article-content'));		
 			$.getScript('html/js/src/easyObject.api.js')
 			.done(function() {
 				$.getScript('packages/knine/html/js/knine.js')
 				.done(function() {
 					$('h2.knine').on('click', function() {
-						var \$content = $('#article-content').children().detach();
-						var \$loader = $('<div />').addClass('loader').text('Loading ...');
-						$('#article-content').append(\$loader).append($('<div />').attr('id', 'content_knine'));
-						$('#content_knine').knine({
+						$('<div />').attr('id', 'content_knine')
+						.bind('ready', function(event) {
+							$('#article-content').prepend($('<a href=\"#\" />').css({'display': 'block', 'padding': '10px'}).text(LANG_BACK)
+							.on('click', function() {
+									$(this).remove();
+									$('#content_knine').remove();
+									$('#articles_list').toggle();
+							}));
+							$('#article-content').append($(this));
+							$('#loader').toggle();								
+						})
+						.knine({
 							article_id: $(this).attr('id'),
 							depth: 1,
 							lang_summary: LANG_SUMMARY,
 							lang_details: LANG_DETAILS,
 							autonum: false
-						});
-						$('#article-content').prepend($('<a href=\"#\" />').css({'display': 'block', 'padding': '10px'}).text(LANG_BACK)
-						.on('click', function() {
-								$('#article-content').empty().append(\$content);
-						}));
-						\$loader.toggle();
+						});						
+						$('#articles_list').toggle();						
+						$('#loader').toggle();						
 					});
 				});
 			})
