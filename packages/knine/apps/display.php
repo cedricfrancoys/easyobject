@@ -34,8 +34,34 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 set_silent(true);
 
 
-check_params(array('article_id'));
-$params = get_params(array('article_id'=>null, 'level'=>0));
+$params = announce(	
+	array(	
+		'description'	=>	"Displays the specified article.",
+		'params' 		=>	array(
+								'article_id'	=> array(
+													'description' => 'Id of the article to display..',
+													'type' => 'string', 
+													'required'=> true
+													),
+								'level'			=> array(
+													'description' => 'Recursion depth.',
+													'type' => 'integer', 
+													'default' => 0
+													),
+								'autonum'		=> array(
+													'description' => 'Auto-numbering chapters.',
+													'type' => 'bool', 
+													'default' => true
+													),
+								'lang'			=> array(
+													'description '=> 'Specific language for multilang field.',
+													'type' => 'string', 
+													'default' => DEFAULT_LANG
+													)
+							)
+	)
+);
+
 
 load_class('orm/I18n');
 load_class('utils/HtmlWrapper');
@@ -70,6 +96,7 @@ function get_article() {
 // This could be done client-side (JS) but then content would not be indexed by search engines
 $frame->add(get_article());
 
+$autonum = ($params['autonum']) ? 'true' : 'false';
 
 $html->addScript("
 $(document).ready(function() {
@@ -78,7 +105,7 @@ $(document).ready(function() {
 		depth: {$params['level']},
 		lang_summary: '{$lang_summary}',
 		lang_details: '{$lang_details}',
-		autonum: true
+		autonum: {$autonum}
 	});
 });
 ");

@@ -34,8 +34,33 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 set_silent(true);
 
 
-check_params(array('article_id'));
-$params = get_params(array('article_id'=>null, 'level'=>0));
+$params = announce(	
+	array(	
+		'description'	=>	"Returns knine-compatible html for the specified article.",
+		'params' 		=>	array(
+								'article_id'	=> array(
+													'description' => 'Id of the article to display..',
+													'type' => 'string', 
+													'required'=> true
+													),
+								'level'			=> array(
+													'description' => 'Recursion depth.',
+													'type' => 'integer', 
+													'default' => 0
+													),
+								'autonum'		=> array(
+													'description' => 'Auto-numbering chapters.',
+													'type' => 'bool', 
+													'default' => true
+													),
+								'lang'			=> array(
+													'description '=> 'Specific language for multilang field.',
+													'type' => 'string', 
+													'default' => DEFAULT_LANG
+													)
+							)
+	)
+);
 
 load_class('orm/I18n');
 load_class('utils/DateFormatter');
@@ -54,17 +79,26 @@ $lang_summary = $i18n->getClassTranslationValue('fr', array('object_class' => 'k
 * @param integer $max_depth
 */
 function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
-	global $lang_details, $lang_summary;
+	global $params, $lang_details, $lang_summary;
 	$html = '';
 	$objectsManager = &ObjectManager::getInstance();
 
-	$values = browse('knine\Article', array($article_id), array('created', 'creator', 'title', 'is_root', 'children_ids', 'summary', 'content'));
+	$values = browse('knine\Article', array($article_id), array('created', 'authors_ids', 'title', 'is_root', 'children_ids', 'summary', 'content'));
 	$article = $values[$article_id];
 
-	if(strlen($level)) $article['title'] = $level.'.&nbsp;'.$article['title'];
+	if(strlen($level) && $params['autonum']) {echo 'ici'; $article['title'] = $level.'.&nbsp;'.$article['title'];}
 
-	$values = browse('knine\User', array($article['creator']), array('firstname', 'lastname'));
-	$creator_name	= $values[$article['creator']]['firstname'].' '.$values[$article['creator']]['lastname'];
+	$values = browse('knine\User', $article['authors_ids'], array('firstname', 'lastname'));
+	$authors = '';
+	
+	for($i=0, $j=count($values); $i < $j; ++$i) {
+		if(strlen($authors)) {
+			if($i == $j-1) $authors .= ' et ';
+			else $authors .= ', ';
+		}
+		$user_values = array_shift($values);
+		$authors .= $user_values['firstname'].' '.$user_values['lastname'];
+	}
 
 	$class_name = 'title';
 	$title_details = '';
@@ -74,7 +108,7 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 		$articleDate = new DateFormatter();
 		$articleDate->setDate($article['created'], DATE_TIME_SQL);
 		$article_date = $articleDate->getDate(DATE_STRING);
-		$title_details	= '<br /><span style="font-size: 12px;">'.$creator_name.'&nbsp;('.$article_date.')</span>';
+		$title_details	= '<br /><span style="font-size: 12px;">'.$authors.'&nbsp;('.$article_date.')</span>';
 	}
 
 	if($depth >= $max_depth) {
@@ -96,7 +130,7 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 			$i = 1;
 			foreach($article['children_ids'] as $sub_article_id) {
 	            $next_level = $i;
-				if(strlen($level)) $next_level = '.'.$next_level;
+				if(strlen($level) && $params['autonum']) $next_level = '.'.$next_level;
 				$html .= get_article_html($sub_article_id, $level.$next_level, $depth+1, $max_depth);
 				++$i;
 			}
@@ -105,7 +139,13 @@ function get_article_html($article_id, $level='', $depth=0, $max_depth=0) {
 			$html .= $article['content'];
 		}
 		$html .= '	</div>';
-		$html .= '  <div class="display_button"><a class="summary_link">'.$lang_summary.'</a><a class="details_link" style="display: none;">'.$lang_details.'</a></div>';
+		
+		if($depth > 0 && count($article['children_ids']) == 0 && strlen($article['content']) == 0) $depth = 0;
+		
+		if( ($depth == 0 && (count($article['children_ids']) > 0 || strlen($article['content']) > 0))
+			||
+			($depth > 0 && strlen($article['summary']) > 0) )			
+			$html .= '  <div class="display_button"><a class="summary_link">'.$lang_summary.'</a><a class="details_link" style="display: none;">'.$lang_details.'</a></div>';
 		$html .= '</div>';
 	}
 	return $html;

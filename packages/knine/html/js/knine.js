@@ -97,7 +97,7 @@
 						fields: ['authors_ids'], 
 						lang: conf.lang,
 						async: true
-					})).done(function(result) { 
+					})).done(function(result) {
 						if(typeof result == 'object' && typeof result[conf.article_id] != 'undefined') {
 							$.when(easyObject.browse({
 								class_name: 'knine\\User',
@@ -122,17 +122,24 @@
 									month = date.substring(5,7);
 									day = date.substring(8,10);
 									$title.html($title.html()+'<br /><span style="font-size: 12px;">'+authors+'&nbsp;('+day+'/'+month+'/'+year+')</span>');
-									if(!loading) $elem.trigger('ready');
 								}
+								if(!loading) $elem.trigger('ready');								
 							});						
 						}
+						else if(!loading) $elem.trigger('ready');
 					});						
 				}
 
 				//add show/hide links
 				var $details_link = $('<a/>').addClass('details_link').text(conf.lang_details);
 				var $summary_link = $('<a/>').addClass('summary_link').text(conf.lang_summary);
-				$article.append($('<div/>').addClass('display_button').append($details_link).append($summary_link));
+
+				if(conf.depth > 0 && $.isEmptyObject(conf.values['children_ids']) && conf.values['content'].length == 0) conf.depth = 0;
+				
+				if( (conf.depth == 0 && (!$.isEmptyObject(conf.values['children_ids']) || conf.values['content'].length > 0))
+					||
+					(conf.depth > 0 && conf.values['summary'].length > 0) )
+					$article.append($('<div/>').addClass('display_button').append($details_link).append($summary_link));
 
 				// 2) Then we add the dynamics
 
@@ -191,7 +198,9 @@
 				});
 
 				// check if there is something more to do for content part (i.e. recurse to a deeper level)
-				if(conf.depth > 0) {
+				if(conf.depth > 0 && (!$.isEmptyObject(conf.values['children_ids']) || conf.values['content'].length > 0)) {
+					console.log(conf.values);
+					console.log('unfold');
 					$content.trigger('unfold');
 					$summary.hide();
 					$details_link.hide();				

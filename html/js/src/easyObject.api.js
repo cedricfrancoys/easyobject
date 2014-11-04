@@ -30,7 +30,7 @@
 		if(event.ctrlKey && event.shiftKey && event.altKey) {
 // todo : add a menu for common tasks
 			var user_id = easyObject.user_id();
-			var user_values = (easyObject.browse('core\\User', [user_id], ['firstname', 'lastname'], easyObject.conf.lang))[user_id];
+			var user_values = (browse('core\\User', [user_id], ['firstname', 'lastname'], easyObject.conf.lang))[user_id];
 			var $dia = $('<div/>')
 			.append($('<div/>').html('Current user: '+user_values['firstname']+' '+user_values['lastname']+' ('+user_id+')')
 			.append($('<button type="button" />').css({'margin-left':'20px'}).html("logon").on('click', function() {logon_dialog();})))

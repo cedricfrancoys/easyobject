@@ -216,7 +216,11 @@ class FClib {
 				else $_REQUEST[$param] = $announcement['params'][$param]['default'];
 			}
 			// prevent some js/php misunderstanding
-			if($_REQUEST[$param] == 'null' ) $_REQUEST[$param] = null;
+			if(in_array($_REQUEST[$param], array('NULL', 'null'))) $_REQUEST[$param] = null;
+			if($announcement['params'][$param]['type'] == 'bool') {
+				if(in_array($_REQUEST[$param], array('TRUE', 'true', '1', 1))) $_REQUEST[$param] = true;						
+				if(in_array($_REQUEST[$param], array('FALSE', 'false', '0', 0))) $_REQUEST[$param] = false;			
+			}
 			if($announcement['params'][$param]['type'] == 'array' && !is_array($_REQUEST[$param])) $_REQUEST[$param] = explode(',', $_REQUEST[$param]);
 			$result[$param] = $_REQUEST[$param];
 		}
