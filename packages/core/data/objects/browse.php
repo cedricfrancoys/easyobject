@@ -34,6 +34,7 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 set_silent(true);
 
 // announce script and fetch parameters values
+// todo : shouldn't we set ids param as mandatory ?
 $params = announce(	
 	array(	
 		'description'	=>	"Returns the values of the specified fields for the given objects ids.",

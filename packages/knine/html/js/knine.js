@@ -1,3 +1,6 @@
+// fix for browsers that don't natively support Object.keys
+Object.keys=Object.keys||function(o,k,r){r=[];for(k in o)r.hasOwnProperty.call(o,k)&&r.push(k);return r};
+
 (function($) {
 	/**
 	* jQuery Knine plugin :
@@ -5,6 +8,7 @@
 	*
 	*/
 
+	
 	$.fn.knine = function(arg) {
 		var default_conf = {
 			article_id: 0,
@@ -98,7 +102,7 @@
 						lang: conf.lang,
 						async: true
 					})).done(function(result) {
-						if(typeof result == 'object' && typeof result[conf.article_id] != 'undefined') {
+						if(typeof result == 'object' && typeof result[conf.article_id] != 'undefined' && !$.isEmptyObject(result[conf.article_id]['authors_ids'])) {
 							$.when(easyObject.browse({
 								class_name: 'knine\\User',
 								ids: result[conf.article_id]['authors_ids'],
@@ -123,10 +127,14 @@
 									day = date.substring(8,10);
 									$title.html($title.html()+'<br /><span style="font-size: 12px;">'+authors+'&nbsp;('+day+'/'+month+'/'+year+')</span>');
 								}
-								if(!loading) $elem.trigger('ready');								
+								if(!loading) $elem.trigger('ready');
+								else --loading;
 							});						
 						}
-						else if(!loading) $elem.trigger('ready');
+						else {
+							if(!loading) $elem.trigger('ready');
+							else --loading;
+						}
 					});						
 				}
 
