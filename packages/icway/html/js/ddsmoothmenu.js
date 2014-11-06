@@ -136,4 +136,3 @@ init:function(setting){
 }
 
 } //end ddsmoothmenu variable
-

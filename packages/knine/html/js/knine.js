@@ -199,8 +199,6 @@
 
 				// check if there is something more to do for content part (i.e. recurse to a deeper level)
 				if(conf.depth > 0 && (!$.isEmptyObject(conf.values['children_ids']) || conf.values['content'].length > 0)) {
-					console.log(conf.values);
-					console.log('unfold');
 					$content.trigger('unfold');
 					$summary.hide();
 					$details_link.hide();				

@@ -44,11 +44,11 @@ $renderer = array(
 							foreach($chapters_titles as $id => $item) {
 								$sub_values = &browse('knine\Article', array($id), array('children_ids'));
 								$sub_titles = &browse('knine\Article', $sub_values[$id]['children_ids'], array('title'));
-								$html .= '<li><a id="'.$id.'">'.$item['title'].'</a>';
+								$html .= '<li><a article_id="'.$id.'">'.$item['title'].'</a>';
 								if(count($sub_titles) > 0) {
-									$html .= '<ul>';
+									$html .= '<ul class="chapters">';
 									foreach($sub_titles as $sub_id => $sub_item) {
-										$html .= '<li><a id="'.$sub_id.'">'.$sub_item['title'].'</a></li>';
+										$html .= '<li><a article_id="'.$id.'" chapter_id="'.$sub_id.'">'.$sub_item['title'].'</a></li>';
 									}
 									$html .= '</ul>';
 								}
@@ -66,23 +66,35 @@ $renderer = array(
 									contentsource: 'markup'
 								});
 							
-								$('#menu li a').on('click', function() {
-									$('#menu li a.active').removeClass('active');
-									$(this).addClass('active');
-									$('#content').empty();
-									var \$loader = $('<div />').attr('id', 'loader').addClass('loader').text('Chargement ...').appendTo($('#content'));
-									$('<div />').attr('id', 'content_knine')
-									.knine({
-										article_id: $(this).attr('id'),
-										depth: 1,
-										lang_summary: 'Résumer',
-										lang_details: 'En savoir plus',										
-										autonum: false
-									})
-									.on('ready', function() {
-										\$loader.remove();
-										$('#content').append($(this));
-									});
+								$('li a').on('click', function() {
+									var \$link = \$main_link = $(this);
+									if(\$link.is('[article_id]')) {									
+										if(\$link.is('[chapter_id]')) \$main_link = \$link.parent().parent().parent().find('a').first();
+										$('.chapters').animate({height:'hide', opacity:'hide'}, 1);										
+										if($('#menu li a.active').get(0) != \$main_link.get(0)) {
+											$('#menu li a.active').removeClass('active');
+																			
+											$('#content').empty().append($('<div />').attr('id', 'loader').addClass('loader').text('Chargement ...'));
+
+											$('<div />').attr('id', 'content_knine')
+											.knine({
+												article_id: \$link.attr('article_id'),
+												depth: 1,
+												lang_summary: 'Résumer',
+												lang_details: 'En savoir plus',										
+												autonum: false
+											})
+											.on('ready', function() {
+												$('#loader').remove();
+												$('#content').append($(this));
+												if(\$link.is('[chapter_id]')) $('html, body').animate({scrollTop: $('#'+\$link.attr('chapter_id')).offset().top}, 2000);
+											});										
+										}
+										else {
+											if(\$link.is('[chapter_id]')) $('html, body').animate({scrollTop: $('#'+\$link.attr('chapter_id')).offset().top}, 2000);
+										}
+										\$main_link.addClass('active');
+									}
 								});
 							});
 							";
