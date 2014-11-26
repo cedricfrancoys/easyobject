@@ -39,9 +39,7 @@ class Tag {
 		$this->type = $type;
 		$this->offset = $offset;
 		$this->length = $length;
-
 		$this->attributes_table = array();
-
 		$matches = array();
 		$end = strpos($this->tag_string, '>');
 		$tag_string = substr($tag_string, 0, $end);
@@ -71,6 +69,14 @@ class Tag {
 		return $result;
 	}
 
+	function getAttribute($attribute) {
+		return (isset($this->attributes_table[$attribute]))?$this->attributes_table[$attribute]:'';
+	}
+
+	function getAttributes() {
+		return $this->attributes_table[$attribute];
+	}
+	
 	function getInnerValue($forbidden_tags=null) {
 		$result = '';
 		if(!is_array($forbidden_tags)) $forbidden_tags = array();
@@ -104,6 +110,16 @@ class Tag {
 	}
 
 	/**
+	* Name getter
+	*
+	* @access   public
+ 	* @return   string The name of the tag
+	*/
+	function getName(){
+		return $this->name;
+	}
+
+	/**
 	* Offset getter
 	*
 	* @access   public
@@ -111,6 +127,16 @@ class Tag {
 	*/
 	function getOffset(){
 		return $this->offset;
+	}
+
+	/**
+	* Type getter
+	*
+	* @access   public
+ 	* @return   string The type of the tag (SINGLE_TAG, OPENING_TAG, CLOSING_TAG)
+	*/
+	function getType(){
+		return $this->type;
 	}
 
 	/**
@@ -142,4 +168,8 @@ class Tag {
 		$name = substr($tag, $begin, $end-$begin);
 	}
 
+	public function __toString(){
+		return '<'.$this->getName().'>'.'</'.$this->getName().'>';
+	}
+	
 }

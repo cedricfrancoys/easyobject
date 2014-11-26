@@ -160,7 +160,7 @@ class IdentificationManager {
 	}
 
 	// We don't use https, however we offer minimum privacy (even if not completely bullet-proof):
-	// 1) Only MD5 values of the password are sent from client to server. So user's password stays unknown from the developper.
+	// 1) Only MD5 values of the password are sent from client to server. So user's password stays unknown from the admin/app developper.
 	// 2) The value that is sent is always different (i.e. : MD5 value is only valid for current session). So, one cannot grab user's password by capturing http packet.
 	public function login($session_id, $login, $password) {
         $user_id = 0;

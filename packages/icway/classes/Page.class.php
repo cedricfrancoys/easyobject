@@ -11,7 +11,9 @@ namespace icway {
 				'url_resolver_id' 	=> array('type' => 'many2one', 'foreign_object' => 'core\UrlResolver', 'multilang' => true),
 				'content'			=> array('type' => 'text', 'multilang' => true, 'onchange' => 'icway\Page::onchangePage'),
 				'script'			=> array('type' => 'text', 'onchange' => 'icway\Page::onchangePage'),
-				'html' 				=> array('type' => 'function', 'result_type' => 'string', 'store' => true, 'function' => 'icway\Page::getHtml', 'multilang' => true),
+// since we also generate dynamic pages (blog), caching might lead to content inconsistency
+//				'html' 				=> array('type' => 'function', 'result_type' => 'string', 'store' => true, 'function' => 'icway\Page::getHtml', 'multilang' => true),
+				'html' 				=> array('type' => 'function', 'result_type' => 'string', 'function' => 'icway\Page::getHtml', 'multilang' => true),				
 			);
 		}
 		
@@ -31,6 +33,7 @@ namespace icway {
 				include($filename); 
 				return ob_get_clean();
 			};
+			// generate the html with the script /index.php?get=icway_page-html
 			return $get_include_contents('packages/icway/data/page-html.php');
 		}
 

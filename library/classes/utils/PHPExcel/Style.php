@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2013 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2013 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    ##VERSION##, ##DATE##
+ * @version    1.8.0, 2014-03-02
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2013 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComparable
 {
@@ -422,7 +422,7 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
                     $newStyle = clone $style;
                     $newStyle->applyFromArray($pStyles);
 
-                    if ($workbook->cellXfExists($newStyle)) {
+                    if ($existingStyle = $workbook->getCellXfByHashCode($newStyle->getHashCode())) {
                         // there is already such cell Xf in our collection
                         $newXfIndexes[$oldXfIndex] = $existingStyle->getIndex();
                     } else {
@@ -595,9 +595,9 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
      */
     public function getQuotePrefix()
     {
-		if ($this->_isSupervisor) {
-			return $this->getSharedComponent()->getQuotePrefix();
-		}
+        if ($this->_isSupervisor) {
+            return $this->getSharedComponent()->getQuotePrefix();
+        }
         return $this->_quotePrefix;
     }
 
@@ -608,16 +608,16 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
      */
     public function setQuotePrefix($pValue)
     {
-		if ($pValue == '') {
-			$pValue = false;
-		}
-		if ($this->_isSupervisor) {
-			$styleArray = array('quotePrefix' => $pValue);
-			$this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
-		} else {
-			$this->_quotePrefix = (boolean) $pValue;
-		}
-		return $this;
+        if ($pValue == '') {
+            $pValue = false;
+        }
+        if ($this->_isSupervisor) {
+            $styleArray = array('quotePrefix' => $pValue);
+            $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
+        } else {
+            $this->_quotePrefix = (boolean) $pValue;
+        }
+        return $this;
     }
 
     /**
