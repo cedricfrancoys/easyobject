@@ -23,7 +23,7 @@ $renderer = array_merge($renderer, array(
 							$html = '<meta property="og:type" content="article" />';
 							$html .= '<meta property="og:title" content="'.$values[$params['post_id']]['title'].'" />';
 							$html .= '<meta property="og:image" content="'.$values[$params['post_id']]['image'].'" />';
-							$html .= '<meta property="og:url" content="'.FClib::get_url().'" />';
+							$html .= '<meta property="og:url" content="'.config\FClib::get_url().'" />';
 							$html .= '<meta property="article:published_time" content="'.$values[$params['post_id']]['created'].'" />';
 							$html .= '<meta property="article:author" content="'.$values[$params['post_id']]['author'].'" />';
 							return $html;

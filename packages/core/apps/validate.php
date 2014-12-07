@@ -77,7 +77,7 @@ if(isset($_SESSION['auto']) && $_SESSION['auto']) {
 	</script>");
 }
 
-$url = FCLib::get_url();
+$url = config\FCLib::get_url();
 echo "</head>
 <body>
 <form action='$url' method='get'>

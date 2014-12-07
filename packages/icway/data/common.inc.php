@@ -104,7 +104,7 @@ switch($params['lang']) {
 */
 $renderer = array(
 	'page_url'		=>	function ($params) {
-							return FClib::get_url();
+							return config\FClib::get_url();
 						},
 	'to_fr'		=>	function ($params) {
 							$url_ids = search('core\UrlResolver', array(array(array('complete_url', 'ilike', "/index.php?show=icway_site&page_id={$params['page_id']}&lang=fr"))));

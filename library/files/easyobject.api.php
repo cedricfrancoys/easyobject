@@ -52,7 +52,7 @@ function user_id($session_id=SESSION_ID) {
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function user_key($session_id=SESSION_ID) {
@@ -71,7 +71,7 @@ function user_key($session_id=SESSION_ID) {
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function user_lang($session_id=SESSION_ID) {
@@ -90,7 +90,7 @@ function user_lang($session_id=SESSION_ID) {
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function login($login, $password, $session_id=SESSION_ID) {
@@ -109,7 +109,7 @@ function login($login, $password, $session_id=SESSION_ID) {
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function validate($object_class, &$values) {
@@ -129,7 +129,7 @@ function validate($object_class, &$values) {
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 /**
@@ -159,7 +159,7 @@ function &get($object_class, $object_id, $session_id=SESSION_ID) {
 		}
 		return $object;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function &browse($object_class, $ids=null, $fields=null, $lang=DEFAULT_LANG, $session_id=SESSION_ID) {
@@ -178,7 +178,7 @@ function &browse($object_class, $ids=null, $fields=null, $lang=DEFAULT_LANG, $se
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function search($object_class, $domain=null, $order='id', $sort='asc', $start=0, $limit='', $lang=DEFAULT_LANG, $session_id=SESSION_ID) {
@@ -197,7 +197,7 @@ function search($object_class, $domain=null, $order='id', $sort='asc', $start=0,
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function update($object_class, $ids, $values=null, $lang=DEFAULT_LANG, $session_id=SESSION_ID) {
@@ -215,7 +215,7 @@ function update($object_class, $ids, $values=null, $lang=DEFAULT_LANG, $session_
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 function remove($object_class, $ids, $permanent=false, $session_id=SESSION_ID) {
@@ -233,7 +233,7 @@ function remove($object_class, $ids, $permanent=false, $session_id=SESSION_ID) {
 		}
 		return $result;
 	}
-	else trigger_error('easyobject.lib.php, unknown operation mode: check configuration file', E_USER_ERROR);
+	else trigger_error('easyobject.api.php, unknown operation mode: check configuration file', E_USER_ERROR);
 }
 
 

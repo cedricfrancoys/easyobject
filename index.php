@@ -21,7 +21,7 @@
 
 /**
 * Dispatcher's role is to set up the context and handle the client calls
-* note : we use the functions defined in easyobject.api.php to call object manager methods so we don't have to deal with the mode (either "standalone" or "client-server" )
+* note : we use the functions defined in easyobject.api.php to call object manager methods so user doesn't have to deal with the mode (either "standalone" or "client-server" )
 *
 */
 
@@ -38,9 +38,8 @@ defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 
 
 /**
-* Define the context
+* Define context
 */
-
 // prevent vars initialization from generating output
 set_silent(true);
 
@@ -86,29 +85,28 @@ $_REQUEST = array_merge($_REQUEST, array_fill_keys(array_keys($_FILES), ''));
 /**
 * Dispatching : include the requested script
 */
-
 $accepted_requests = array(
-						'do'	=> array('type' => 'action', 'dir' => 'actions'),		// do something server-side
-						'get'	=> array('type' => 'data provider', 'dir' => 'data'), 	// return some data (json)
-						'show'	=> array('type' => 'application', 'dir' => 'apps')		// output rendering information (html/js)
+						'do'	=> array('type' => 'action',		'dir' => 'actions'), 	// do something server-side
+						'get'	=> array('type' => 'data provider',	'dir' => 'data'),		// return some data (json)
+						'show'	=> array('type' => 'application',	'dir' => 'apps')		// output rendering information (html/js)
 					);
 
-$request_found = false;
+// if no request is specified, use the default app
+if(count(array_intersect_key($accepted_requests, $_REQUEST)) == 0) {
+	if(defined('DEFAULT_APP')) $_REQUEST['show'] = DEFAULT_APP;
+}
+
 foreach($accepted_requests as $request_key => $request_conf) {
 	if(isset($_REQUEST[$request_key])) {
 		$parts = explode('_', $_REQUEST[$request_key]);
-		$filename = 'packages/'.array_shift($parts).'/'.$request_conf['dir'].'/'.implode('/', $parts).'.php';
+		$package = array_shift($parts);
+		$filename = 'packages/'.$package.'/'.$request_conf['dir'].'/'.implode('/', $parts).'.php';
 		is_file($filename) or die ("'{$_REQUEST[$request_key]}' is not a valid {$request_conf['type']}.");
+		// if package has a custom configuration file, load it
+		if(is_file('packages/'.$package.'/config.inc.php')) include('packages/'.$package.'/config.inc.php');		
+		// export parameters declared with config\define function as constants (i.e.: accessible through global scope)
+		config\export_config();
 		include($filename);
-		$request_found = true;
 		break;
 	}
-}
-
-// if no script was specified and config.ini.php specifies a default application, let's display that one
-if(!$request_found && defined('DEFAULT_APP')) {
-	$parts = explode('_', DEFAULT_APP);
-	$filename = 'packages/'.array_shift($parts).'/apps/'.implode('/', $parts).'.php';
-	is_file($filename) or die ("'{$_REQUEST[$request_key]}' is not a valid {$request_conf['type']}.");
-	include($filename);
 }

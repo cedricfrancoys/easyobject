@@ -251,6 +251,7 @@ class Object {
 	/**
 	* Magic method for handling dynamic getters and setters
 	* Note : This mechanism only works under standalone mode
+// todo : why ? we should do some testing 
 	*
 	* @param string $name
 	* @param array $arguments
@@ -263,6 +264,7 @@ class Object {
 		if(in_array($field, array_keys(array_change_key_case($this->schema, CASE_LOWER)))) {
 			switch($method) {
 				case 'get':
+// todo : in case of  relational fields we could return an object instead of an id
 					$values = $this->getValues(array($field));
 					return $values[$field];
 					break;

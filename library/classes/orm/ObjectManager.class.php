@@ -21,6 +21,7 @@
 
 defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 
+// load dependencies
 load_class('db/DBConnection') or die('unable to load mandatory class DBConnection');
 load_class('orm/IdentificationManager') or die('unable to load mandatory class IdentificationManager');
 load_class('orm/ErrorHandler') or die('unable to load mandatory class ErrorHandler');
@@ -84,8 +85,8 @@ class ObjectManager {
 			'function'		=> array('type', 'result_type', 'function')
 	);
 
+	
 // Private methods
-
 
 	private function __construct() {
 		// initialize the objects array

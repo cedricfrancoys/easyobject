@@ -8,7 +8,7 @@
 
 defined('__FC_LIB') or include_once('fc.lib.php');
 include_once('config.inc.php');
-defined('__EASYOBJECT_LIB') or include_file('easyobject.lib.php');
+defined('__EASYOBJECT_LIB') or include_file('easyobject.api.php');
 
 
 // server calls are equivalent to standalone-mode calls

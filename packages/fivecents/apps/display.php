@@ -63,7 +63,7 @@ $get_html = function ($attributes) {
 			<meta property="og:type" content="article"/>
 			<meta property="og:title" content="'.$post_values[$params['post_id']]['title'].'"/>
 			<meta property="og:description" content="'.$description.'"/>
-			<meta property="og:url" content="'.FClib::get_url().'"/>
+			<meta property="og:url" content="'.config\FClib::get_url().'"/>
 			<meta property="og:site_name" content="fivecents.org"/>
 			<meta property="article:author" content="http://www.facebook.com/cedric.francoys"/>
 			<meta name="twitter:card" content="summary"/>

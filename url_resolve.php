@@ -41,18 +41,24 @@ define('SESSION_ID', session_id());
 $base = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')+1);
 // note: in our example, $base should now contain '/easyobject/'
 
-// get a clean version of the request URI
+/**
+* Get a clean version of the request URI
+*/
 $request_uri = $_SERVER['REQUEST_URI'];
 // remove everything after question mark, if any
-if(($pos = strpos($_SERVER['REQUEST_URI'], '?')) !== false) $request_uri = substr($request_uri, 0, $pos);
+if(($pos = strpos($request_uri, '?')) !== false) $request_uri = substr($request_uri, 0, $pos);
 // remove 'index.php', if explicit
 $request_uri = str_replace('/index.php', '/', $request_uri);
 
+/**
+* Check for redirection
+*/
 // if the main entry point (index.php) is requested (inside some virtual subfolder), then we redirect to the root
 // example: 
 // '/easyobject/presentation/index.php?show=icway_site&page_id=6&lang=fr'
 // must redirect to 
 // '/easyobject/index.php?show=icway_site&page_id=6&lang=fr'
+// therefore '/easyobject/presentation/' must redirect to '/easyobject/'
 if(substr($request_uri, -1) == '/') {
 	$request_uri = str_replace($request_uri, $base, $_SERVER['REQUEST_URI']);
 	header('HTTP/1.0 200 OK');
@@ -61,20 +67,21 @@ if(substr($request_uri, -1) == '/') {
 	exit();
 }
 
-
+/**
+* Check for content type
+*/
 // if the resource being requested differs from a script (name containing a dot and thus suggesting a file, like 'style.css' or 'ui.js'),
 // then we try to find out its location (assuming referer's url might involve virtual folders)
-
 $parts = explode('.', $request_uri);
-if(count($parts)) {
+if(count($parts) > 1) {
 	// get everything after the last dot
 	$extension = strtolower($parts[count($parts)-1]);
 	// if resource is among accepted extensions
 	if(in_array($extension, array('htm', 'html', 'css', 'js', 'png', 'gif', 'jpg', 'jpeg'))) {
 		// get path from referer's URL (current URL must have that part in common)
-		$referer_url = FClib::get_script_path($_SERVER['HTTP_REFERER']).'/';
+		$referer_url = config\FClib::get_script_path($_SERVER['HTTP_REFERER']).'/';
 		// keep only the part following referer's url
-		$request_uri = substr(FClib::get_url(), strlen($referer_url));
+		$request_uri = substr(config\FClib::get_url(), strlen($referer_url));
 		header('HTTP/1.0 200 OK');
 		header('Status: 200 OK');
 		header("Location: ".$base.$request_uri);
@@ -82,16 +89,20 @@ if(count($parts)) {
 	}
 }
 
-// If we reached this part, it means we are looking for a script pointed by an object of class 'core\UrlResolver'
+/**
+* Get related UrlResolver object
+*/
+// if we reached this part, it means we are looking for a script pointed by an object of class 'core\UrlResolver'
 
 // first, look for exact match
 $request_uri = str_replace($base, '/', $_SERVER['REQUEST_URI']);
+
 $ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', $request_uri))));
 // if no match, look for a resolver having same URL base location
 if(count($ids) <= 0) {
 	if(($pos = strrpos($request_uri, '?')) !== false) $request_uri = substr($request_uri, 0, $pos);
 	$ids = search('core\UrlResolver', array(array(array('human_readable_url', 'like', $request_uri))));
-	$additional_params = FClib::extract_params($_SERVER['REQUEST_URI']);
+	$additional_params = extract_params($_SERVER['REQUEST_URI']);
 }
 else $additional_params = array();
 
@@ -106,7 +117,7 @@ if(count($ids) <= 0) {
 else {
 	// get the complete URL (we should get only one result)
 	$values = browse('core\UrlResolver', $ids, array('complete_url', 'human_readable_url'));
-	$additional_params = array_merge($additional_params, FClib::extract_params($values[$ids[0]]['complete_url']));		
+	$additional_params = array_merge($additional_params, extract_params($values[$ids[0]]['complete_url']));		
 	// set the global var '$_REQUEST' (if a param is already set, its value is overwritten)
 	foreach($additional_params as $key => $value) $_REQUEST[$key] = $value;
 	// set the header to HTTP 200 and relay processing to index.php

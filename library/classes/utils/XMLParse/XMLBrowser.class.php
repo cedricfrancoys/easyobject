@@ -4,6 +4,12 @@ function_exists('load_class') or die(__FILE__.' requires fc.lib.php');
 load_class('utils/XMLParse/XMLTag');
 
 
+/**
+*
+* This class allows to parse any XML string (even non-well-formed)
+* 
+*/
+
 class XMLBrowser {
 	private $xml;
 	private $tags;
@@ -52,6 +58,7 @@ class XMLBrowser {
 									$this,
 									count($this->tags), 	// index
 									$matches[1][$i][1]-1, 	// offset
+									$tag_name,
 									$type,
 									$positions
 							);
@@ -70,36 +77,11 @@ class XMLBrowser {
 	public function &next() {
 		return $this->tags[$this->cursor++];
 	}
-
-	public function hasSibling() {
-		$result = false;
-		if($this->hasNext()) {
-			$tag = &$this->tags[$this->cursor];
-			// retrieve related closing tag offset
-			$closing_offset = $tag->getPosition('outer', 'stop');
-			for($i = $this->cursor, $j = $this->getSize(); !$result && $i < $j; ++$i) {
-				if($this->tags[$i]->getOffset() > $closing_offset) $result = true;
-			}
-		}
-		return $result;
-	}
-	
-	public function &nextSibling() {	
-		$result = null;
-		$tag = &$this->tags[$this->cursor];
-		// retrieve related closing tag offset
-		$closing_offset = $tag->getPosition('outer', 'stop');
-		for($i = $this->cursor, $j = $this->getSize(); !$result && $i < $j; ++$i) {
-			if($this->tags[$i]->getOffset() > $closing_offset) $result = &$this->tags[$i];
-		}
-		return $result;	
-	}
 	
 	public function &first() {
 		$this->reset();
 		return $this->next();
 	}
-
 
 	public function getSize() {
 		return count($this->tags);

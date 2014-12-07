@@ -1214,8 +1214,8 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
 					else {
 
 						if (isset($this->_cssStyles['td.style' . $cell->getXfIndex()])) {
-// commented by ced (remove styles)						
-//						$cssClass = array_merge($cssClass, $this->_cssStyles['td.style' . $cell->getXfIndex()]);
+// note by ced : comment next line to remove styles
+						$cssClass = array_merge($cssClass, $this->_cssStyles['td.style' . $cell->getXfIndex()]);
 						}
 
 						// General horizontal alignment: Actual horizontal alignment depends on dataType
@@ -1223,8 +1223,8 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
 						if ($sharedStyle->getAlignment()->getHorizontal() == PHPExcel_Style_Alignment::HORIZONTAL_GENERAL
 							&& isset($this->_cssStyles['.' . $cell->getDataType()]['text-align']))
 						{
-// commented by ced (remove styles)												
-//							$cssClass['text-align'] = $this->_cssStyles['.' . $cell->getDataType()]['text-align'];
+// note by ced : comment next line to remove styles
+							$cssClass['text-align'] = $this->_cssStyles['.' . $cell->getDataType()]['text-align'];
 						}
 
 					}
