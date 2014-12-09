@@ -79,9 +79,9 @@ if(count($parts) > 1) {
 	// if resource is among accepted extensions
 	if(in_array($extension, array('htm', 'html', 'css', 'js', 'png', 'gif', 'jpg', 'jpeg'))) {
 		// get path from referer's URL (current URL must have that part in common)
-		$referer_url = config\FClib::get_script_path($_SERVER['HTTP_REFERER']).'/';
+		$referer_url = config\get_script_path($_SERVER['HTTP_REFERER']).'/';
 		// keep only the part following referer's url
-		$request_uri = substr(config\FClib::get_url(), strlen($referer_url));
+		$request_uri = substr(config\get_url(), strlen($referer_url));
 		header('HTTP/1.0 200 OK');
 		header('Status: 200 OK');
 		header("Location: ".$base.$request_uri);

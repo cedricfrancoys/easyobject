@@ -390,7 +390,17 @@ namespace config {
 		}
 	}
 
-
+	/**
+	* We add some standalone functions to relieve the user from the scope resolution notation.
+	*/
+	function get_url($server_port=true, $query_string=true) {
+		return FClib::get_url($server_port, $query_string);
+	}
+	
+	function get_script_path($script=__FILE__) {
+		return FClib::get_script_path($script);	
+	}
+	
 	//Initialize the FClib class for further 'load_class' and 'include_file' calls
 	FClib::init();	
 }

@@ -43,7 +43,7 @@ class HttpRequest {
     }
    
     // constructor
-    function HttpRequest($url) {
+    function __construct($url) {
         $this->_url = $url;
         $this->_scan_url();
     }

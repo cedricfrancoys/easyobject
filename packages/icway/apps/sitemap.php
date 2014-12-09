@@ -55,11 +55,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 ';	
 echo "<url>\n";
-echo "\t<loc>".config\FClib::get_url(true, false)."</loc>\n";
+echo "\t<loc>".config\get_url(true, false)."</loc>\n";
 echo "</url>\n";
 
 
-$root_url = config\FClib::get_url(true, false);
+$root_url = config\get_url(true, false);
 $pages_ids = get_pages_list(1);
 
 foreach(array('fr', 'en', 'es') as $lang) {

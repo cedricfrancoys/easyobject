@@ -732,9 +732,13 @@ class ObjectManager {
 				// 3) some fields require to be adapted in some ways
 				switch($columns[$field]['type']) {
 					case 'text':
-						load_class('utils/HtmlCleaner');
-						// standard cleaning: remove non-standard tags and 'class' attributes
-						$fields_values[$field] = str_replace('&amp;', '&', HtmlCleaner::clean($value, null, array('class')));
+						load_class('utils/HTMLPurifier');						
+						// standard cleaning: remove non-standard tags and attributes (class)
+						$cleaner = new HTMLPurifier(HTMLPurifier_Config::createDefault());
+						// we need to replace &amp; to maintain href values integrity
+	// note : this shouldn't be necessary for recent browsers, read http://www.w3.org/TR/xhtml1/#C_12						
+						// $fields_values[$field] = str_replace('&amp;', '&', $cleaner->purify($value));
+						$fields_values[$field] = $cleaner->purify($value);
 						break;
 					case 'date':
 						if(empty($value)) $value = '0000-00-00';

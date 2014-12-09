@@ -7,6 +7,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// Define changes to default configuration here.
 	// For the complete reference:
 	// http://docs.ckeditor.com/#!/api/CKEDITOR.config
+	// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html
 
 	// The toolbar groups arrangement, optimized for two toolbar rows.
 	config.toolbarGroups = [
@@ -36,4 +37,7 @@ CKEDITOR.editorConfig = function( config ) {
 	config.removePlugins = 'elementspath,tabletools,contextmenu';
 	config.disableNativeSpellChecker = false;
 	config.allowedContent = true;
+	// prevent conversion to htmlentities
+	config.htmlEncodeOutput = false;
+	config.entities = false;
 };
