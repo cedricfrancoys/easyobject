@@ -16,8 +16,11 @@ if(isset($params['cat_id'])) {
 				$url_values = &browse('core\UrlResolver', array($values['url_resolver_id']), array('human_readable_url'));
 				$url = ltrim($url_values[$values['url_resolver_id']]['human_readable_url'], '/');
 			}
-			else $url = "index.php?show=icway_blog&post_id={$id}&lang={$params['lang']}";					
-			$html .= '<div class="blog_entry"><a href="'.$url.'">'.$values['title'].'</a>'.'&nbsp;-&nbsp;<span class="details">'.$date.'</span></div>';
+			else $url = "index.php?show=icway_blog&post_id={$id}&lang={$params['lang']}";
+			if($params['cat_id'] == 5) 
+				$html .= '<div class="blog_entry"><a href="'.$url.'">'.$values['title'].'</a>'.'&nbsp;-&nbsp;<span class="details">'.$date.'</span></div>';
+			else 
+				$html .= '<div class="blog_entry"><a href="'.$url.'">'.$values['title'].'</a></div>';
 		}
 		return $html;
 	};

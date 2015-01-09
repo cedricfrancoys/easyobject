@@ -275,8 +275,7 @@ var input_criteria = (explode(',', input_value))[0];
 												var results = 0;
 												$.each(ids, function(i, id){ ++results; });
 												if(results == 1) {
-													var conf = $choice.data('conf');
-													conf.domain = [[[ 'id', '=', ids[0] ]]];
+													$choice.data('conf').domain = [[[ 'id', '=', ids[0] ]]];
 													$choice.trigger('reload');												
 													return;
 												}
@@ -292,10 +291,9 @@ var input_criteria = (explode(',', input_value))[0];
 											$dia.dialog({
 												buttons: {
 													"Ok": function() {
-														var conf = $choice.data('conf');
 														var $sub_grid = $list.data('grid');
 														$.each($sub_grid.grid('selection'), function(i, id){
-															conf.domain = [[[ 'id', '=', id ]]];
+															$choice.data('conf').domain = [[[ 'id', '=', id ]]];
 														});
 														// closing the dialog will trigger the widget reload
 														$(this).dialog("close").dialog("destroy");
@@ -323,10 +321,10 @@ var input_criteria = (explode(',', input_value))[0];
 								$.extend(config, {
 									del: {
 										func: function($ddlist) {
-											var conf = $ddlist.data('conf');
+											var dd_conf = $ddlist.data('conf');
 											var id = $ddlist.dropdownlist('selection');
-											conf.less = add_value(conf.less, id);
-											conf.more = remove_value(conf.more, id);
+											dd_conf.less = add_value(dd_conf.less, id);
+											dd_conf.more = remove_value(dd_conf.more, id);
 											// force grid to refresh its content
 											$ddlist.trigger('reload');
 											// update the value of the widget
@@ -403,10 +401,10 @@ var input_criteria = (explode(',', input_value))[0];
 									},
 									del: {
 										func: function($grid, ids) {
-											var conf = $grid.data('conf');
+											var grid_conf = $grid.data('conf');
 											$.each($grid.grid('selection'), function(i, id){
-												conf.less = add_value(conf.less, id);
-												conf.more = remove_value(conf.more, id);
+												grid_conf.less = add_value(grid_conf.less, id);
+												grid_conf.more = remove_value(grid_conf.more, id);
 											});
 											// force grid to refresh its content
 											$grid.trigger('reload');
@@ -418,25 +416,23 @@ var input_criteria = (explode(',', input_value))[0];
 										func: function($grid) {
 // todo : display only items not already present in relation
 // todo: attr_domain is here too											
-											var grid_conf = $grid.data('conf');
-											var config = {class_name: class_name, view_name: grid_conf.views.add, lang: conf.lang};
+											var grid_conf = {class_name: class_name, view_name: $grid.data('conf').views.add, lang: conf.lang};
 											if(attr_domain != undefined) {
 												var domain = eval(attr_domain);											
-												config = $.extend(true, config, {domain: domain});
+												grid_conf = $.extend(true, grid_conf, {domain: domain});
 											}
 
-											var $list = easyObject.UI.list(config);
+											var $list = easyObject.UI.list(grid_conf);
 											var $dia = easyObject.UI.dialog({
 													content: $list,
 													title: 'Add relation'});
 											$dia.dialog({
 												buttons: {
 													"Ok": function() {
-														var conf = $grid.data('conf');
-														var $sub_grid = $list.data('grid');
-														$.each($sub_grid.grid('selection'), function(i, id){
-															conf.more = add_value(conf.more, id);
-															conf.less = remove_value(conf.less, id);
+														var grid_conf = $grid.data('conf');
+														$.each($list.data('grid').grid('selection'), function(i, id){
+															grid_conf.more = add_value(grid_conf.more, id);
+															grid_conf.less = remove_value(grid_conf.less, id);
 														});
 
 														// closing the dialog will trigger the grid reload

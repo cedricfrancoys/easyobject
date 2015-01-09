@@ -83,7 +83,7 @@ class easyObjectServer extends PHPRPC_Server {
 			$result = parent::call($request);
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = base64_encode(serialize(false));
 		}
 		return $result;

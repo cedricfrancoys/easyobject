@@ -78,8 +78,19 @@ if(count($parts) > 1) {
 	$extension = strtolower($parts[count($parts)-1]);
 	// if resource is among accepted extensions
 	if(in_array($extension, array('htm', 'html', 'css', 'js', 'png', 'gif', 'jpg', 'jpeg'))) {
-		// get path from referer's URL (current URL must have that part in common)
-		$referer_url = config\get_script_path($_SERVER['HTTP_REFERER']).'/';
+	
+		// use HTTP_REFERER if set
+		if(isset($_SERVER['HTTP_REFERER'])) {
+			// get path from referer's URL (current URL must have that part in common)
+			$referer_url = config\get_script_path($_SERVER['HTTP_REFERER']).'/';
+		}
+		else {
+			// otherwise, try to locate 'packages' folder in current URL (this should cover most cases)
+			$url = config\get_url();
+// todo : redirect to 404
+			if(($pos = strpos($url, 'packages')) === false) die(); // unable to resolve URL
+			$referer_url = substr($url, 0, $pos);
+		}
 		// keep only the part following referer's url
 		$request_uri = substr(config\get_url(), strlen($referer_url));
 		header('HTTP/1.0 200 OK');

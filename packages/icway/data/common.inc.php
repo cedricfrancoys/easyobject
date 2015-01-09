@@ -192,16 +192,16 @@ $renderer = array(
 						},
 	'latest_posts'	=>	function () use($params) {
 							$html = "<ul>";
-							$posts_ids = search('icway\Post', array(array(array('language','=', $params['lang']))), 'created', 'desc', 0, 3);
+							$posts_ids = search('icway\Post', array(array(array('language','=', $params['lang']))), 'created', 'desc', 0, 7);
 							$posts_values = &browse('icway\Post', $posts_ids, array('id', 'created', 'title'), $params['lang']);
 							foreach($posts_values as $post_values) {
 								$dateFormatter = new DateFormatter($post_values['created'], DATE_TIME_SQL);
-								$date = ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp()));
+								$date = ucfirst(strftime("%m/%Y", $dateFormatter->getTimestamp()));
 								if(mb_detect_encoding($date) != 'UTF-8') $date = mb_convert_encoding($date, 'UTF-8');
 								// $date = mb_convert_encoding(ucfirst(strftime("%B&nbsp;%Y", $dateFormatter->getTimestamp())), "UTF-8");
 								$html .= '<li>';
 								$html .= '  <a href="'.BASE_DIR.'index.php?show=icway_blog&post_id='.$post_values['id'].'">'.$post_values['title'].'</a>';
-								$html .= '  <span class="details">'.$date.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+//								$html .= '  <span class="details">('.$date.')</span>';
 								$html .= '</li>';
 							}
 							$html .= "</ul>";
@@ -216,8 +216,8 @@ $renderer = array(
 								$dateFormatter = new DateFormatter($resource_values['created'], DATE_TIME_SQL);
 								list($mode, $type) = explode('/', $resource_values['type']);
 								$html .= '<li>';
-								$html .= '  <a href="'.BASE_DIR.'index.php?show=icway_site&page_id=7#'.$resource_values['id'].'">'.$resource_values['title'].'</a>';
-								$html .= '  <span class="details">'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+								$html .= '  <a href="'.BASE_DIR.'index.php?show=icway_site&page_id=7#'.$resource_values['id'].'">'.$resource_values['title'].'</a><br />';
+								$html .= '  <span class="details">'.$dateFormatter->getDate(DATE_SQL).'&nbsp;&nbsp;|&nbsp;&nbsp;'.$type.'&nbsp;&nbsp;|&nbsp;&nbsp;'.floor($resource_values['size']/1000).'ko</span>';
 								$html .= '</li>';
 							}
 							$html .= "</ul>";

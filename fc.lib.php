@@ -351,11 +351,11 @@ namespace config {
 			if(strpos($class_path, 'Zend_') === 0) {
 				// Zend framework 1
 				 require_once 'Zend/Loader.php';
-				 $result = Zend_Loader::loadClass($class_path);
+				 $result = \Zend_Loader::loadClass($class_path);
 				// Zend framework 2
 				/*
 				require_once 'Zend/Loader/StandardAutoloader.php';
-				$loader = new Zend\Loader\StandardAutoloader(array('autoregister_zf' => true));
+				$loader = new \Zend\Loader\StandardAutoloader(array('autoregister_zf' => true));
 				$result = $loader->autoload($class_path);
 				*/
 			}

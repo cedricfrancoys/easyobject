@@ -12,11 +12,11 @@ namespace icway {
 											 'selection'	=> array( 'en' => 'English', 'es' => 'Español', 'fr' => 'Français')
 										),				
 				'content'			=> array('type' => 'text'),
+				'tips'				=> array('type' => 'text'),
 				'image'				=> array('type' => 'string', 'help' => 'URL of the image illustrating the post'),
 				'author' 			=> array('type' => 'function', 'result_type' => 'string', 'store' => true, 'function' => 'icway\Post::getAuthor'),
 				'url_resolver_id' 	=> array('type' => 'many2one', 'foreign_object' => 'core\UrlResolver'),
-				'tips_ids'			=> array('type' => 'one2many', 'foreign_object' => 'icway\Tip', 'foreign_field' => 'post_id'),				
-				'comments_ids'		=> array('type' => 'one2many', 'foreign_object' => 'icway\Comment', 'foreign_field' => 'post_id'),
+				'comments_ids'		=> array('type' => 'one2many', 'foreign_object' => 'icway\Comment', 'foreign_field' => 'post_id', 'order'=>'created', 'sort' => 'desc'),
 				'category_id'		=> array('type' => 'many2one', 'foreign_object' => 'icway\Category'),
 				'related_posts_ids'	=> array('type' => 'many2many', 'foreign_object' => 'icway\Post', 'foreign_field' => 'related_posts_ids', 'rel_table' => 'icway_rel_post_post', 'rel_foreign_key' => 'related_id', 'rel_local_key' => 'post_id'),
 			);

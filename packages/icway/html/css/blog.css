@@ -225,27 +225,28 @@ body {
 #sidebar div {
 	box-shadow: 3px 3px 3px 1px rgba(0, 0, 0, 0.5);
 	border: solid 1px #f3f1ec;
-	background-color: #f9f9f9;
+	background-color: #ffffff;
 	padding: 12px;
-	margin-bottom: 20px;
-	border-radius: 6px;
+	padding-bottom: 20px;
+	margin-bottom: 40px;
+	border-radius: 0px 0px 10px 0px;
 }
-#sidebar span {
+#sidebar span, #sidebar div span {
 	display: block;
 	margin-bottom: 14px;
 	color: #1b59c2;
 	font: 400 0.88em arial, sans-serif;
 }
-#sidebar a, #sidebar a:hover {
-	display: block;
-	font: 400 0.85em arial, sans-serif;
-	font-style: italic;		
-	color: #4c8efc;
-	text-decoration: none;
+#sidebar ul {
+	list-style: disc outside none;
+	padding: 0;
+	margin: 0;
+	margin-left: 10px;
+	border: 0;
+	height: auto;
+	color: #1B59C2;
 }
-#sidebar a:hover {
-	text-decoration: underline;
-}
+
 #sidebar a.tip, #sidebar a.tip:hover {
 	display: inline;
 	font: 400 0.88em arial, sans-serif;

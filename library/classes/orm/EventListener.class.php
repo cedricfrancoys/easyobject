@@ -19,30 +19,30 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class ErrorHandler {
+class EventListener {
 
 	private static $errors_stack;
 
 	public function __construct() {
 	    self::$errors_stack = array();
-		set_error_handler("ErrorHandler::ErrorHandling");
-		set_exception_handler("ErrorHandler::UncaughtExceptionHandling");
+		set_error_handler("EventListener::ErrorHandler");
+		set_exception_handler("EventListener::UncaughtExceptionHandler");
 	}
 
 	public static function getErrorsStack() {
 		return self::$errors_stack;
 	}
 
-    public static function UncaughtExceptionHandling($exception) {
+    public static function UncaughtExceptionHandler($exception) {
     	trigger_error('Fatal error : Uncaught exception raised in : '.$exception->getFile().'@'.$exception->getLine().', '.$exception->getMessage(), E_USER_ERROR);
 	}
 
-    public static function ExceptionHandling($exception, $exception_thrower) {
+    public static function ExceptionHandler($exception, $exception_thrower) {
     	trigger_error('Error raised by '.$exception_thrower.' : '.$exception->getFile().'@'.$exception->getLine().', '.$exception->getMessage(), E_USER_WARNING);
 	}
 
 	/**
-	* We user PHP constant E_USER_ERROR for critical errors that need an immedaite stop
+	* We use PHP constant E_USER_ERROR for critical errors that need an immediate stop (fatal error)
 	*
 	* @param mixed $errno
 	* @param mixed $errmsg
@@ -50,7 +50,7 @@ class ErrorHandler {
 	* @param mixed $linenum
 	* @param mixed $vars
 	*/
-	public static function ErrorHandling($errno, $errmsg, $filename, $linenum, $vars) {
+	public static function ErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 	    $error_types = array (
 		                E_ERROR				=> 'Error',
 		                E_USER_ERROR		=> 'Error',
@@ -85,7 +85,7 @@ class ErrorHandler {
 	     	die();
 		}
 		// other error
-		// if we are in debug mode, then immidiately display the error
+		// if we are in debug mode, then output errors as they come
 	    elseif(function_exists('debug_mode') && (debug_mode() & DEBUG_PHP)) print($err);
 	}
 }

@@ -24,7 +24,7 @@ defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 // load dependencies
 load_class('db/DBConnection') or die('unable to load mandatory class DBConnection');
 load_class('orm/IdentificationManager') or die('unable to load mandatory class IdentificationManager');
-load_class('orm/ErrorHandler') or die('unable to load mandatory class ErrorHandler');
+load_class('orm/eventListener') or die('unable to load mandatory class eventListener');
 load_class('orm/Object') or die('unable to load mandatory class Object');
 
 
@@ -59,7 +59,7 @@ class ObjectManager {
 			'selection'		=> array('type', 'label', 'help', 'onchange', 'selection'),
 			'binary'		=> array('type', 'label', 'help', 'onchange', 'search', 'multilang'),
 			'many2one'		=> array('type', 'foreign_object', 'label', 'help', 'onchange', 'search', 'multilang'),
-			'one2many'		=> array('type', 'foreign_object', 'foreign_field', 'label', 'help', 'onchange', 'order'),
+			'one2many'		=> array('type', 'foreign_object', 'foreign_field', 'label', 'help', 'onchange', 'order', 'sort'),
 			'many2many'		=> array('type', 'foreign_object', 'foreign_field', 'rel_table', 'rel_local_key', 'rel_foreign_key', 'label', 'help', 'onchange'),
 			'related'		=> array('type', 'foreign_object', 'result_type', 'path', 'label', 'help', 'onchange', 'store'),
 			'function'		=> array('type', 'result_type', 'function', 'label', 'help', 'onchange', 'store', 'multilang')
@@ -92,7 +92,7 @@ class ObjectManager {
 		// initialize the objects array
 		$this->objectsArray = array();
 		// initialize error handler
-		new ErrorHandler();
+		new eventListener();
 		// open DB connection
 		$this->dbConnection = &DBConnection::getInstance(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_DBMS);
 		if($this->dbConnection->connect() === false) trigger_error('ObjectManager::ObjectManager, unable to establish connection to database: check connection parameters (possibles reasons: non-supported DBMS, unknown database name, incorrect username or password, ...)', E_USER_ERROR);
@@ -157,7 +157,7 @@ class ObjectManager {
 			return $this->objectsArray[$object_class][0];
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to get static instance', $e->getCode());
 		}
 	}
@@ -204,7 +204,7 @@ class ObjectManager {
 			return $object;
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to get object instance', $e->getCode());
 		}
 	}
@@ -220,7 +220,7 @@ class ObjectManager {
 			$object = &$this->getObjectStaticInstance($object_class);
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			return $e->getCode();
 		}
 		return $object->getTable();
@@ -353,7 +353,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											ErrorHandler::ExceptionHandling($e, __METHOD__);
+											eventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -395,7 +395,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											ErrorHandler::ExceptionHandling($e, __METHOD__);
+											eventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -407,14 +407,15 @@ class ObjectManager {
 											foreach($fields as $field) {
 												if(!ObjectManager::checkFieldAttributes(ObjectManager::$mandatory_attributes, $schema, $field)) throw new Exception("missing at least one mandatory attribute for field '$field' of class '$object_class'", INVALID_PARAM);
 												$order = (isset($schema[$field]['order']))?$schema[$field]['order']:'id';
+												$sort = (isset($schema[$field]['sort']))?$schema[$field]['sort']:'asc';
 												foreach($ids as $object_id) {
 													// obtain the ids by searching among objects having symetrical field ('foreign_field') set to $object_id
-													$values_array[$object_id][$field] = $om->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], '=', $object_id), array('deleted', '=', '0'))), $order);
+													$values_array[$object_id][$field] = $om->search($user_id, $schema[$field]['foreign_object'], array(array(array($schema[$field]['foreign_field'], '=', $object_id), array('deleted', '=', '0'))), $order, $sort);
 												}
 											}
 										}
 										catch(Exception $e) {
-											ErrorHandler::ExceptionHandling($e, __METHOD__);
+											eventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -432,7 +433,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											ErrorHandler::ExceptionHandling($e, __METHOD__);
+											eventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -450,7 +451,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											ErrorHandler::ExceptionHandling($e, __METHOD__);
+											eventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -495,7 +496,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											ErrorHandler::ExceptionHandling($e, __METHOD__);
+											eventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									}
@@ -564,7 +565,7 @@ class ObjectManager {
 			}
 		}				
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to load object fields', $e->getCode());
 		}		
 	}
@@ -668,7 +669,7 @@ class ObjectManager {
 			}
 		}
 		catch (Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __METHOD__);
+			eventListener::ExceptionHandler($e, __METHOD__);
 		}
 	}
 
@@ -699,7 +700,7 @@ class ObjectManager {
 			return $object->getValues($object_fields, $lang);
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to get object fields', $e->getCode());
 		}
 	}
@@ -799,7 +800,7 @@ class ObjectManager {
 			}
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to set object fields', $e->getCode());
 		}
 		return $object_id;
@@ -912,7 +913,7 @@ class ObjectManager {
 			$result = $this->checkFieldsValidity($object_class, array_intersect_key($values, $object->getColumns()));
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = false;
 		}
 		return $result;
@@ -933,7 +934,7 @@ class ObjectManager {
 			$this->browse($user_id, $object_class, array($object_id), $object->getFieldsNames(), $lang);
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$object = false;
 		}
 		return $object;
@@ -952,7 +953,7 @@ class ObjectManager {
 			$object = &$this->getObjectStaticInstance($object_class);
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$object = false;
 		}
 		return $object;
@@ -1029,7 +1030,7 @@ class ObjectManager {
 
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = $e->getCode();
 		}
 		return $result;
@@ -1276,7 +1277,7 @@ class ObjectManager {
 			else $res_list = array_unique($res_list);
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$res_list = $e->getCode();
 		}
 		return $res_list;
@@ -1322,7 +1323,7 @@ class ObjectManager {
 			}
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = $e->getCode();
 		}
 		return $result;
@@ -1372,7 +1373,7 @@ class ObjectManager {
 			foreach($ids as $object_id) $this->setLog($user_id, $log_action, $object_class, $object_id, $log_fields);
 		}
 		catch(Exception $e) {
-			ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = $e->getCode();
 		}
 		return $result;

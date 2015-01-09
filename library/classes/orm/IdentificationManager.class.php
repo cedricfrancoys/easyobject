@@ -94,7 +94,7 @@ class IdentificationManager {
 				}
 			}
 			catch(Exception $e) {
-				ErrorHandler::ExceptionHandling($e, __FILE__.', '.__METHOD__);
+				EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 				throw new Exception('unable to check user rights', UNKNOWN_ERROR);
 			}
 		}
