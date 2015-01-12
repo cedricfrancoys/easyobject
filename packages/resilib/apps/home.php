@@ -43,6 +43,7 @@ $html_menu = build_menu($cat_ids, true);
 // by default we request all documents (we could improve this with a multi-page widget)
 $documents_ids = search('resilib\Document');
 $documents = browse('resilib\Document', $documents_ids, array('title', 'author', 'categories_ids', 'language', 'last_update'));
+
 // get template for result entries
 $template_result = file_get_contents('packages/resilib/html/templates/result.html');
 // describe how vars from result-template must be interpreted

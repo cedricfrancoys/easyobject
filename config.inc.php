@@ -21,7 +21,7 @@
 
 /** 
 * Add stuff in the global namespace.
-* Constants defined in this file cannot be modified in customs config.inc.php
+* Constants defined in this file are mandatory and cannot be modified in customs config.inc.php
 */
 
 /**
@@ -64,7 +64,7 @@ define('RPC_PACKET_SIZE', 1500);
 * Cache parameters
 */
 // This applies only when OPERATION_MODE is set to client-server
-// ObjectManager and IdentificationManager use a cache mechanism to minimize database access
+// Note: ObjectManager and AccessController use a cache mechanism to minimize database access
 define('STORE_INTERVAL', 10);		// time (in minutes) during which data is cached (objects changes & users permissions)
 
 
@@ -122,10 +122,19 @@ define ("PUBLIC_OBJECTS", serialize (array ('icway\Comment')));
 
 
 /**
+* Default Package
+*/
+// Package we'll try to access if nothing is specified in the url (typically while accessing root folder)
+define('DEFAULT_PACKAGE', 'core');
+
+
+/**
 * Default App
 */
 // Application that will be invoked if nothing is specified in the url (typically while accessing root folder)
-define('DEFAULT_APP', 'core_manage');
+// @deprecated
+// @see packages/[package]/config.inc.php DEFAULT_APP directive
+// define('DEFAULT_APP', 'core_manage');
 
 
 /**

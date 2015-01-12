@@ -23,7 +23,7 @@ define('__EASYOBJECT_LIB', true) or die('unable to define or already defined con
 defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 
 load_class('orm/ObjectManager');
-load_class('orm/IdentificationManager');
+load_class('orm/AccessController');
 
 if(OPERATION_MODE == 'client-server') {
 	defined('__PHPRPC_LIB') or include_file('phprpc.lib.php');
@@ -38,8 +38,8 @@ if(OPERATION_MODE == 'client-server') {
 
 function user_id($session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
-		$im = &IdentificationManager::getInstance();
-		return $im->user_id($session_id);
+		$ac = &AccessController::getInstance();
+		return $ac->user_id($session_id);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = 0;
@@ -57,8 +57,8 @@ function user_id($session_id=SESSION_ID) {
 
 function user_key($session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
-		$im = &IdentificationManager::getInstance();
-		return $im->user_key($session_id);
+		$ac = &AccessController::getInstance();
+		return $ac->user_key($session_id);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = 0;
@@ -76,8 +76,8 @@ function user_key($session_id=SESSION_ID) {
 
 function user_lang($session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
-		$im = &IdentificationManager::getInstance();
-		return $im->user_lang($session_id);
+		$ac = &AccessController::getInstance();
+		return $ac->user_lang($session_id);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = DEFAULT_LANG;
@@ -95,8 +95,8 @@ function user_lang($session_id=SESSION_ID) {
 
 function login($login, $password, $session_id=SESSION_ID) {
 	if(OPERATION_MODE == 'standalone' || (OPERATION_MODE == 'client-server' && OPERATION_SIDE == 'server')) {
-		$im = &IdentificationManager::getInstance();
-		return $im->login($session_id, $login, $password);
+		$ac = &AccessController::getInstance();
+		return $ac->login($session_id, $login, $password);
 	}
 	elseif(OPERATION_MODE == 'client-server') {
 		$result = 0;

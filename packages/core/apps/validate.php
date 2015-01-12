@@ -64,7 +64,7 @@ if($test_no > $total_tests || !isset($validation_tests[$test_id])) {
 }
 
 
-echo "<html>\n<head>\n  <script type='text/javascript' src='html/js/jquery-1.7.1.min.js'></script>\n";
+echo "<html>\n<head>\n  <script type='text/javascript' src='packages/core/html/js/jquery-1.7.1.min.js'></script>\n";
 
 if(isset($_SESSION['auto']) && $_SESSION['auto']) {
 	print("

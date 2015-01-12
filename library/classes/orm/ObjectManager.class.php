@@ -23,7 +23,7 @@ defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 
 // load dependencies
 load_class('db/DBConnection') or die('unable to load mandatory class DBConnection');
-load_class('orm/IdentificationManager') or die('unable to load mandatory class IdentificationManager');
+load_class('orm/AccessController') or die('unable to load mandatory class AccessController');
 load_class('orm/eventListener') or die('unable to load mandatory class eventListener');
 load_class('orm/Object') or die('unable to load mandatory class Object');
 
@@ -180,11 +180,11 @@ class ObjectManager {
 			if($object_id == 0) {
 				$is_new_object = true;
 				// check user's permission for creation
-				if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_CREATE)) throw new Exception("user($user_id) does not have permission to create object($object_class)", NOT_ALLOWED);
+				if(!AccessController::hasRight($user_id, $object_class, (array) $object_id, R_CREATE)) throw new Exception("user($user_id) does not have permission to create object($object_class)", NOT_ALLOWED);
 				$object_id = $this->getNewObjectId($user_id, $object_class);
 			}
 			// check user's permission for reading
-			else if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_READ)) throw new Exception("user($user_id) does not have read permission on the object($object_class, $object_id)", NOT_ALLOWED);
+			else if(!AccessController::hasRight($user_id, $object_class, (array) $object_id, R_READ)) throw new Exception("user($user_id) does not have read permission on the object($object_class, $object_id)", NOT_ALLOWED);
 			// check if object is already loaded
 			if(isset($this->objectsArray[$object_class]) && isset($this->objectsArray[$object_class][$object_id])) $object = &$this->objectsArray[$object_class][$object_id];
 	        else {
@@ -582,7 +582,7 @@ class ObjectManager {
 	private function storeObjectFields($user_id, $object_class, $object_id, $object_fields=null, $lang=DEFAULT_LANG) {
 		try {
 			// private methods are reliable : right management is done in public methods 
-			// if(!IdentificationManager::hasRight($user_id, $object_class, $object_id, R_WRITE)) throw new Exception("user $user_id does not have write permission on object $object_id of class $object_class");
+			// if(!AccessController::hasRight($user_id, $object_class, $object_id, R_WRITE)) throw new Exception("user $user_id does not have write permission on object $object_id of class $object_class");
 			if($object_id <= 0) throw new Exception("unable to store non-existing object : create a new instance first");
 			$object = &$this->getObjectInstance($user_id, $object_class, $object_id);
 
@@ -980,7 +980,7 @@ class ObjectManager {
 			// we strictly return what was asked : if no ids were specified, the result is always an empty list
 			if(empty($ids)) 		return $result;
 
-			if(!IdentificationManager::hasRight($user_id, $object_class, $ids, R_READ)) throw new Exception("user '$user_id' does not have permission to read specified objects of class '$object_class'", NOT_ALLOWED);
+			if(!AccessController::hasRight($user_id, $object_class, $ids, R_READ)) throw new Exception("user '$user_id' does not have permission to read specified objects of class '$object_class'", NOT_ALLOWED);
 
 			$object = &$this->getObjectStaticInstance($object_class);
 			$schema = $object->getSchema();
@@ -1022,7 +1022,7 @@ class ObjectManager {
 					$result[$object_id] = $object->getValues($fields, $lang);
 				}
 				else {
-					if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_READ)) throw new Exception("user '$user_id' does not have permission to read object '$object_id' of class '$object_class'", NOT_ALLOWED);
+					if(!AccessController::hasRight($user_id, $object_class, (array) $object_id, R_READ)) throw new Exception("user '$user_id' does not have permission to read object '$object_id' of class '$object_class'", NOT_ALLOWED);
 					$result[$object_id] = $this->getFields($user_id, $object_class, $object_id, $fields, $lang);
 					$this->setLog($user_id, R_READ, $object_class, $object_id, $fields, $lang);
 				}
@@ -1059,7 +1059,7 @@ class ObjectManager {
 	*/
 	public function search($user_id, $object_class, $domain=NULL, $order='id', $sort='asc', $start='0', $limit='0', $lang=DEFAULT_LANG) {
 		try {
-			if(!IdentificationManager::hasRight($user_id, $object_class, array(0), R_READ)) throw new Exception("user($user_id) does not have permission to read objects of class ($object_class)", NOT_ALLOWED);
+			if(!AccessController::hasRight($user_id, $object_class, array(0), R_READ)) throw new Exception("user($user_id) does not have permission to read objects of class ($object_class)", NOT_ALLOWED);
 			if(empty($order)) throw new Exception("sort field cannot be empty", INVALID_PARAM);
 			$res_list = array();
 			$res_assoc_db = array();
@@ -1314,7 +1314,7 @@ class ObjectManager {
 				if($object_id == 0) $action = R_CREATE;
 				else $action = R_WRITE;
 				// checking for permissions
-				if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, $action)) throw new Exception("user '$user_id' does not have permission to write object '$object_id' of class '$object_class'", NOT_ALLOWED);
+				if(!AccessController::hasRight($user_id, $object_class, (array) $object_id, $action)) throw new Exception("user '$user_id' does not have permission to write object '$object_id' of class '$object_class'", NOT_ALLOWED);
 				$id = $this->setFields($user_id, $object_class, $object_id, $values, $lang);
 				// log the current action
 				$this->setLog($user_id, $action, $object_class, $id, array_keys($values), $lang);
@@ -1348,7 +1348,7 @@ class ObjectManager {
 			$schema = $object->getSchema();
 
 			foreach($ids as $object_id) {
-				if(!IdentificationManager::hasRight($user_id, $object_class, (array) $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);
+				if(!AccessController::hasRight($user_id, $object_class, (array) $object_id, R_DELETE)) throw new Exception("user($user_id) does not have permission to remove object($object_class)", NOT_ALLOWED);
 				foreach($schema as $field => $def) {
 // todo : handle cascading for other relation types
 					if($def['type'] == 'one2many') {

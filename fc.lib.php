@@ -65,10 +65,10 @@ namespace {
 	*/
 
 	/**
-	* Register a configuraiton parameter.
+	* Returns a configuraiton parameter.
 	*/
 	function config($name, $default=null) {
-		return $GLOBALS['CONFIG_ARRAY'][$name];
+		return (isset($GLOBALS['CONFIG_ARRAY'][$name]))?$GLOBALS['CONFIG_ARRAY'][$name]:$default;
 	}
 
 	/**

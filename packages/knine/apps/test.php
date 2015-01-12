@@ -44,8 +44,8 @@ load_class('utils/DateFormatter');
 
 $html = new HtmlWrapper();
 $html->addCSSFile('packages/knine/html/css/article2.css');
-$html->addJSFile('html/js/jquery-1.7.1.min.js');
-$html->addJSFile('html/js/src/easyobject.api.js');
+$html->addJSFile('packages/core/html/js/jquery-1.7.1.min.js');
+$html->addJSFile('packages/core/html/js/src/easyobject.api.js');
 $html->addJSFile('packages/knine/html/js/knine.js');
 
 $i18n = I18n::getInstance();

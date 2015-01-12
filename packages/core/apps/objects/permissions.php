@@ -20,9 +20,9 @@
 */
 
 /*
-* file: views/core/user/login.php
+* file: packages/core/apps/objects/permissions.php
 *
-* Displays the logon screen.
+* Allows to manage users and groups access on classes.
 *
 */
 
@@ -33,29 +33,30 @@ load_class('utils/HtmlWrapper');
 
 
 $html = new HtmlWrapper();
-$html->addCSSFile('html/css/easyobject/base.css');
-$html->addCSSFile('html/css/jquery.ui.grid/jquery.ui.grid.css');
-$html->addCSSFile('html/css/jquery/base/jquery.ui.easyobject.css');
+$html->addCSSFile('packages/core/html/css/easyobject/base.css');
+$html->addCSSFile('packages/core/html/css/jquery.ui.grid/jquery.ui.grid.css');
+$html->addCSSFile('packages/core/html/css/jquery/base/jquery.ui.easyobject.css');
 
-$html->addJSFile('html/js/jquery-1.7.1.min.js');
-$html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
-$html->addJSFile('html/js/fckeditor/fckeditor.js');
+$html->addJSFile('packages/core/html/js/jquery-1.7.1.min.js');
+$html->addJSFile('packages/core/html/js/jquery-ui-1.8.20.custom.min.js');
+$html->addJSFile('packages/core/html/js/fckeditor/fckeditor.js');
 
-//$html->addJSFile('html/js/easyObject.min.js');
-//$html->addJSFile('html/js/easyObject.loader.js');
+//$html->addJSFile('packages/core/html/js/easyObject.min.js');
+//$html->addJSFile('packages/core/html/js/easyObject.loader.js');
 
-$html->addJSFile('html/js/src/md5.js');
-$html->addJSFile('html/js/src/jquery.simpletip-1.3.1.js');
-$html->addJSFile('html/js/src/jquery.noselect-1.1.js');
-$html->addJSFile('html/js/src/jquery-ui.timepicker-1.0.1.js');
-$html->addJSFile('html/js/src/easyObject.utils.js');
-$html->addJSFile('html/js/src/easyObject.grid.js');
-$html->addJSFile('html/js/src/easyObject.tree.js');
-$html->addJSFile('html/js/src/easyObject.dropdownlist.js');
-$html->addJSFile('html/js/src/easyObject.choice.js');
-$html->addJSFile('html/js/src/easyObject.editable.js');
-$html->addJSFile('html/js/src/easyObject.form.js');
-$html->addJSFile('html/js/src/easyObject.api.js');
+$html->addJSFile('packages/core/html/js/src/md5.js');
+$html->addJSFile('packages/core/html/js/src/jquery.simpletip-1.3.1.js');
+$html->addJSFile('packages/core/html/js/src/jquery.noselect-1.1.js');
+$html->addJSFile('packages/core/html/js/src/jquery-ui.timepicker-1.0.1.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.utils.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.grid.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.tree.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.dropdownlist.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.choice.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.editable.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.form.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.api.js');
+$html->addJSFile('packages/core/html/js/src/jquery.inputmask.bundle.js');
 
 
 

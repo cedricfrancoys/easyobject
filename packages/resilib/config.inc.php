@@ -20,7 +20,7 @@
 */
 /** 
 * Use the config namespace and its related functions.
-* Constants defined in this file are mandatory but can be modified/re-defined in customs config.inc.php (i.e.: packages/[package_name]/config.inc.php)
+* Constants defined in this file can be modified/re-defined in customs config.inc.php (i.e.: packages/[package_name]/config.inc.php)
 * Note: instead, we could use the global namespace and explicitely call the config\define function
 * Note: parameters defined with config\define are automatically exported as global constants in main entry point (index.php)
 */
@@ -37,53 +37,9 @@ namespace config;
 define('UPLOAD_MAX_FILE_SIZE', 30000000);		// set upload limit to 30Mo
 
 
-/**
-* Locale parameters
-*/
-date_default_timezone_set('Europe/Brussels');
-
-
-/**
-* Logging
-*/
-// note : keep in mind that enabling logging makes I/O operations a little bit longer
-define('LOGGING_MODE', R_CREATE | R_WRITE | R_DELETE);
-//define('LOGGING_MODE', false);
-
-
-/**
-* Draft & Versioning
-*/
-// draft validity in days
-define('DRAFT_VALIDITY', 0);
-// define('DRAFT_VALIDITY', 10);
-
-
-/**
-* Date formatting
-*/
-define('DATE_FORMAT', 'd/m/Y');
-
-
-/**
-* Currency formatting
-* Mask examples: '£#,##0.00', '#.##0,00€'
-*/
-define('CURRENCY_FORMAT', '£#,##0.00');
-
-
-/**
-* Email sending
-*/
-define('SMTP_HOST',				'smtp.gmail.com');
-define('SMTP_ACCOUNT_USERNAME',	'example');
-define('SMTP_ACCOUNT_PASSWORD',	'password');
-define('SMTP_ACCOUNT_EMAIL',	'example@gmail.com');
-
 
 /**
 * Default App
 */
 // Application that will be invoked if URL does not specify any app after the package name
-// todo : we should display a homepage telling that the installation is successfull and redirecting to documentation for further customization
-define('DEFAULT_APP', 'manage');
+define('DEFAULT_APP', 'home');

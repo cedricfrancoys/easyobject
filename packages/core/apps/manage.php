@@ -29,25 +29,34 @@
 // the dispatcher (index.php) is in charge of setting the context and should include the easyObject library
 defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 
+set_silent(true);
+
 load_class('utils/HtmlWrapper');
 
 $params = get_params(array('lang'=>'en'));
 
 $html = new HtmlWrapper();
-$html->addCSSFile('html/css/easyobject/base.css');
-$html->addCSSFile('html/css/jquery.ui.grid/jquery.ui.grid.css');
-$html->addCSSFile('html/css/jquery/base/jquery.ui.easyobject.css');
-$html->addCSSFile('html/css/jquery.ui.daterangepicker.css');
-$html->addJSFile('html/js/jquery-1.7.1.min.js');
-$html->addJSFile('html/js/jquery-ui-1.8.20.custom.min.js');
-// todo : include these in the loader
-$html->addJSFile('html/js/ckeditor/ckeditor.js');
-$html->addJSFile('html/js/ace/src-min/ace.js');
+$html->addCSSFile('packages/core/html/css/easyobject/base.css');
+$html->addCSSFile('packages/core/html/css/jquery.ui.grid/jquery.ui.grid.css');
+$html->addCSSFile('packages/core/html/css/jquery/base/jquery.ui.easyobject.css');
+$html->addCSSFile('packages/core/html/css/jquery.ui.daterangepicker.css');
+$html->addCSSFile('packages/core/html/css/sliding_login/sliding_login_eo.css');
+
+$html->addJSFile('packages/core/html/js/jquery-1.7.1.min.js');
+$html->addJSFile('packages/core/html/js/jquery-ui-1.8.20.custom.min.js');
+$html->addJSFile('packages/core/html/js/ckeditor/ckeditor.js');
+$html->addJSFile('packages/core/html/js/ace/src-min/ace.js');
+
+$html->addJSFile('packages/core/html/js/easyObject.min.js');
+
+//$html->addJSFile('packages/core/html/js/easyObject.loader.js');
 
 
-$html->addJSFile('html/js/easyObject.min.js');
+$user_id = user_id();
+$user_data = browse('core\User', $user_id, array('firstname', 'lastname'));
+$user_name = $user_data[$user_id]['firstname'].' '.$user_data[$user_id]['lastname'];
 
-//$html->addJSFile('html/js/easyObject.loader.js');
+
 
 $js_packages = function () {
 	$packages_directory = 'packages';
@@ -71,6 +80,17 @@ $(document).ready(function() {
 	var languages = ['en', 'fr', 'es'];	
     var selection = $('body');
 
+	
+	// sliding login panel
+	$('#login-panel-open').click(function(){
+		$('#sliding-pane').slideDown('slow');
+	});
+	$('#login-panel-close').click(function(){
+		$('#sliding-pane').slideUp('slow');		
+	});	
+	
+	
+	
 	// layout
 	$('body')
 	.append($('<div/>').attr('id', 'menu').css({'height': $(window).height()+'px', 'float':'left', 'width':'200px'})
@@ -141,5 +161,55 @@ $(document).ready(function() {
 	$('#package').trigger('change');
 });
 ");
+
+$html->add('
+<div id="login-panel">
+	<div id="sliding-pane">
+		<div class="content clearfix">
+			<div class="left">
+				<h1>Welcome to Web-Kreation</h1>
+				<h2>Sliding login panel Demo with jQuery</h2>		
+				<p class="grey">You can put anything you want in this sliding panel: videos, audio, images, forms... The only limit is your imagination!</p>
+				<h2>Download</h2>
+				<p class="grey">To download this script go back to <a href="http://web-kreation.com/index.php/tutorials/nice-clean-sliding-login-panel-built-with-jquery" title="Download">article &raquo;</a></p>
+			</div>
+			<div class="left">
+				<form class="clearfix" action="#" method="post">
+					<h1>Member Login</h1>
+					<label class="grey" for="log">Username:</label>
+					<input class="field" type="text" name="log" id="log" value="" size="23" />
+					<label class="grey" for="pwd">Password:</label>
+					<input class="field" type="password" name="pwd" id="pwd" size="23" />
+	            	<label><input name="rememberme" id="rememberme" type="checkbox" checked="checked" value="forever" /> &nbsp;Remember me</label>
+        			<div class="clear"></div>
+					<input type="submit" name="submit" value="Login" class="bt_login" />
+					<a class="lost-pwd" href="#">Lost your password?</a>
+				</form>
+			</div>
+			<div class="left right">			
+				<form action="#" method="post">
+					<h1>Not a member yet? Sign Up!</h1>				
+					<label class="grey" for="signup">Username:</label>
+					<input class="field" type="text" name="signup" id="signup" value="" size="23" />
+					<label class="grey" for="email">Email:</label>
+					<input class="field" type="text" name="email" id="email" size="23" />
+					<label>A password will be e-mailed to you.</label>
+					<input type="submit" name="submit" value="Register" class="bt_register" />
+				</form>
+			</div>
+		</div>
+		<div class="close-tab">
+			<a id="login-panel-close" class="close" href="#">Close Panel</a>			
+		</div>
+	</div>	
+	<div class="login-menu">
+		<ul class="login">
+			<li>Welcome '.$user_name.'</li>
+			<li class="sep">|</li>
+			<li><a id="login-panel-open" class="open" href="#">Log In | Register</a></li>
+		</ul> 
+	</div>	
+</div>
+');
 
 print($html);

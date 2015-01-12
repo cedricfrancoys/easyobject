@@ -36,11 +36,11 @@ $params = get_params(array('ui'=>user_lang()));
 $user_key = user_key();
 
 $html = new HtmlWrapper();
-$html->addCSSFile('html/css/login.css');
-$html->addJSFile('html/js/jquery-1.7.1.min.js');
-$html->addJSFile('html/js/src/md5.js');
-$html->addJSFile('html/js/src/easyObject.utils.js');
-$html->addJSFile('html/js/easyObject.api.min.js');
+$html->addCSSFile('packages/core/html/css/login.css');
+$html->addJSFile('packages/core/html/js/jquery-1.7.1.min.js');
+$html->addJSFile('packages/core/html/js/src/md5.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.utils.js');
+$html->addJSFile('packages/core/html/js/easyObject.api.min.js');
 
 $html->addScript("
 $(document).ready(function() {

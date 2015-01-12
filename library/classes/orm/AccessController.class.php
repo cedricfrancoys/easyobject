@@ -4,7 +4,7 @@ defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 load_class('orm/ObjectManager') or die(__FILE__.' unable to load mandatory class : orm/ObjectManager.');
 
 
-class IdentificationManager {
+class AccessController {
 
 	private $usersTable;
 	private $groupsTable;
@@ -27,7 +27,7 @@ class IdentificationManager {
 	}
 
 	private static function unlock($key, $value) {
-		if (IdentificationManager::is_valid_password($value)) {
+		if (self::is_valid_password($value)) {
 			$hex_next = function ($val) {
 				$next = hexdec($val) + 1;
 				if($next == 16) $next = 0;
@@ -117,16 +117,16 @@ class IdentificationManager {
 	}
 
 	public static function &getInstance()	{
-		if (!isset($GLOBALS['IdentificationManager_instance'])) {
-			if(isset($_SESSION['IdentificationManager_instance'])) $GLOBALS['IdentificationManager_instance'] = unserialize($_SESSION['IdentificationManager_instance']);
-			else $GLOBALS['IdentificationManager_instance'] = new IdentificationManager();
+		if (!isset($GLOBALS['AccessController_instance'])) {
+			if(isset($_SESSION['AccessController_instance'])) $GLOBALS['AccessController_instance'] = unserialize($_SESSION['AccessController_instance']);
+			else $GLOBALS['AccessController_instance'] = new AccessController();
 		}
-		return $GLOBALS['IdentificationManager_instance'];
+		return $GLOBALS['AccessController_instance'];
 	}
 
 	public function __destruct() {
 		// to keep track of users data, we store them in the SESSION global array
-		$_SESSION['IdentificationManager_instance'] = serialize($this);
+		$_SESSION['AccessController_instance'] = serialize($this);
 	}
 
 	public function __sleep() {
@@ -164,9 +164,9 @@ class IdentificationManager {
 	// 2) The value that is sent is always different (i.e. : MD5 value is only valid for current session). So, one cannot grab user's password by capturing http packet.
 	public function login($session_id, $login, $password) {
         $user_id = 0;
-		if(IdentificationManager::is_valid_login($login) && IdentificationManager::is_valid_password($password)) {
-			$password = IdentificationManager::unlock($this->user_key($session_id), $password);
-			if(($user_id = IdentificationManager::resolveUserId($login, $password)) > 0) {
+		if(self::is_valid_login($login) && self::is_valid_password($password)) {
+			$password = self::unlock($this->user_key($session_id), $password);
+			if(($user_id = self::resolveUserId($login, $password)) > 0) {
 				$this->usersTable[$session_id]['user_id'] = $user_id;
 			}
 		}
@@ -180,7 +180,7 @@ class IdentificationManager {
 	*/
 
 	public static function hasRight($user_id, $object_class, $objects_ids, $right_flags) {
- 		$im = &IdentificationManager::getInstance();
+ 		$im = &self::getInstance();
 // todo: improve this by using bulk queries in method 'getUserPermissions'
 		$user_rights = DEFAULT_RIGHTS;
 		// we return the most restrictive permission on the given group of object

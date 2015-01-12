@@ -35,8 +35,8 @@ check_params(array('post_id'));
 $params = get_params(array('post_id'=>null));
 
 $html = new HtmlWrapper();
-$html->addJSFile('html/js/jquery-1.7.1.min.js');
-$html->addJSFile('html/js/src/easyObject.api.js');
+$html->addJSFile('packages/core/html/js/jquery-1.7.1.min.js');
+$html->addJSFile('packages/core/html/js/src/easyObject.api.js');
 $html->addCSSFile('packages/blog/html/css/style.css');
 $html->addScript("
 var post_id = {$params['post_id']};

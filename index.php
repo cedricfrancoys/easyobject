@@ -91,20 +91,41 @@ $accepted_requests = array(
 						'show'	=> array('type' => 'application',	'dir' => 'apps')		// output rendering information (html/js)
 					);
 
-// if no request is specified, use the default app
-if(count(array_intersect_key($accepted_requests, $_REQUEST)) == 0) {
-	if(defined('DEFAULT_APP')) $_REQUEST['show'] = DEFAULT_APP;
-}
+// load default config values
+include_once('packages/core/config.inc.php');
 
+// check current request for package specification
 foreach($accepted_requests as $request_key => $request_conf) {
 	if(isset($_REQUEST[$request_key])) {
 		$parts = explode('_', $_REQUEST[$request_key]);
 		$package = array_shift($parts);
+		config\define('DEFAULT_PACKAGE', $package);	
+		break;
+	}
+}
+// if no package is pecified in the URL, check for DEFAULT_PACKAGE constant (defined in root config.inc.php)
+if(!config\defined('DEFAULT_PACKAGE') && defined('DEFAULT_PACKAGE')) config\define('DEFAULT_PACKAGE', DEFAULT_PACKAGE);
+
+if(config\defined('DEFAULT_PACKAGE')) {
+	// if package has a custom configuration file, load it
+	if(is_file('packages/'.config('DEFAULT_PACKAGE').'/config.inc.php')) include('packages/'.config('DEFAULT_PACKAGE').'/config.inc.php');
+}
+
+// if no request is specified, set DEFAULT_PACKAGE/DEFAULT_APP as requested script
+if(count(array_intersect_key($accepted_requests, $_REQUEST)) == 0) {
+	if(config\defined('DEFAULT_PACKAGE') && config\defined('DEFAULT_APP')) $_REQUEST['show'] = config('DEFAULT_PACKAGE').'_'.config('DEFAULT_APP');
+}
+
+// try to include requested script
+foreach($accepted_requests as $request_key => $request_conf) {
+	if(isset($_REQUEST[$request_key])) {
+		$parts = explode('_', $_REQUEST[$request_key]);
+		$package = array_shift($parts);
+		// if no app is specified, use the default app (if any)
+		if(empty($parts) && config\defined('DEFAULT_APP')) $parts[] = config('DEFAULT_APP');
 		$filename = 'packages/'.$package.'/'.$request_conf['dir'].'/'.implode('/', $parts).'.php';
 		is_file($filename) or die ("'{$_REQUEST[$request_key]}' is not a valid {$request_conf['type']}.");
-		// if package has a custom configuration file, load it
-		if(is_file('packages/'.$package.'/config.inc.php')) include('packages/'.$package.'/config.inc.php');		
-		// export parameters declared with config\define function as constants (i.e.: accessible through global scope)
+		// export as constants all parameters declared with config\define() (i.e.: to make them accessible through global scope)
 		config\export_config();
 		include($filename);
 		break;

@@ -44,14 +44,14 @@ class Timer {
 
 class easyObjectServer extends PHPRPC_Server {
 	private $objectManager;
-	private $IdentificationManager;
+	private $accessController;
 	private $timer;
 	private $msg_count;
 
 	public function __construct($host, $port) {
 		parent::__construct($host, $port);
 		$this->objectManager = &ObjectManager::getInstance();
-		$this->IdentificationManager = &IdentificationManager::getInstance();
+		$this->accessController = &AccessController::getInstance();
 
 		$this->timer = new Timer(STORE_INTERVAL*60);
 		$this->msg_count = 0;
@@ -73,7 +73,7 @@ class easyObjectServer extends PHPRPC_Server {
 			if($this->timer->iterate() == Timer::TIME_IS_UP) {
 				echo "storing changes to database\n";
 				$this->objectManager->store();
-				$this->IdentificationManager->resetPermissionsCache();
+				$this->accessController->resetPermissionsCache();
 			}
 		}
 	}

@@ -15,7 +15,7 @@ load_class('utils/HtmlWrapper');
 
 
 $html = new HtmlWrapper();
-$html->addJSFile('html/js/jquery-1.7.1.min.js');
+$html->addJSFile('packages/core/html/js/jquery-1.7.1.min.js');
 $html->addStyle("
 	a {
 		display: block;
