@@ -57,7 +57,7 @@
 	background: url(images/bt_open.png) no-repeat left 0px;
 }
 #login-panel .login-menu ul.login a:hover.open {
-	background: url(images/bt_open.png) no-repeat left -19px;
+	background: url(images/bt_open.png) no-repeat left -20px;
 }
 
 /* Sliding panel */
@@ -202,7 +202,7 @@
 	background: url(images/bt_close.png) no-repeat left 0px;
 }
 #sliding-pane .close-tab a:hover.close {
-	background: url(images/bt_close.png) no-repeat left -19px;
+	background: url(images/bt_close.png) no-repeat left -20px;
 }
 
 /***** clearfix *****/

@@ -20,9 +20,8 @@
 */
 
 /*
-* file: views/core/user/login.php
+* file: packages/core/apps/manage.php
 *
-* Displays the logon screen.
 *
 */
 
@@ -33,7 +32,19 @@ set_silent(true);
 
 load_class('utils/HtmlWrapper');
 
-$params = get_params(array('lang'=>'en'));
+$params = announce(	
+	array(	
+		'description'	=>	"Allows to manage (view/update/remove) objects from classes available for each packages.",
+		'params' 		=>	array(
+								'lang'			=> array(
+													'description '=> 'Specific language for multilang field.',
+													'type' => 'string', 
+													'default' => DEFAULT_LANG
+													)
+							)
+	)
+);
+
 
 $html = new HtmlWrapper();
 $html->addCSSFile('packages/core/html/css/easyobject/base.css');
@@ -167,15 +178,16 @@ $html->add('
 	<div id="sliding-pane">
 		<div class="content clearfix">
 			<div class="left">
-				<h1>Welcome to Web-Kreation</h1>
-				<h2>Sliding login panel Demo with jQuery</h2>		
-				<p class="grey">You can put anything you want in this sliding panel: videos, audio, images, forms... The only limit is your imagination!</p>
-				<h2>Download</h2>
-				<p class="grey">To download this script go back to <a href="http://web-kreation.com/index.php/tutorials/nice-clean-sliding-login-panel-built-with-jquery" title="Download">article &raquo;</a></p>
+				<h1>Welcome easyForge</h1>
+				<h2>easy web applications</h2>
+				<p class="grey">framework for making web applications development fast and easy.</p>
+				<h2>Current application</h2>
+				<p class="grey">Current application is <b>{}</b><br />
+				See all available apps <a href="" title="Download" target=_blank">here &raquo;</a></p>
 			</div>
 			<div class="left">
 				<form class="clearfix" action="#" method="post">
-					<h1>Member Login</h1>
+					<h1>User Login</h1>
 					<label class="grey" for="log">Username:</label>
 					<input class="field" type="text" name="log" id="log" value="" size="23" />
 					<label class="grey" for="pwd">Password:</label>
@@ -188,7 +200,7 @@ $html->add('
 			</div>
 			<div class="left right">			
 				<form action="#" method="post">
-					<h1>Not a member yet? Sign Up!</h1>				
+					<h1>Not registered yet? Sign Up!</h1>				
 					<label class="grey" for="signup">Username:</label>
 					<input class="field" type="text" name="signup" id="signup" value="" size="23" />
 					<label class="grey" for="email">Email:</label>

@@ -789,7 +789,7 @@ class ObjectManager {
 			// second pass : handle onchange events, if any (must be called afer modifications otherwise object values might be outdated)
 			// before handling onchange events, we store fields having the onchange attribute set (we need to do so because o2m and m2m fields can be only partially loaded)
 			if(count($onchange_fields)) {
-				// force a storage of the modified values to DB
+				// force storage of the modified values to DB
 				$this->storeObjectFields($user_id, $object_class, $object_id, $onchange_fields, $lang);
 				// reset the state flags (so value will be reloaded from DB when needed)
 				$object->resetModifiedFields(array($lang => $onchange_fields));
@@ -904,7 +904,7 @@ class ObjectManager {
 	*
 	* @param string $object_class object class
 	* @param array $values
-	* @return mixed (boolean or array)
+	* @return mixed (integer or array)
 	*/
 	public function validate($object_class, $values) {
 		try {
@@ -914,7 +914,7 @@ class ObjectManager {
 		}
 		catch(Exception $e) {
 			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
-			$result = false;
+			$result = $e->getCode();
 		}
 		return $result;
 	}
@@ -925,7 +925,7 @@ class ObjectManager {
 	* @param integer $user_id
 	* @param string $object_class object class
 	* @param integer $object_id
-	* @return object
+	* @return mixed (boolean or object)
 	*/
 	public function &get($user_id, $object_class, $object_id, $lang=DEFAULT_LANG) {
 		try {
