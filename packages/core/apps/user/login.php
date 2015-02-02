@@ -20,9 +20,9 @@
 */
 
 /*
-* file: views/core/user/login.php
+* file: packages/core/apps/user/login.php
 *
-* Displays the logon screen.
+* Displays a logon form.
 *
 */
 

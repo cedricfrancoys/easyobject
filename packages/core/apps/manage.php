@@ -94,10 +94,10 @@ $(document).ready(function() {
 	
 	// sliding login panel
 	$('#login-panel-open').click(function(){
-		$('#sliding-pane').slideDown('slow');
+		$('#sliding-pane').animate({top: '0px'}, 'slow');
 	});
 	$('#login-panel-close').click(function(){
-		$('#sliding-pane').slideUp('slow');		
+		$('#sliding-pane').animate({top: '-250px'}, 'slow');
 	});	
 	
 	
@@ -178,12 +178,12 @@ $html->add('
 	<div id="sliding-pane">
 		<div class="content clearfix">
 			<div class="left">
-				<h1>Welcome easyForge</h1>
+				<h1>Welcome to easyForge</h1>
 				<h2>easy web applications</h2>
-				<p class="grey">framework for making web applications development fast and easy.</p>
+				<p class="grey">easyForge is a framework for making web applications development fast and easy.</p>
 				<h2>Current application</h2>
 				<p class="grey">Current application is <b>{}</b><br />
-				See all available apps <a href="" title="Download" target=_blank">here &raquo;</a></p>
+				See all available apps <a href="index.php?show=core_utils" target=_blank">here &raquo;</a></p>
 			</div>
 			<div class="left">
 				<form class="clearfix" action="#" method="post">
@@ -198,7 +198,7 @@ $html->add('
 					<a class="lost-pwd" href="#">Lost your password?</a>
 				</form>
 			</div>
-			<div class="left right">			
+			<div class="left">			
 				<form action="#" method="post">
 					<h1>Not registered yet? Sign Up!</h1>				
 					<label class="grey" for="signup">Username:</label>
@@ -210,16 +210,17 @@ $html->add('
 				</form>
 			</div>
 		</div>
+		<div class="login-tab">
+			<ul class="login">
+				<li>Welcome '.$user_name.'</li>
+				<li class="sep">|</li>
+				<li><a id="login-panel-open" class="open" href="#">Log In | Register</a></li>
+			</ul> 
+		</div>		
 		<div class="close-tab">
 			<a id="login-panel-close" class="close" href="#">Close Panel</a>			
 		</div>
-	</div>	
-	<div class="login-menu">
-		<ul class="login">
-			<li>Welcome '.$user_name.'</li>
-			<li class="sep">|</li>
-			<li><a id="login-panel-open" class="open" href="#">Log In | Register</a></li>
-		</ul> 
+		
 	</div>	
 </div>
 ');
