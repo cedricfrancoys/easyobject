@@ -24,7 +24,7 @@ defined('__FC_LIB') or die(__FILE__.' requires fc.lib.php');
 // load dependencies
 load_class('db/DBConnection') or die('unable to load mandatory class DBConnection');
 load_class('orm/AccessController') or die('unable to load mandatory class AccessController');
-load_class('orm/eventListener') or die('unable to load mandatory class eventListener');
+load_class('orm/EventListener') or die('unable to load mandatory class EventListener');
 load_class('orm/Object') or die('unable to load mandatory class Object');
 
 
@@ -157,7 +157,7 @@ class ObjectManager {
 			return $this->objectsArray[$object_class][0];
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to get static instance', $e->getCode());
 		}
 	}
@@ -204,7 +204,7 @@ class ObjectManager {
 			return $object;
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to get object instance', $e->getCode());
 		}
 	}
@@ -220,7 +220,7 @@ class ObjectManager {
 			$object = &$this->getObjectStaticInstance($object_class);
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			return $e->getCode();
 		}
 		return $object->getTable();
@@ -353,7 +353,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											eventListener::ExceptionHandler($e, __METHOD__);
+											EventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -395,7 +395,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											eventListener::ExceptionHandler($e, __METHOD__);
+											EventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -415,7 +415,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											eventListener::ExceptionHandler($e, __METHOD__);
+											EventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -433,7 +433,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											eventListener::ExceptionHandler($e, __METHOD__);
+											EventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -451,7 +451,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											eventListener::ExceptionHandler($e, __METHOD__);
+											EventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									},
@@ -496,7 +496,7 @@ class ObjectManager {
 											}
 										}
 										catch(Exception $e) {
-											eventListener::ExceptionHandler($e, __METHOD__);
+											EventListener::ExceptionHandler($e, __METHOD__);
 										}
 										return $values_array;
 									}
@@ -565,7 +565,7 @@ class ObjectManager {
 			}
 		}				
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to load object fields', $e->getCode());
 		}		
 	}
@@ -669,7 +669,7 @@ class ObjectManager {
 			}
 		}
 		catch (Exception $e) {
-			eventListener::ExceptionHandler($e, __METHOD__);
+			EventListener::ExceptionHandler($e, __METHOD__);
 		}
 	}
 
@@ -700,7 +700,7 @@ class ObjectManager {
 			return $object->getValues($object_fields, $lang);
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to get object fields', $e->getCode());
 		}
 	}
@@ -800,7 +800,7 @@ class ObjectManager {
 			}
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			throw new Exception('unable to set object fields', $e->getCode());
 		}
 		return $object_id;
@@ -913,7 +913,7 @@ class ObjectManager {
 			$result = $this->checkFieldsValidity($object_class, array_intersect_key($values, $object->getColumns()));
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = $e->getCode();
 		}
 		return $result;
@@ -934,7 +934,7 @@ class ObjectManager {
 			$this->browse($user_id, $object_class, array($object_id), $object->getFieldsNames(), $lang);
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$object = false;
 		}
 		return $object;
@@ -953,7 +953,7 @@ class ObjectManager {
 			$object = &$this->getObjectStaticInstance($object_class);
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$object = false;
 		}
 		return $object;
@@ -1030,7 +1030,7 @@ class ObjectManager {
 
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = $e->getCode();
 		}
 		return $result;
@@ -1277,7 +1277,7 @@ class ObjectManager {
 			else $res_list = array_unique($res_list);
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$res_list = $e->getCode();
 		}
 		return $res_list;
@@ -1323,7 +1323,7 @@ class ObjectManager {
 			}
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = $e->getCode();
 		}
 		return $result;
@@ -1373,7 +1373,7 @@ class ObjectManager {
 			foreach($ids as $object_id) $this->setLog($user_id, $log_action, $object_class, $object_id, $log_fields);
 		}
 		catch(Exception $e) {
-			eventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
+			EventListener::ExceptionHandler($e, __FILE__.', '.__METHOD__);
 			$result = $e->getCode();
 		}
 		return $result;

@@ -4,6 +4,9 @@ defined('__EASYOBJECT_LIB') or die(__FILE__.' cannot be executed directly.');
 // force silent mode
 set_silent(true);
 
+// set 'fr' as default language
+isset($_SESSION['icway_lang']) or $_SESSION['icway_lang'] = 'fr';
+
 $params = announce(	
 	array(	
 		'description'	=>	"Returns the values of the specified fields for the given objects ids.",
@@ -26,14 +29,13 @@ $params = announce(
 								'lang'			=> array(
 													'description '=> 'Language in which to display content.',
 													'type' => 'string', 
-													'default' => DEFAULT_LANG
+													'default' => $_SESSION['icway_lang']
 													)
 							)
 	)
 );
 
 // lang param was not in the URL: use previously chosen or default
-isset($_SESSION['icway_lang']) or $_SESSION['icway_lang'] = 'fr';
 if(is_null($params['lang'])) $params['lang'] = $_SESSION['LANG'] = $_SESSION['icway_lang'];
 else $_SESSION['icway_lang'] = $params['lang'];
 
