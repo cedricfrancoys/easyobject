@@ -35,10 +35,16 @@ $params = announce(
 	)
 );
 
+/* obsolete code
 // lang param was not in the URL: use previously chosen or default
-if(is_null($params['lang'])) $params['lang'] = $_SESSION['LANG'] = $_SESSION['icway_lang'];
-else $_SESSION['icway_lang'] = $params['lang'];
+// if(is_null($params['lang'])) $params['lang'] = $_SESSION['LANG'] = $_SESSION['icway_lang'];
+// else $_SESSION['icway_lang'] = $params['lang'];
+*/
+// remember selected language for further requests
+$_SESSION['icway_lang'] = $params['lang'];
 
+
+// todo : use a different ap for bog
 //we use the cached version of the content
 if($params['page_id'] != 5) {
 	$values = &browse('icway\Page', array($params['page_id']), array('html'), $params['lang']);
