@@ -8,7 +8,7 @@ namespace alternet {
 			return array(
 				'firstname'			=> array('type' => 'string'),
 				'lastname'			=> array('type' => 'string'),
-				'description'		=> array('type' => 'short_text', 'help' => "courte présentation (vision, formation, profession, ouvrages, ...)"),
+				'description'		=> array('type' => 'short_text', 'help' => "courte prÃ©sentation (vision, formation, profession, ouvrages, ...)"),
 				'url'				=> array('type' => 'string'),
 				'email'				=> array('type' => 'string'),
 				'address'			=> array('type' => 'short_text'),

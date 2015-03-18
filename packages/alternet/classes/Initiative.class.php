@@ -6,8 +6,8 @@ namespace alternet {
 
 		public static function getColumns() {
 			return array(
-				'name'				=> array('type' => 'string', 'help' => "Dénomination complète, avec raison sociale le cas échéant"),
-				'description'		=> array('type' => 'short_text', 'help' => "courte présentation (mission, objectifs, moyens, public, vision, ...)"),
+				'name'				=> array('type' => 'string', 'help' => "DÃ©nomination complÃ¨te, avec raison sociale le cas Ã©chÃ©ant"),
+				'description'		=> array('type' => 'short_text', 'help' => "courte prÃ©sentation (mission, objectifs, moyens, public, vision, ...)"),
 				'url'				=> array('type' => 'string'),
 				'email'				=> array('type' => 'string'),
 				'address'			=> array('type' => 'short_text'),
