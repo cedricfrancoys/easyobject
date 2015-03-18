@@ -75,7 +75,7 @@ class DBManipulator {
 	 */
 	protected $last_query;
 
-	protected $mysql_handler;
+	protected $dbms_handler;
 
 
 	/**
