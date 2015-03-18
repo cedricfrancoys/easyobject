@@ -48,8 +48,8 @@ $params = announce(
 );
 
 // ask schema to the object manager
-$om = &ObjectManager::getInstance();
+$om = ObjectManager::getInstance();
 $result = $om->getObjectSchema($params['object_class']);
 
 // send json result
-echo json_encode($result);
+print_r(json_encode($result));

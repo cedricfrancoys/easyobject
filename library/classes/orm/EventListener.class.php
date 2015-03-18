@@ -21,16 +21,9 @@
 
 class EventListener {
 
-	private static $errors_stack;
-
 	public function __construct() {
-	    self::$errors_stack = array();
 		set_error_handler("EventListener::ErrorHandler");
 		set_exception_handler("EventListener::UncaughtExceptionHandler");
-	}
-
-	public static function getErrorsStack() {
-		return self::$errors_stack;
 	}
 
     public static function UncaughtExceptionHandler($exception) {
@@ -53,7 +46,7 @@ class EventListener {
 	public static function ErrorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 	    $error_types = array (
 		                E_ERROR				=> 'Error',
-		                E_USER_ERROR		=> 'Error',
+		                E_USER_ERROR		=> 'Fatal error',
 		                E_WARNING			=> 'Warning',
 		                E_USER_WARNING		=> 'Warning',
 		                E_PARSE				=> 'Parsing Error',
@@ -64,28 +57,21 @@ class EventListener {
 		                E_COMPILE_ERROR		=> 'Compile Error',
 		                E_COMPILE_WARNING	=> 'Compile Warning',
 		                E_STRICT			=> 'Runtime Notice',
-		                E_RECOVERABLE_ERROR	=> 'Catchable Fatal Error'
+		                E_RECOVERABLE_ERROR	=> 'Catchable Fatal Error',
+						E_DEPRECATED		=> 'Deprecated warning'
 	                );
-	    $user_errors = array(E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);
 	    $dt = date("Y-m-d H:i:s (T)");
-		$last_error = error_get_last();
 
-	    if (in_array($errno, $user_errors)) $err = "$dt, $errmsg";
-	    else $err = "$dt, {$error_types[$errno]} ($filename@$linenum), {$last_error['message']} : $errmsg";
-
-	    self::$errors_stack[] = $err;
-
-	    // fatal error
-	    if ($errno == E_USER_ERROR) {
-	    	// if we can output messages, display the whole stack
-	    	if(function_exists('debug_mode') && debug_mode()) {
-	    		print("<pre>A fatal error has been raised. Flushing errors stack:\n");
-	    		foreach(self::$errors_stack as $line) print($line."\n");
-			}
-	     	die();
+		if(isset($error_types[$errno])) $errtype = $error_types[$errno];
+		else $errtype = '[undefined error type]';
+		
+		// if we are in debug mode, output error message
+		if(function_exists('debug_mode') && (debug_mode() & DEBUG_PHP)) {
+			if(empty(self::$errors_stack)) print'<pre>';
+			print "$dt, $errtype in $filename@$linenum : $errmsg\n";
 		}
-		// other error
-		// if we are in debug mode, then output errors as they come
-	    elseif(function_exists('debug_mode') && (debug_mode() & DEBUG_PHP)) print($err);
+				
+		// stop the script in case of fatal error
+		if ($errno == E_USER_ERROR) die();
 	}
 }
