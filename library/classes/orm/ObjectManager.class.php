@@ -139,8 +139,9 @@ class ObjectManager {
 			if(!class_exists($object_class)) {
 				// first, read the file content to see if the class extends from another (which could not be loaded yet)
 				// we do so because we cannot use __autoload mechanism since the script might be run in CLI SAPI
-				$filename = realpath($_SERVER['DOCUMENT_ROOT']).dirname($_SERVER['PHP_SELF']).'/packages/'.$this->getObjectPackageName($object_class).'/classes/'.$this->getObjectName($object_class).'.class.php';
-
+				// $filename = realpath($_SERVER['DOCUMENT_ROOT']).dirname($_SERVER['PHP_SELF']).'/packages/'.$this->getObjectPackageName($object_class).'/classes/'.$this->getObjectName($object_class).'.class.php';
+// todo : test this access method with CLI
+				$filename = realpath(__DIR__.'/../../..').'/packages/'.$this->getObjectPackageName($object_class).'/classes/'.$this->getObjectName($object_class).'.class.php';
 				if(!is_file($filename)) throw new Exception("unknown object class : '$object_class' ($filename)", UNKNOWN_OBJECT);
 				preg_match('/\bextends\b(.*)\{/iU', file_get_contents($filename, FILE_USE_INCLUDE_PATH), $matches);
 				if(!isset($matches[1])) throw new Exception("malformed class file for object '$object_class' : parent class name not found", INVALID_PARAM);
@@ -265,7 +266,7 @@ class ObjectManager {
 	* @return string
 	*/
 	public function getObjectSchema($object_class) {
-		$object = &$this->getObjectStaticInstance($object_class);
+		$object = &$this->getObjectStaticInstance($object_class);		
 		return $object->getSchema();
 	}
 
