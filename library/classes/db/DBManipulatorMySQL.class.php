@@ -37,10 +37,10 @@ class DBManipulatorMySQL extends DBManipulator {
 	public function connect($auto_select=true) {
 		$result = false;
 		if(DBManipulator::is_db_server($this->host_name, $this->port)) {
-			if($this->mysql_handler = mysql_connect($this->host_name.':'.$this->port, $this->user_name, $this->password)){
+			if($this->dbms_handler = mysqli_connect($this->host_name, $this->user_name, $this->password, $this->db_name, $this->port)){
 				if(!$auto_select) $result = true;
 				elseif($result = $this->select($this->db_name)) {
-					mysql_query('SET NAMES '.DB_CHARSET);
+					mysqli_query($this->dbms_handler, 'SET NAMES '.DB_CHARSET);
 					$result = true;
 				}
 			}
@@ -49,7 +49,7 @@ class DBManipulatorMySQL extends DBManipulator {
 	}
 
 	public function select($db_name) {
-		return mysql_select_db($db_name);
+		return mysqli_select_db($this->dbms_handler, $db_name);
 	}
 
 	/**
@@ -59,9 +59,9 @@ class DBManipulatorMySQL extends DBManipulator {
 	* @access   public
 	*/
 	public function disconnect() {
-        if(!$this->mysql_handler) return true;
-		if(!($result = mysql_close($this->mysql_handler))) throw new Exception(__METHOD__.' : unable to close connection to DB, '.mysql_error());
-		else $this->mysql_handler = false;
+        if(!$this->dbms_handler) return true;
+		if(!($result = mysqli_close($this->dbms_handler))) throw new Exception(__METHOD__.' : unable to close connection to DB, '.mysqli_error($this->dbms_handler));
+		else $this->dbms_handler = false;
 		return $result;
 	}
 
@@ -74,30 +74,30 @@ class DBManipulatorMySQL extends DBManipulator {
 	function sendQuery($query) {
 	    if(function_exists('debug_mode') && (debug_mode() & DEBUG_SQL)) print("$query<br />\n");
 		$this->setLastQuery($query);
-		if(($result = mysql_query($query)) === false) throw new Exception(__METHOD__.' : query failure, '.mysql_error(), SQL_ERROR);
+		if(($result = mysqli_query($this->dbms_handler, $query)) === false) throw new Exception(__METHOD__.' : query failure, '.mysqli_error($this->dbms_handler), SQL_ERROR);
 		else {
 			// if everything went well, fetch some additional info
 			// a) for 'select' queries
 			if(stristr(substr($query, 0, 6), 'select')) {
-				if(($res = mysql_query("SELECT FOUND_ROWS();")) === false) throw new Exception(__METHOD__.' : query failure, '.mysql_error(), SQL_ERROR);
-				$row = mysql_fetch_row($res);
+				if(($res = mysqli_query($this->dbms_handler, "SELECT FOUND_ROWS();")) === false) throw new Exception(__METHOD__.' : query failure, '.mysqli_error($this->dbms_handler), SQL_ERROR);
+				$row = mysqli_fetch_row($res);
 				$this->setAffectedRows($row[0]);
 			}
 			// b) for 'show' queries
-			else if(stristr(substr($query, 0, 4), 'show')) $this->setAffectedRows(mysql_num_rows($result));
+			else if(stristr(substr($query, 0, 4), 'show')) $this->setAffectedRows(mysqli_num_rows($result));
 			// c) for other queries (insert, update, replace, delete)
-			else $this->setAffectedRows(mysql_affected_rows());
-			$this->setLastId(mysql_insert_id());
+			else $this->setAffectedRows(mysqli_affected_rows());
+			$this->setLastId(mysqli_insert_id($this->dbms_handler));
 		}
 		return $result;
 	}
 
 	public static function fetchRow(&$array) {
-		return mysql_fetch_row($array);
+		return mysqli_fetch_row($array);
 	}
 
 	public static function fetchArray(&$array) {
-		return mysql_fetch_array($array, MYSQL_ASSOC);
+		return mysqli_fetch_array($array, MYSQL_ASSOC);
 	}
 
 	/**
@@ -117,13 +117,13 @@ class DBManipulatorMySQL extends DBManipulator {
 	* @param string $value
 	* @return string
 	*/
-	private static function escapeString($value) {
+	private function escapeString($value) {
 		$result = '';
 		if(in_array($value, array(NULL, 'null', 'NULL'))) $result = 'NULL';
 		else if($value{0} == '`') {
 			$result = DBManipulatorMySQL::escapeFieldName($value);
 		}
-		else $result = "'".mysql_real_escape_string($value)."'";
+		else $result = "'".mysqli_real_escape_string($this->dbms_handler, $value)."'";
 		return $result;
 	}
 
